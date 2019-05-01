@@ -1,0 +1,18 @@
+{
+	"name": "bytes",
+	"erdAbbreviation": "<byt>",
+	"dtdAbbreviation": "{BYT}",
+	"parentType": "binary",
+	"useSample": false,
+	"defaultValues": {
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignEntity": "",
+		"foreignField": [],
+		"default": "",
+		"gridFS": "",
+		"enum": [],
+		"sample": ""
+	}
+}

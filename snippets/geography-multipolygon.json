@@ -1,0 +1,133 @@
+{
+	"name": "geography-multipolygon",
+	"parentType": "document",
+	"properties": [{
+		"name": "type",
+		"type": "string",
+		"sample": "multipolygon"
+	}, {
+		"name": "coordinates",
+		"type": "array",
+		"properties": [{
+			"type": "array",
+			"properties": [{
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}]
+			}]
+		}, {
+			"type": "array",
+			"properties": [{
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}]
+			}, {
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "numeric"
+					}, {
+						"type": "numeric"
+					}]
+				}]
+			}]
+		}]
+	}]
+}

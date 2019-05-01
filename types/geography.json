@@ -1,0 +1,32 @@
+{
+	"name": "geography",
+	"erdAbbreviation": "<geo>",
+	"dtdAbbreviation": "{...}",
+	"parentType": "document",
+	"defaultValues": {
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"properties": [],
+		"dependencies": [],
+		"orientation": "ccw",
+		"ignore_z_value": true,
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false,
+		"enum": [],
+		"subTypes": [
+			{ "name": "point", "snippet": "geography-point" },
+			{ "name": "linestring", "snippet": "geography-linestring" },
+			{ "name": "polygon", "snippet": "geography-polygon" },
+			{ "name": "multipoint", "snippet": "geography-multipoint" },
+			{ "name": "multilinestring", "snippet": "geography-multilinestring" },
+			{ "name": "multipolygon", "snippet": "geography-multipolygon" },
+			{ "name": "geometrycollection", "snippet": "geography-geometrycollection" },
+			{ "name": "envelope", "snippet": "geography-envelope" },
+			{ "name": "circle", "snippet": "geography-circle" }
+		]
+	}
+}

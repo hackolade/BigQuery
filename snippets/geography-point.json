@@ -1,0 +1,17 @@
+{
+	"name": "geography-point",
+	"parentType": "document",
+	"properties": [{
+		"name": "type",
+		"type": "string",
+		"sample": "point"
+	}, {
+		"name": "coordinates",
+		"type": "array",
+		"properties": [{
+			"type": "numeric"
+		}, {
+			"type": "numeric"
+		}]
+	}]
+}

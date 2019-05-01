@@ -1,0 +1,61 @@
+{
+    "name": "BigQuery",
+    "version": "0.0.1",
+    "versionDate": "2019-05-01",
+    "author": "hackolade",
+    "engines": {
+        "hackolade": "3.0.2",
+        "hackoladePlugin": "1.0.0"
+    },
+    "contributes": {
+        "target": {
+            "applicationTarget": "BigQuery",
+            "title": "Google BigQuery",
+            "versions": []
+        },
+        "features": {
+            "jaySchemaHasRequiredPatternField": false,
+            "nestedCollections": false,
+			"disableMultipleTypes": true,
+			"enableReverseEngineering": {
+				"jsonDocument": true,
+				"jsonSchema": true,
+				"ddl": true,
+				"xsd": true,
+				"plugin": true 
+			},
+			"disableDenormalization": false,
+			"enableForwardEngineering": {
+				"jsonDocument": true,
+				"jsonSchema": true,
+				"plugin": true
+			},
+			"disablePatternField": true,
+			"disableChoices": {
+				"anyOf": true,
+				"allOf": true,
+				"oneOf": true,
+				"not": true
+			},
+			"enableJsonType": false,
+			"disableNamingConvention": {
+				"containerLevel": true,
+				"entityLevel": false,
+				"fieldLevel": {
+					"parameter": false
+				}
+			},
+			"disableChildren": {
+				"entityLevel": false
+			},
+			"disableDefinitions": {
+				"internal": false
+			},
+			"disableRelationships": false,
+			"disableJsonPreview": false,
+			"enableArrayItemName": false
+        }
+    },
+    "description": "Hackolade plugin for Google Cloud BigQuery",
+    "disabled": false
+}
