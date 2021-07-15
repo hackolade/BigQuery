@@ -1,25 +1,22 @@
 {
 	"model": {
 		"modelName": "New model",
-		"dbVersion": "",
-		"dbVendor": "Google BigQuery"
+		"dbVersion": "v2",
+		"dbVendor": "BigQuery"
 	},
 	"container": {
 		"name": "New dataset",
-		"indexes": []
+		"unlimitedQuota": false
 	},
 	"collection": {
 		"collectionName": "New table",
-		"tableType": "Native",
-		"partitioning": "No partitioning",
-		"encryption": "Google-managed key"
+		"type": "string"
 	},
 	"field": {
-		"name": "New field",
-		"dataTypeMode": "Nullable"
+		"name": "New column"
 	},
 	"patternField": {
-		"name": "^[a-zA-Z0-9_.-]{20}$"
+		"name": "^[a-zA-Z0-9_.-]+$"
 	},
 	"multipleField": {
 		"primaryKey": false
@@ -31,6 +28,7 @@
 	"user": {},
 	"view": {
 		"viewOn": "",
-		"pipeline": ""
+		"pipeline": "",
+		"autoSortKey": false
 	}
 }

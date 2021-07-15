@@ -1,11 +1,10 @@
 /*
-* Copyright © 2016-2017 by IntegrIT S.A. dba Hackolade.  All rights reserved.
+* Copyright © 2016-2019 by IntegrIT S.A. dba Hackolade.  All rights reserved.
 *
 * The copyright to the computer software herein is the property of IntegrIT S.A.
 * The software may be used and/or copied only with the written permission of 
 * IntegrIT S.A. or in accordance with the terms and conditions stipulated in 
 * the agreement/contract under which the software has been supplied. 
-
 
 In order to define custom properties for any object's properties pane, you may copy/paste from the following,
 making sure that you maintain a proper JSON format.
@@ -13,14 +12,12 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Simple text",
 				"propertyKeyword": "simpletextProp",
-				"shouldValidate": false,
 				"propertyType": "text",
 				"sampleGen": "&containerName|&entityName|&random|<value>"
 			},
 			{
 				"propertyName": "Text area",
 				"propertyKeyword": "textareaProp",
-				"propertyValidate": false,
 				"propertyTooltip": "Popup for multi-line text entry",
 				"propertyType": "details",
 				"template": "textarea"
@@ -28,7 +25,6 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Dropdown selection",
 				"propertyKeyword": "dropdownProp",
-				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": [
@@ -50,31 +46,68 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Checkbox",
 				"propertyKeyword": "checkboxProp",
-				"shouldValidate": false,
 				"propertyType": "checkbox"
 			},
 			{
 				"propertyName": "Group",
 				"propertyType": "group",
 				"propertyKeyword": "grpProp",
-				"shouldValidate": true,
 				"propertyTooltip": "",
 				"structure": [
 					{
 						"propertyName": "Simple Grp Text",
 						"propertyKeyword": "simpleGrpText",
-						"shouldValidate": false,
 						"propertyTooltip": "",
 						"propertyType": "text"
 					},
 					{
 						"propertyName": "Group Number",
 						"propertyKeyword": "grpNumber",
-						"propertyValidate": true,
 						"propertyType": "numeric",
 						"valueType": "number",
 						"allowNegative": false
 					}
+				]
+			},
+// “groupInput” can have the following states - 0 items, 1 item, and many items.
+// “blockInput” has only 2 states - 0 items or 1 item. 
+// This gives us an easy way to represent it as an object and not as an array internally which is beneficial for processing 
+// and forward-engineering in particular.
+			{
+				"propertyName": "Block",
+				"propertyType": "block",
+				"propertyKeyword": "grpProp",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Simple Grp Text",
+						"propertyKeyword": "simpleGrpText",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Group Number",
+						"propertyKeyword": "grpNumber",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false
+					}
+				]
+			},
+			{
+				"propertyName": "Field List",
+				"propertyKeyword": "keyList",
+				"propertyType": "fieldList",
+				"template": "orderedList"
+			}, 
+			{
+				"propertyName": "List with attribute",
+				"propertyKeyword": "keyListOrder",
+				"propertyType": "fieldList",
+				"template": "orderedList",
+				"attributeList": [
+					"ascending",
+					"descending"
 				]
 			}
 
@@ -85,30 +118,16 @@ making sure that you maintain a proper JSON format.
 		"lowerTab": "Details",
 		"structure": [
 			{
-				"propertyName": "Labels",
-				"propertyType": "group",
-				"propertyKeyword": "Labels",
-				"shouldValidate": true,
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Key",
-						"propertyKeyword": "labelKey",
-						"shouldValidate": false,
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "Value",
-						"propertyKeyword": "labelValue",
-						"propertyValidate": false,
-						"propertyType": "text"
-					}
-				]
+				"propertyName": "Description",
+				"propertyKeyword": "description",
+				"propertyTooltip": "description",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
 			},
 			{
 				"propertyName": "Table type",
 				"propertyKeyword": "tableType",
-				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": [
@@ -117,14 +136,65 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Or replace",
+				"propertyKeyword": "orReplace",
+				"propertyTooltip": "Cannot appear with IF NOT EXISTS.",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "ifNotExist",
+						"value": false
+					}, {
+						"key": "ifNotExist",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "If not exist",
+				"propertyKeyword": "ifNotExist",
+				"propertyTooltip": "Cannot appear with OR REPLACE.",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "orReplace",
+						"value": false
+					}, {
+						"key": "orReplace",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "Temporary",
+				"propertyKeyword": "temporary",
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Expiration (ms)",
+				"propertyKeyword": "expiration",
+				"propertyTooltip": "Expiration in MS",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"step": 1,
+				"allowNegative": false,
+				"dependency": {
+					"key": "temporary",
+					"value": true
+				}
+			},
+			{
 				"propertyName": "Partitioning",
 				"propertyKeyword": "partitioning",
-				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": [
 					"No partitioning",
-					"By ingestion time"
+					"By ingestion time",
+					"By time-unit column",
+					"By integer-range"
 				],
 				"dependency": {
 					"key": "tableType",
@@ -134,7 +204,6 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Partitioning filter required",
 				"propertyKeyword": "partitioningFilterRequired",
-				"shouldValidate": false,
 				"propertyType": "checkbox",
 				"dependency": {
 					"key": "partitioning",
@@ -143,17 +212,81 @@ making sure that you maintain a proper JSON format.
 
 			},
 			{
-				"propertyName": "Expiration",
-				"propertyKeyword": "expiration",
-				"propertyValidate": true,
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false
+				"propertyName": "Partitioning type",
+				"propertyKeyword": "partitioningType",
+				"propertyType": "select",
+				"options": [
+					"By day",
+					"By hour",
+					"By month",
+					"By year"
+				],
+				"dependency": {
+					"key": "partitioning",
+					"value": "By ingestion time"
+				}
+			},
+			{
+				"propertyName": "Partition by",
+				"propertyKeyword": "timeUnitpartitionKey",
+				"propertyType": "primaryKeySetter",
+				"abbr": "PK",
+				"templateOptions": {
+					"maxFields": 4
+				},
+				"dependency": {
+					"key": "partitioning",
+					"value": "By time-unit column"
+				}
+			},
+			{
+				"propertyName": "Range partition",
+				"propertyType": "block",
+				"propertyTooltip": "",
+				"propertyKeyword": "rangeOptions",
+				"structure": [
+					{
+						"propertyName": "Partition by",
+						"propertyKeyword": "rangePartitionKey",
+						"propertyType": "primaryKeySetter",
+						"abbr": "PK",
+						"templateOptions": {
+							"maxFields": 4
+						}
+					},
+					{
+						"propertyName": "Start",
+						"propertyKeyword": "rangeStart",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					},
+					{
+						"propertyName": "End",
+						"propertyKeyword": "rangeEnd",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					},
+					{
+						"propertyName": "Interval",
+						"propertyKeyword": "rangeinterval",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					}
+				],
+				"dependency": {
+					"key": "partitioning",
+					"value": "By integer-range"
+				}
 			},
 			{
 				"propertyName": "Clustering order",
 				"propertyKeyword": "custeringOrder",
-				"shouldValidate": false,
 				"propertyType": "fieldList",
 				"template": "orderedList",
 				"dependency": {
@@ -162,35 +295,78 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "Cluster by",
+				"propertyKeyword": "clusteringKey",
+				"propertyType": "group",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "external",
+						"value": true
+					}
+				},
+				"structure": [{
+					"propertyName": "Key",
+					"propertyKeyword": "clusteringKey",
+					"propertyType": "compositeKeySetter",
+					"disabledItemStrategy": "default",
+					"abbr": "CK",
+					"setPrimaryKey": false,
+					"template": "collectiontree",
+					"isCompositeKey": true,
+					"templateOptions": {
+						"maxFields": 4
+					}
+				}]
+			},
+			{
 				"propertyName": "Encryption",
 				"propertyKeyword": "encryption",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
+				"propertyTooltip": "Data is encrypted automatically. Select an encryption key management solution.",
+				"defaultValue": "Google-managed",
 				"propertyType": "select",
 				"options": [
-					"Google-managed key",
-					"Customer-managed key"
+					"Google-managed",
+					"Customer-managed"
 				]
 			},
 			{
 				"propertyName": "Encryption key",
 				"propertyKeyword": "customerEncryptionKey",
-				"shouldValidate": false,
+				"propertyTooltip": "Keys can be configured in your Cloud KMS settings",
 				"propertyType": "text",
 				"dependency": {
 					"key": "encryption",
-					"value": "Customer-managed key"
+					"value": "Customer-managed"
 				}
+			},
+			{
+				"propertyName": "Labels",
+				"propertyType": "group",
+				"propertyKeyword": "Labels",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "labelKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "labelValue",
+						"propertyType": "text"
+					}
+				]
 			},
 			{
 				"propertyName": "Comments",
 				"propertyKeyword": "comments",
-				"shouldValidate": false,
 				"propertyTooltip": "comments",
+				"addTimestampButton": true,
 				"propertyType": "details",
 				"template": "textarea",
 				"valueType": "string"
 			}
-		]
+		],
+		"columnsRatio": [3.7, 5]
 	}
 ]

@@ -1,5 +1,5 @@
 /*
-* Copyright © 2016-2017 by IntegrIT S.A. dba Hackolade.  All rights reserved.
+* Copyright © 2016-2021 by IntegrIT S.A. dba Hackolade.  All rights reserved.
 *
 * The copyright to the computer software herein is the property of IntegrIT S.A.
 * The software may be used and/or copied only with the written permission of 
@@ -96,7 +96,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -128,82 +129,13 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
 			"dependencies",
 			"required",
-			"comments"
-		],
-		"integer": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required"
-				]
-			},
-			"description",
-			"dependencies",
-			"required",
-			"primaryKey",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"float": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required"
-				]
-			},
-			"description",
-			"dependencies",
-			"required",
-			"primaryKey",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
 			"comments"
 		],
 		"numeric": [
@@ -219,7 +151,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -241,7 +174,115 @@ making sure that you maintain a proper JSON format.
 			"sample",
 			"comments"
 		],
-		"boolean": [
+		"bignumeric": [
+			"name",
+			"code",
+			"schemaId",
+			"type",
+			{
+				"propertyName": "Type mode",
+				"propertyKeyword": "dataTypeMode",
+				"shouldValidate": false,
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Nullable",
+					"Required",
+					"Repeated"
+				]
+			},
+			"description",
+			"dependencies",
+			"required",
+			"primaryKey",
+			"foreignCollection",
+			"foreignField",
+			"relationshipType",
+			"default",
+			"unit",
+			"minimum",
+			"exclusiveMinimum",
+			"maximum",
+			"exclusiveMaximum",
+			"multipleOf",
+			"divisibleBy",
+			"enum",
+			"sample",
+			"comments"
+		],
+		"int64": [
+			"name",
+			"code",
+			"schemaId",
+			"type",
+			{
+				"propertyName": "Type mode",
+				"propertyKeyword": "dataTypeMode",
+				"shouldValidate": false,
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Nullable",
+					"Required",
+					"Repeated"
+				]
+			},
+			"description",
+			"dependencies",
+			"required",
+			"primaryKey",
+			"foreignCollection",
+			"foreignField",
+			"relationshipType",
+			"default",
+			"unit",
+			"minimum",
+			"exclusiveMinimum",
+			"maximum",
+			"exclusiveMaximum",
+			"multipleOf",
+			"divisibleBy",
+			"enum",
+			"sample",
+			"comments"
+		],
+		"float64": [
+			"name",
+			"code",
+			"schemaId",
+			"type",
+			{
+				"propertyName": "Type mode",
+				"propertyKeyword": "dataTypeMode",
+				"shouldValidate": false,
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Nullable",
+					"Required",
+					"Repeated"
+				]
+			},
+			"description",
+			"dependencies",
+			"required",
+			"primaryKey",
+			"foreignCollection",
+			"foreignField",
+			"relationshipType",
+			"default",
+			"unit",
+			"minimum",
+			"exclusiveMinimum",
+			"maximum",
+			"exclusiveMaximum",
+			"multipleOf",
+			"divisibleBy",
+			"enum",
+			"sample",
+			"comments"
+		],
+		"bool": [
 			"name",
 			"code",
 			"sampleName",
@@ -255,7 +296,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -264,31 +306,6 @@ making sure that you maintain a proper JSON format.
 			"comments"
 		],
 		"___0": [],
-		"timestamp": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required"
-				]
-			},
-			"description",
-			"dependencies",
-			"pattern",
-			"default",
-			"enum",
-			"sample",
-			"comments"
-		],
 		"date": [
 			"name",
 			"code",
@@ -303,7 +320,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -328,7 +346,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -353,12 +372,39 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
 			"dependencies",
 			"required",
+			"pattern",
+			"default",
+			"enum",
+			"sample",
+			"comments"
+		],
+		"timestamp": [
+			"name",
+			"code",
+			"sampleName",
+			"schemaId",
+			"type",
+			{
+				"propertyName": "Type mode",
+				"propertyKeyword": "dataTypeMode",
+				"shouldValidate": false,
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Nullable",
+					"Required",
+					"Repeated"
+				]
+			},
+			"description",
+			"dependencies",
 			"pattern",
 			"default",
 			"enum",
@@ -379,7 +425,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -387,7 +434,7 @@ making sure that you maintain a proper JSON format.
 			"comments"
 		],
 		"___2": [],
-		"record": [
+		"struct": [
 			"name",
 			"code",
 			"sampleName",
@@ -401,7 +448,8 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"options": [
 					"Nullable",
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",
@@ -425,7 +473,8 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": [
-					"Required"
+					"Required",
+					"Repeated"
 				]
 			},
 			"description",

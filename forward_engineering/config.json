@@ -1,10 +1,14 @@
 {
-	"extension": "hql",
-	"filterName": "Hive Query Language",
-	"namePrefix": "Hive",
-	"hasUpdateScript": false,
+	"extension": "sql",
+	"filterName": "SQL",
+	"type": "ddl",
+	"ddlType": "snowflake",
+	"namePrefix": "Snowflake",
+	"hasUpdateScript": true,
+	"resolvedDefinitions": true,
 	"level": {
+		"container": true,
 		"entity": true,
-		"container": true
+		"view": true
 	}
 }

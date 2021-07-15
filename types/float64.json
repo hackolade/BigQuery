@@ -1,5 +1,5 @@
 {
-	"name": "float",
+	"name": "float64",
 	"erdAbbreviation": "<flt>",
 	"dtdAbbreviation": "{123}",
 	"parentType": "numeric",

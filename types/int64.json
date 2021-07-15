@@ -1,5 +1,5 @@
 {
-	"name": "integer",
+	"name": "int64",
 	"erdAbbreviation": "<int>",
 	"dtdAbbreviation": "{123}",
 	"parentType": "numeric",

@@ -1,61 +1,46 @@
 {
     "name": "BigQuery",
     "version": "0.0.1",
-    "versionDate": "2019-05-01",
+    "versionDate": "2021-07-07",
     "author": "hackolade",
     "engines": {
-        "hackolade": "3.0.2",
-        "hackoladePlugin": "1.0.0"
+        "hackolade": "4.3.1",
+        "hackoladePlugin": "1.2.0"
     },
     "contributes": {
         "target": {
             "applicationTarget": "BigQuery",
-            "title": "Google BigQuery",
-            "versions": []
+            "title": "BigQuery Standard SQL",
+            "versions": [
+                "Standard SQL"
+            ]
         },
         "features": {
-            "jaySchemaHasRequiredPatternField": false,
+            "views": {
+                "enabled": true,
+                "viewLevel": "model",
+                "disablePipelines": true
+            },
             "nestedCollections": false,
-			"disableMultipleTypes": true,
-			"enableReverseEngineering": {
-				"jsonDocument": true,
-				"jsonSchema": true,
-				"ddl": true,
-				"xsd": true,
-				"plugin": true 
-			},
-			"disableDenormalization": false,
-			"enableForwardEngineering": {
-				"jsonDocument": true,
-				"jsonSchema": true,
-				"plugin": true
-			},
-			"disablePatternField": true,
-			"disableChoices": {
-				"anyOf": true,
-				"allOf": true,
-				"oneOf": true,
-				"not": true
-			},
-			"enableJsonType": false,
-			"disableNamingConvention": {
-				"containerLevel": true,
-				"entityLevel": false,
-				"fieldLevel": {
-					"parameter": false
-				}
-			},
-			"disableChildren": {
-				"entityLevel": false
-			},
-			"disableDefinitions": {
-				"internal": false
-			},
-			"disableRelationships": false,
-			"disableJsonPreview": false,
-			"enableArrayItemName": false
+            "disablePatternField": false,
+            "enableForwardEngineering": {
+                "jsonDocument": true,
+                "jsonSchema": true,
+                "excel": true,
+                "plugin": true
+            },
+            "enableReverseEngineering": true,
+            "disableChoices": true,
+            "enableJsonType": true,
+            "reverseSchemaIntoOneColumn": true,
+            "disableDenormalization": true,
+            "enableComplexTypesNormalization": true,
+            "relationships": {
+                "compositeRelationships": true
+            },
+            "FEScriptCommentsSupported": true
         }
     },
-    "description": "Hackolade plugin for Google Cloud BigQuery",
+    "description": "Hackolade plugin for Google BigQuery Standard SQL",
     "disabled": false
 }

@@ -5,79 +5,6 @@
 * The software may be used and/or copied only with the written permission of 
 * IntegrIT S.A. or in accordance with the terms and conditions stipulated in 
 * the agreement/contract under which the software has been supplied. 
-
-
-In order to define custom properties for any object's properties pane, you may copy/paste from the following,
-making sure that you maintain a proper JSON format.
-
-			{
-				"propertyName": "Simple text",
-				"propertyKeyword": "simpletextProp",
-				"shouldValidate": false,
-				"propertyType": "text",
-				"sampleGen": "&containerName|&entityName|&random|<value>"
-			},
-			{
-				"propertyName": "Text area",
-				"propertyKeyword": "textareaProp",
-				"propertyValidate": false,
-				"propertyTooltip": "Popup for multi-line text entry",
-				"propertyType": "details",
-				"template": "textarea"
-			},
-			{
-				"propertyName": "Dropdown selection",
-				"propertyKeyword": "dropdownProp",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": [
-					"Option 1",
-					"Option 2",
-					"Option 3",
-					"Option 4"
-				]
-			},
-			{
-				"propertyName": "Numeric",
-				"propertyKeyword": "numericProp",
-				"propertyValidate": true,
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"sampleGen": "&containerName|&entityName|&random|<value>"
-			},
-			{
-				"propertyName": "Checkbox",
-				"propertyKeyword": "checkboxProp",
-				"shouldValidate": false,
-				"propertyType": "checkbox"
-			},
-			{
-				"propertyName": "Group",
-				"propertyType": "group",
-				"propertyKeyword": "grpProp",
-				"shouldValidate": true,
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Simple Grp Text",
-						"propertyKeyword": "simpleGrpText",
-						"shouldValidate": false,
-						"propertyTooltip": "",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "Group Number",
-						"propertyKeyword": "grpNumber",
-						"propertyValidate": true,
-						"propertyType": "numeric",
-						"valueType": "number",
-						"allowNegative": false
-					}
-				]
-			}
-
 */
 
 [
@@ -85,10 +12,37 @@ making sure that you maintain a proper JSON format.
 		"lowerTab": "Details",
 		"structure": [
 			{
+				"propertyName": "Description",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
+			},
+			{
+				"propertyName": "Or replace",
+				"propertyKeyword": "orReplace",
+				"propertyType": "checkbox",
+				"propertyTooltip": "remarks"
+			},
+			{
+				"propertyKeyword": "pipeline",
+				"hidden": true
+			},
+			{
+				"propertyName": "As query",
+				"propertyKeyword": "selectStatement",
+				"propertyType": "details",
+				"propertyTooltip": "A query (in the form of a SELECT statement) that evaluates to a table. This table defines the columns and rows in the view.",
+				"template": "textarea",
+				"markdown": false
+			},
+			{
 				"propertyName": "Comments",
 				"propertyKeyword": "comments",
 				"shouldValidate": false,
-				"propertyTooltip": "comments",
+				"propertyTooltip": "remarks",
+				"addTimestampButton": true,
 				"propertyType": "details",
 				"template": "textarea"
 			}
