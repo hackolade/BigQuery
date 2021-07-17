@@ -129,6 +129,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Table type",
 				"propertyKeyword": "tableType",
 				"propertyTooltip": "Select from list of options",
+				"defaultValue": "Native",
 				"propertyType": "select",
 				"options": [
 					"Native",
@@ -189,6 +190,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Partitioning",
 				"propertyKeyword": "partitioning",
 				"propertyTooltip": "Select from list of options",
+				"defaultValue": "No partitioning",
 				"propertyType": "select",
 				"options": [
 					"No partitioning",
@@ -214,6 +216,7 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Partitioning type",
 				"propertyKeyword": "partitioningType",
+				"defaultValue": "By day",
 				"propertyType": "select",
 				"options": [
 					"By day",
