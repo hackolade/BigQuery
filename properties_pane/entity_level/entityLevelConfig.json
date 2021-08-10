@@ -244,9 +244,10 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Range partition",
-				"propertyType": "block",
+				"propertyType": "group",
 				"propertyTooltip": "",
 				"propertyKeyword": "rangeOptions",
+				"groupItemLimit": 1,
 				"structure": [
 					{
 						"propertyName": "Partition by",
