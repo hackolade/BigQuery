@@ -119,6 +119,20 @@ making sure that you maintain a proper JSON format.
 		"lowerTab": "Details",
 		"structure": [
 			{
+				"propertyName": "Dataset name",
+				"propertyKeyword": "name",
+				"validation": {
+					"regex": "^[A-Za-z0-9_]{1,1024}$"
+				}
+			},
+			{
+				"propertyName": "Technical name",
+				"propertyKeyword": "code",
+				"validation": {
+					"regex": "^[A-Za-z0-9_]{1,1024}$"
+				}
+			},
+			{
 				"propertyName": "Description",
 				"propertyKeyword": "description",
 				"propertyTooltip": "description",
