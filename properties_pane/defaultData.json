@@ -9,7 +9,9 @@
 		"unlimitedQuota": false
 	},
 	"collection": {
-		"collectionName": "New table"
+		"collectionName": "New table",
+		"tableType": "Native",
+		"partitioning": "No partitioning"
 	},
 	"field": {
 		"name": "New_column"

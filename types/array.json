@@ -16,6 +16,26 @@
 		"additionalItems": true,
 		"minItems": "",
 		"maxItems": "",
-		"uniqueItems": false
+		"uniqueItems": false,
+		"subtype": "array"
+	},
+	"subtypes": {
+		"array": {
+			"childValueType": [
+				"bignumeric",
+				"bool",
+				"bytes",
+				"date",
+				"datetime",
+				"float64",
+				"geography",
+				"int64",
+				"numeric",
+				"string",
+				"struct",
+				"time",
+				"timestamp"
+			]
+		}
 	}
 }

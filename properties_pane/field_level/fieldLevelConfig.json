@@ -477,6 +477,10 @@ making sure that you maintain a proper JSON format.
 					"Repeated"
 				]
 			},
+			{
+				"propertyKeyword": "subtype",
+				"hidden": true
+			},
 			"description",
 			"dependencies",
 			"required",
