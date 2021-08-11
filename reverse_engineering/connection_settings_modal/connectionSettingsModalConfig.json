@@ -14,97 +14,22 @@
 				"inputKeyword": "cloudPlatform",
 				"inputType": "select",
 				"options": [
-					{ "value": "", "label": "" },
-					{ "value": "GCP", "label": "Google Cloud" }
+					{ "value": "", "label": "Google Cloud" }
 				]
 			},
 			{
-				"inputLabel": "Host prefix",
-				"inputKeyword": "host",
+				"inputLabel": "Project id",
+				"inputKeyword": "projectId",
 				"inputType": "text",
-				"inputPlaceholder": "<account>.<region>.<gcp>",
-				"inputTooltip": "account name provided by Snowflake, or <account>.<region>.<gcp>",
-				"dependency": {
-					"key": "cloudPlatform",
-					"value": "GCP"
-				}
-			}
-		]
-	},
-	{
-		"tab": "Authentication",
-		"structure": [
-			{
-				"inputLabel": "Auth type",
-				"inputKeyword": "authType",
-				"inputType": "select",
-				"defaultValue": "credentials",
-				"options": [
-					{ "value": "credentials", "label": "Snowflake" },
-					{ "value": "okta", "label": "Native SSO (Okta only)" },
-					{ "value": "externalbrowser", "label": "Identity Provider SSO (via external browser)" }
-				]
+				"inputPlaceholder": "Optional",
+				"inputTooltip": "Project ID on Google Cloud Platform"
 			},
 			{
-				"inputLabel": "Authenticator",
-				"inputKeyword": "authenticator",
-				"inputType": "text",
-				"inputPlaceholder": "https://<okta_account_name>.okta.com",
-				"inputTooltip": "Multi-Factor Auth is not available with this option. Use the \"Identity Provider SSO (via external browser)\" option instead",
-				"dependency": {
-					"key": "authType",
-					"value": "okta"
-				}
-			},
-			{
-				"inputLabel": "User name",
-				"inputKeyword": "username",
-				"inputType": "text",
-				"dependency": {
-					"key": "authType",
-					"value": "credentials"
-				}
-			},
-			{
-				"inputLabel": "User name",
-				"inputKeyword": "username",
-				"inputType": "text",
-				"inputPlaceholder": "<name@example.com>",
-				"inputTooltip": "Okta username in email format",
-				"dependency": {
-					"key": "authType",
-					"value": "okta"
-				}
-			},
-			{
-				"inputLabel": "User name",
-				"inputKeyword": "username",
-				"inputType": "text",
-				"inputPlaceholder": "<username>",
-				"inputTooltip": "Network or AzureAD username or Okta username in email format",
-				"dependency": {
-					"key": "authType",
-					"value": "externalbrowser"
-				}
-			},
-			{
-				"inputLabel": "Password",
-				"inputKeyword": "password",
-				"inputType": "password",
-				"inputTooltip": "Password",
-				"isHiddenKey": true,
-				"defaultValue": "",
-				"dependency": {
-					"key": "authType",
-					"value": ["", "okta", "credentials"]
-				}
-			},
-			{
-				"inputLabel": "Role name",
-				"inputKeyword": "role",
-				"inputType": "text",
-				"inputTooltip": "Required entry.  Or enter ALL to combine all your user roles",
-				"defaultValue": ""
+				"inputLabel": "Key file",
+				"inputKeyword": "keyFilename",
+				"inputType": "file",
+				"extensions": ["json"],
+				"description": " Path to a .json file for service account"
 			}
 		]
 	}

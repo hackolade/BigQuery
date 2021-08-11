@@ -1,16 +1,9 @@
 {
 	"errors": {
-		"NO_DATABASES": "There is no databases in the Redshift instance",
-		"WRONG_CONNECTION": "Can not connect to the Redshift instance"
+		"NO_DATABASES": "There is no databases in the BigQuery instance",
+		"WRONG_CONNECTION": "Can not connect to the BigQuery instance"
 	},
 	"excludeDocKind": ["id"],
-	"defaultDdlType": "redshift",
-	"connectionList": ["name", "host", "cloudPlatform", "username"],
-	"scenario": [{
-		"dependency": {
-			"key": "authType",
-			"value": "externalbrowser"
-		},
-		"value": "connectByExternalBrowser"
-	}]
+	"connectionList": ["name", "projectId"],
+	"widestColumn": "projectId"
 }

@@ -1,66 +1,51 @@
 'use strict';
 
-const connect = async (connectionInfo, logger, cb, app) => {
-	initDependencies(app);
+const connectionHelper = require('./helpers/connectionHelper');
+const createBigQueryHelper = require('./helpers/bigQueryHelper');
+
+const connect = (connectionInfo, logger) => {
 	logger.clear();
 	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
-	try {
-		await snowflakeHelper.connect(logger, connectionInfo);
-		cb();
-	} catch (err) {
-		handleError(logger, err, cb);
-	}
-};
 
-const disconnect = async (connectionInfo, logger, cb) => {
-	try {
-		await snowflakeHelper.disconnect();
-		cb();
-	} catch (err) {
-		handleError(logger, err, cb);
-	}
+	return connectionHelper.connect(connectionInfo);
 };
 
 const testConnection = async (connectionInfo, logger, cb) => {
 	try {
-		if (connectionInfo.authType === 'externalbrowser') {
-			await getExternalBrowserUrl(connectionInfo, logger, cb);
-		} else {
-			await snowflakeHelper.testConnection(logger, connectionInfo);
-		}
+		const client = connect(connectionInfo, logger);
+		const bigQueryHelper = createBigQueryHelper(client);
+		await bigQueryHelper.getDatasets();
+
 		cb();
 	} catch (err) {
-		handleError(logger, err, cb);
+		cb(prepareError(logger, err));
 	}
 };
 
-const getExternalBrowserUrl = async (connectionInfo, logger, cb, app) => {
-	try {
-		initDependencies(app);
-		const ssoData = await ssoHelper.getSsoUrlData(logger, _, connectionInfo);
-		cb(null, ssoData);
-	} catch (err) {
-		handleError(logger, err, cb);
-	}
-}
-
-const getDatabases = (connectionInfo, logger, cb) => {
-	cb();
-};
-
-const getDocumentKinds = (connectionInfo, logger, cb) => {
+const disconnect = async (connectionInfo, logger, cb) => {
 	cb();
 };
 
 const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 	try {
-		initDependencies(app);
-		await snowflakeHelper.connect(logger, connectionInfo);
-		const namesBySchemas = await snowflakeHelper.getEntitiesNames();
+		const async = app.require('async');
+		const client = connect(connectionInfo, logger);
+		const bigQueryHelper = createBigQueryHelper(client);
+		const datasets = await bigQueryHelper.getDatasets();
+		const tablesByDataset = await async.mapSeries(datasets, async (dataset) => {
+			const tables = await bigQueryHelper.getTables(dataset.id);
+			const dbCollections = tables.map(table => table.id);
 
-		cb(null, namesBySchemas);
+			return {
+				isEmpty: tables.length === 0,
+				dbName: dataset.id,
+				dbCollections,
+			};
+		});
+
+		cb(null, tablesByDataset);
 	} catch (err) {
-		handleError(logger, err, cb);
+		cb(prepareError(logger, err));
 	}
 };
 
@@ -169,26 +154,20 @@ const getCount = (count, recordSamplingSettings) => {
 	return size;
 };
 
-const handleError = (logger, error, cb) => {
-	const message = _.isString(error) ? error : _.get(error, 'message', 'Reverse Engineering error')
-	logger.log('error', { error }, 'Reverse Engineering error');
+const prepareError = (logger, error) => {
+	const err = {
+		message: error.message,
+		stack: error.stack,
+	};	
 
-	cb(message);
-};
+	logger.log('error', err, 'Reverse Engineering error');
 
-const initDependencies = app => {
-	setDependencies(app);
-	_ = dependencies.lodash;
-	snowflakeHelper.setDependencies(dependencies);
+	return err;
 };
 
 module.exports = {
-	connect,
 	disconnect,
 	testConnection,
-	getDatabases,
-	getDocumentKinds,
 	getDbCollectionsNames,
 	getDbCollectionsData,
-	getExternalBrowserUrl
 }
