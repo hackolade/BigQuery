@@ -13,5 +13,17 @@
 		"comments":"",
 		"pattern":"",
 		"format": ""
-	}
+	},
+	"descriptor": [
+		{
+			"schema": {},
+			"format": "YYYY-MM-DD hh:mm:ss"
+		}, {
+			"schema": {},
+			"format": "YYYY-MM-DD hh:mm:ss.nnn"
+		}, {
+			"schema": {},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnn"
+		}
+	]
 }

@@ -1,10 +1,5 @@
 'use strict';
 
-const snowflakeHelper = require('./helpers/snowflakeHelper');
-const ssoHelper = require('./helpers/ssoHelper');
-const { setDependencies, dependencies } = require('./helpers/appDependencies');
-let _;
-
 const connect = async (connectionInfo, logger, cb, app) => {
 	initDependencies(app);
 	logger.clear();

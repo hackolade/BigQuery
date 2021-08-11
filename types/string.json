@@ -16,5 +16,16 @@
 		"foreignField": [],
 		"enum": [],
 		"sample": ""
-	}
+	},
+	"descriptor": [
+		{
+			"format": "PnYnMnDTnHnMnS" 
+		},
+		{
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnnnnn"
+		},
+		{
+			"format": "hh:mm:ss.nnnnnnnnn"
+		}
+	]
 }
