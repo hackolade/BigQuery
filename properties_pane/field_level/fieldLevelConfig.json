@@ -416,7 +416,6 @@ making sure that you maintain a proper JSON format.
 			"name",
 			"schemaId",
 			"type",
-			"subtype",
 			{
 				"propertyName": "Type mode",
 				"propertyKeyword": "dataTypeMode",
