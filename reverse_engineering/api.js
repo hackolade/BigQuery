@@ -2,6 +2,15 @@
 
 const connectionHelper = require('./helpers/connectionHelper');
 const createBigQueryHelper = require('./helpers/bigQueryHelper');
+const { createJsonSchema } = require('./helpers/jsonSchemaHelper');
+const {
+	BigQueryDate,
+	BigQueryDatetime,
+	BigQueryTime,
+	BigQueryTimestamp,
+	Geography,
+} = require('@google-cloud/bigquery');
+const { Big } = require("big.js");
 
 const connect = (connectionInfo, logger) => {
 	logger.clear();
@@ -57,8 +66,14 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 		const _ = app.require('lodash');
 		const async = app.require('async');
 		const client = connect(data, logger);
+		const log = createLogger({
+			title: 'Reverse-engineering process',
+			hiddenKeys: data.hiddenKeys,
+			logger,
+		});
 		const bigQueryHelper = createBigQueryHelper(client);
 		const project = await bigQueryHelper.getProjectInfo();
+		const recordSamplingSettings = data.recordSamplingSettings;
 
 		const modelInfo = {
 			projectID: project.id,
@@ -66,6 +81,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 		};
 
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
+			log.info(`Process dataset "${datasetName}"`);
+			log.progress(`Process dataset "${datasetName}"`, datasetName);
+
 			const dataset = await bigQueryHelper.getDataset(datasetName);
 			const bucketInfo = getBucketInfo({
 				metadata: dataset.metadata,
@@ -73,22 +91,44 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			});
 
 			const collectionPackages = await async.mapSeries(data.collectionData.collections[datasetName], async (tableName) => {
+				log.info(`Get table metadata: "${tableName}"`);
+				log.progress(`Get table metadata`, datasetName, tableName);
+
 				const viewName = getViewName(tableName);
 				const [table] = await dataset.table(viewName || tableName).get();
 				const entityLevelData = getTableInfo({ _, table });
 				const jsonSchema = createJsonSchema(table.metadata.schema);
+				const maxCountRows = getCount(Number(table?.metadata?.numRows), recordSamplingSettings);
+
+				log.info(`Get table rows: "${tableName}"`);
+				log.progress(`Get table rows`, datasetName, tableName);
+
+				const [rows] = await table.getRows({
+					wrapIntegers: {
+						integerTypeCastFunction(n) {
+							return Number(n);
+						}
+					},
+					maxResults: maxCountRows,
+				});
+
+				log.info(`Convert rows: "${tableName}"`);
+				log.progress(`Convert rows`, datasetName, tableName);
+
+				const documents = convertValue(rows);
 
 				return {
 					dbName: datasetName,
 					collectionName: tableName,
 					entityLevel: entityLevelData,
-					documents: [],
+					documents: documents,
 					views: [],
 					emptyBucket: false,
 					validation: {
 						jsonSchema,
 					},
 					bucketInfo,
+					standardDoc: documents[0],
 				};
 			});
 
@@ -99,6 +139,25 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 	} catch (err) {
 		cb(prepareError(logger, err));
 	}
+};
+
+const createLogger = ({ title, logger, hiddenKeys }) => {
+	return {
+		info(message) {
+			logger.log('info', { message }, title, hiddenKeys);
+		},
+
+		progress(message, dbName = '', tableName = '') {
+			logger.progress({ message, containerName: dbName, entityName: tableName });
+		},
+
+		error(error) {
+			logger.log('error', {
+				message: error.message,
+				stack: error.stack,
+			}, title);
+		}
+	};
 };
 
 const getBucketInfo = ({ _, metadata }) => {
@@ -207,100 +266,6 @@ const getPartitioningRange = (rangePartitioning) => {
 	}];
 };
 
-const createJsonSchema = (schema) => {
-	const properties = getProperties(schema.fields);
-
-	return {
-		properties,
-	};
-};
-
-const getProperties = (fields) => {
-	return fields.reduce((properties, field) => {
-		return {
-			...properties,
-			[field.name]: convertField(field),
-		};
-	}, {});
-};
-
-const convertField = (field) => {
-	const type = getType(field.type);
-	const dataTypeMode = getTypeMode(field.mode);
-	const description = field.description;
-
-	if (field.mode === 'REPEATED') {
-		return {
-			type: 'array',
-			items: convertField({
-				...field,
-				mode: 'NULLABLE',
-			}),
-		};
-	}
-
-	if (Array.isArray(field.fields)) {
-		const properties = getProperties(field.fields);
-
-		return {
-			type,
-			description,
-			properties,
-			dataTypeMode,
-		};
-	}
-
-
-	return {
-		type,
-		description,
-		dataTypeMode,
-	};
-};
-
-const getTypeMode = (mode) => {
-	switch(mode) {
-		case 'REQUIRED':
-			return 'Required';
-		case 'REPEATED':
-			return 'Repeated';
-		default:
-			return 'Nullable';
-	}
-};
-
-const getType = (fieldType) => {
-	switch(fieldType) {
-		case 'RECORD':
-			return 'struct';
-		case 'GEOGRAPHY':
-			return 'geography';
-		case 'TIME':
-			return 'time';
-		case 'DATETIME':
-			return 'datetime';
-		case 'DATE':
-			return 'date';
-		case 'TIMESTAMP':
-			return 'timestamp';
-		case 'BOOLEAN':
-			return 'bool';
-		case 'BIGNUMERIC':
-			return 'bignumeric';
-		case 'NUMERIC':
-			return 'numeric';
-		case 'FLOAT':
-			return 'float64';
-		case 'INTEGER':
-			return 'int64';
-		case 'BYTES':
-			return 'bytes';
-		case 'STRING':
-		default:
-			return 'string';
-	}
-};
-
 const getCount = (count, recordSamplingSettings) => {
 	const per = recordSamplingSettings.relative.value;
 	const size = (recordSamplingSettings.active === 'absolute')
@@ -318,6 +283,46 @@ const prepareError = (logger, error) => {
 	logger.log('error', err, 'Reverse Engineering error');
 
 	return err;
+};
+
+const convertValue = (value) => {
+	if (
+		value instanceof BigQueryDate
+		||
+		value instanceof BigQueryDatetime
+		||
+		value instanceof BigQueryTime
+		||
+		value instanceof BigQueryTimestamp
+	) {
+		return value.value;
+	}
+
+	if (value instanceof Buffer) {
+		return value.toString('base64');
+	}
+
+	if (value instanceof Big) {
+		return value.toNumber();
+	}
+
+	if (value instanceof Geography) {
+		value = value.value;
+	}
+
+	if (Array.isArray(value)) {
+		return value.map(convertValue);
+	}
+
+	if (value && typeof value === 'object') {
+		return Object.keys(value)
+			.reduce((result, key) => ({
+				...result,
+				[key]: convertValue(value[key])
+			}),	{});
+	}
+
+	return value;
 };
 
 module.exports = {
