@@ -38,6 +38,23 @@
 				"markdown": false
 			},
 			{
+				"propertyName": "Labels",
+				"propertyType": "group",
+				"propertyKeyword": "labels",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "labelKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "labelValue",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
 				"propertyName": "Comments",
 				"propertyKeyword": "comments",
 				"shouldValidate": false,

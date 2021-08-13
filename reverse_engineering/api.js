@@ -10,7 +10,8 @@ const {
 	BigQueryTimestamp,
 	Geography,
 } = require('@google-cloud/bigquery');
-const { Big } = require("big.js");
+const { Big } = require('big.js');
+const { Parser } = require('flora-sql-parser');
 
 const connect = (connectionInfo, logger) => {
 	logger.clear();
@@ -44,8 +45,9 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		const datasets = await bigQueryHelper.getDatasets();
 		const tablesByDataset = await async.mapSeries(datasets, async (dataset) => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
-			const dbCollections = tables.filter(t => t.metadata.type !== 'VIEW').map(table => table.id);
-			const views = tables.filter(t => t.metadata.type === 'VIEW').map(table => table.id);
+			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
+			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
+			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => table.id);
 
 			return {
 				isEmpty: tables.length === 0,
@@ -89,13 +91,14 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				metadata: dataset.metadata,
 				_,
 			});
+			const tables = (data.collectionData.collections[datasetName] || []).filter((item) => !getViewName(item));
+			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
 
-			const collectionPackages = await async.mapSeries(data.collectionData.collections[datasetName], async (tableName) => {
+			const collectionPackages = await async.mapSeries(tables, async (tableName) => {
 				log.info(`Get table metadata: "${tableName}"`);
 				log.progress(`Get table metadata`, datasetName, tableName);
 
-				const viewName = getViewName(tableName);
-				const [table] = await dataset.table(viewName || tableName).get();
+				const [table] = await dataset.table(tableName).get();
 				const entityLevelData = getTableInfo({ _, table });
 				const jsonSchema = createJsonSchema(table.metadata.schema);
 				const maxCountRows = getCount(Number(table?.metadata?.numRows), recordSamplingSettings);
@@ -109,7 +112,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 							return Number(n);
 						}
 					},
-					maxResults: maxCountRows,
+					maxResults: Number(maxCountRows),
 				});
 
 				log.info(`Convert rows: "${tableName}"`);
@@ -122,17 +125,49 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 					collectionName: tableName,
 					entityLevel: entityLevelData,
 					documents: documents,
+					standardDoc: documents[0],
 					views: [],
 					emptyBucket: false,
 					validation: {
 						jsonSchema,
 					},
 					bucketInfo,
-					standardDoc: documents[0],
+				};
+			});
+			const viewsPackages = await async.mapSeries(views, async (viewName) => {
+				log.info(`Get view metadata: "${viewName}"`);
+				log.progress(`Get view metadata`, datasetName, viewName);
+
+				const [view] = await dataset.table(viewName).get();
+				const viewData = view.metadata.materializedView || view.metadata.view;
+
+				log.info(`Process view: "${viewName}"`);
+				log.progress(`Process view`, datasetName, viewName);
+				
+				const viewJsonSchema = createJsonSchema(view.metadata.schema);
+
+				return {
+					dbName: datasetName,
+					name: viewName,
+					jsonSchema: createViewSchema({
+						viewQuery: viewData.query,
+						tablePackages: collectionPackages,
+						viewJsonSchema,
+						log,
+					}),
+					data: {
+						description: view.metadata.description,
+						selectStatement: viewData.query,
+						labels: getLabels(_, view.metadata.labels),
+					},
 				};
 			});
 
-			return result.concat(collectionPackages);
+			return result.concat(collectionPackages).concat({
+				dbName: datasetName,
+				views: viewsPackages,
+				emptyBucket: false,
+			});
 		});
 
 		cb(null, packages, modelInfo);
@@ -323,6 +358,115 @@ const convertValue = (value) => {
 	}
 
 	return value;
+};
+
+const equalByStructure = (a, b) => {
+	if (!a || !b) {
+		return false;
+	}
+	
+	if (a.type !== b.type) {
+		return false;
+	}
+
+	if (
+		(a.properties && !b.properties)
+		||
+		(!a.properties && b.properties)
+		||
+		(!a.items && b.items)
+		||
+		(a.items && !b.items)
+	) {
+		return false;
+	}
+
+	if (a.properties && b.properties) {
+		return Object.keys(a.properties).every((key) => equalByStructure(a.properties[key], b.properties[key]));
+	}
+
+	if (Array.isArray(a.items) && Array.isArray(b.items)) {
+		return a.items.every((item, i) => equalByStructure(item, b.item[i]));
+	}
+
+	if (a.items && b.items) {
+		return equalByStructure(a.items, b.items);
+	}
+
+	return true;
+};
+
+const findViewPropertyByTableProperty = (viewSchema, tableProperty) => {
+	if (viewSchema.properties[tableProperty.alias]) {
+		return tableProperty.alias;
+	}
+
+	return Object.keys(viewSchema.properties).find(key => equalByStructure(viewSchema.properties[key], tableProperty));
+};
+
+const prepareSql = (sql) => {
+	return sql.replace(/\s+/g, ' ').replace(/\b[a-z0-9-_]+\.([a-z0-9-_]+\.[a-z0-9-_]+)\b/i, '$1');
+};
+
+const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => {
+	try {
+		const result = (new Parser()).parse(prepareSql(viewQuery));
+		const columns = result.columns.map((column) => {
+			return {
+				alias: column.as, 
+				name: column.expr.column,
+				table: column.expr.table,
+			};
+		});
+	
+		const tablesProperties = result.from.reduce((result, fromItem) => {
+			const pack = tablePackages.find(pack => pack.dbName === fromItem.db && (pack.collectionName === fromItem.table));
+	
+			if (!pack) {
+				return result;
+			}
+	
+			const tableColumns = columns.filter(column => column.table === fromItem.table || column.table === fromItem.as || column.table === null);
+			const tableSchema = pack.validation.jsonSchema;
+			const tableProperties = tableColumns.map((column) => {
+				if (!tableSchema.properties[column.name]) {
+					return;
+				}
+				
+				return {
+					...tableSchema.properties[column.name],
+					table: fromItem.table,
+					name: column.name,
+					alias: column.alias,
+				};
+			}).filter(Boolean);
+	
+			return result.concat(tableProperties);
+		}, []);
+	
+		return tablesProperties.reduce((resultSchema, property, i) => {
+			const viewProperty = findViewPropertyByTableProperty(resultSchema, property);
+	
+			if (!viewProperty) {
+				return resultSchema;
+			}
+	
+			return {
+				...resultSchema,
+				properties: {
+					...resultSchema.properties,
+					[viewProperty]: {
+						$ref: `#collection/definitions/${property.table}/${property.name}`,
+					},
+				},
+			};
+		}, viewJsonSchema);
+	} catch (e) {
+		log.info('Error with processing view select statement: ' + viewQuery);
+		log.error(e);
+
+		return viewJsonSchema;
+	}
 };
 
 module.exports = {
