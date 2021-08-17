@@ -135,6 +135,28 @@ const convertPropertiesToType = (deps) => (properties) => {
 	});
 };
 
+const addParameters = (jsonSchema) => {
+	const params = [];
+
+	if (jsonSchema.precision) {
+		params.push(jsonSchema.precision);
+	}
+
+	if (jsonSchema.scale) {
+		params.push(jsonSchema.scale);
+	}
+
+	if (jsonSchema.length) {
+		params.push(jsonSchema.length);
+	}
+
+	if (params.length) {
+		return `(${params.join(', ')})`;
+	}
+
+	return '';
+};
+
 const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, jsonSchema }, isArrayItem) => {
 	const { assignTemplates, tab } = deps;
 	let dataType = type;
@@ -164,7 +186,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 			)
 		}\n>`;
 	} else {
-		dataType = (' ' + type).toUpperCase();
+		dataType = (' ' + type).toUpperCase() + addParameters(jsonSchema);
 	}
 
 	if (description) {
@@ -417,7 +439,6 @@ module.exports = (baseProvider, options, app) => {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
-				isActivated: data.isActivated,
 			};
 		},
 

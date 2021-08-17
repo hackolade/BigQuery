@@ -100,6 +100,15 @@ making sure that you maintain a proper JSON format.
 					"Repeated"
 				]
 			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"minValue": 1,
+				"step": 1,
+				"typeDecorator": true
+			},
 			"description",
 			"dependencies",
 			"required",
@@ -133,6 +142,15 @@ making sure that you maintain a proper JSON format.
 					"Required",
 					"Repeated"
 				]
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"minValue": 1,
+				"step": 1,
+				"typeDecorator": true
 			},
 			"description",
 			"dependencies",

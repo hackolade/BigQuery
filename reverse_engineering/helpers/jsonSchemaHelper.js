@@ -20,6 +20,9 @@ const convertField = (field) => {
 	const type = getType(field.type);
 	const dataTypeMode = getTypeMode(field.mode);
 	const description = field.description;
+	const precision = field.precision;
+	const scale = field.scale;
+	const length = field.maxLength;
 
 	if (field.mode === 'REPEATED') {
 		return {
@@ -42,11 +45,13 @@ const convertField = (field) => {
 		};
 	}
 
-
 	return {
 		type,
 		description,
 		dataTypeMode,
+		precision,
+		scale,
+		length,
 	};
 };
 
