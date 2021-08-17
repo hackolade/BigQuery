@@ -135,19 +135,23 @@ const convertPropertiesToType = (deps) => (properties) => {
 	});
 };
 
-const addParameters = (jsonSchema) => {
+const addParameters = (type, jsonSchema) => {
 	const params = [];
 
-	if (jsonSchema.precision) {
-		params.push(jsonSchema.precision);
+	if (['bignumeric', 'numeric'].includes((type || '').toLowerCase())) {
+		if (jsonSchema.precision) {
+			params.push(jsonSchema.precision);
+		}
+	
+		if (jsonSchema.scale) {
+			params.push(jsonSchema.scale);
+		}
 	}
 
-	if (jsonSchema.scale) {
-		params.push(jsonSchema.scale);
-	}
-
-	if (jsonSchema.length) {
-		params.push(jsonSchema.length);
+	if (['string', 'bytes'].includes((type || '').toLowerCase())) {
+		if (jsonSchema.length) {
+			params.push(jsonSchema.length);
+		}
 	}
 
 	if (params.length) {
@@ -186,7 +190,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 			)
 		}\n>`;
 	} else {
-		dataType = (' ' + type).toUpperCase() + addParameters(jsonSchema);
+		dataType = (' ' + type).toUpperCase() + addParameters(type, jsonSchema);
 	}
 
 	if (description) {
@@ -203,6 +207,32 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 		notNull,
 		name,
 	});
+};
+
+const generateViewSelectStatement = (getFullName) => ({ columns, projectId, datasetName }) => {
+	const keys = columns.reduce((tables, key) => {
+		let column = key.name;
+
+		if (key.alias) {
+			column = `${column} as ${key.alias}`;
+		}
+
+		if (!Array.isArray(tables[key.tableName])) {
+			tables[key.tableName] = [];
+		}
+
+		tables[key.tableName].push(column);
+
+		return tables;
+	}, {});
+
+	return columns.map(key => {
+		return `SELECT ${
+			keys[key.tableName] ? keys[key.tableName].join(', ') : '*'
+		} FROM ${
+			getFullName(projectId, datasetName, key.tableName)
+		}`;
+	}).join('\nUNION ALL\n');
 };
 
 module.exports = (baseProvider, options, app) => {
@@ -329,45 +359,38 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		createView(viewData, dbData, isActivated) {
-			// const allDeactivated = checkAllKeysDeactivated(viewData.keys || []);
-			// const deactivatedWholeStatement = allDeactivated || !isActivated;
-			// const { columns, tables } = getViewData(viewData.keys, dbData);
-			// let columnsAsString = columns.map(column => column.statement).join(',\n\t\t');
+			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
+			const columns = viewData.keys.map(key => key.alias || key.name);
+			let options = [];
 
-			// if (!deactivatedWholeStatement) {
-			// 	const dividedColumns = divideIntoActivatedAndDeactivated(columns, column => column.statement);
-			// 	const deactivatedColumnsString = dividedColumns.deactivatedItems.length
-			// 		? commentIfDeactivated(dividedColumns.deactivatedItems.join(',\n\t\t'), {
-			// 				isActivated: false,
-			// 				isPartOfLine: true,
-			// 		  })
-			// 		: '';
-			// 	columnsAsString = dividedColumns.activatedItems.join(',\n\t\t') + deactivatedColumnsString;
-			// }
+			if (viewData.friendlyName) {
+				options.push(`friendly_name="${viewData.friendlyName}"`);
+			}
 
-			// const selectStatement = _.trim(viewData.selectStatement)
-			// 	? _.trim(tab(viewData.selectStatement))
-			// 	: assignTemplates(templates.viewSelectStatement, {
-			// 			tableName: tables.join(', '),
-			// 			keys: columnsAsString,
-			// 	  });
+			if (viewData.description) {
+				options.push(`description="${viewData.description}"`);
+			}
 
-			// const algorithm = viewData.algorithm && viewData.algorithm !== 'UNDEFINED' ? `ALGORITHM ${viewData.algorithm} ` : '';
+			if (viewData.expiration) {
+				options.push(`expiration_timestamp=TIMESTAMP "${getTimestamp(viewData.expiration)}"`);
+			}
 
-			// return commentIfDeactivated(
-			// 	assignTemplates(templates.createView, {
-			// 		name: getTableName(viewData.name, dbData.databaseName),
-			// 		orReplace: viewData.orReplace ? 'OR REPLACE ' : '',
-			// 		ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
-			// 		sqlSecurity: viewData.sqlSecurity ? `SQL SECURITY ${viewData.sqlSecurity} ` : '',
-			// 		checkOption: viewData.checkOption ? `\nWITH ${viewData.checkOption} CHECK OPTION` : '',
-			// 		selectStatement,
-			// 		algorithm,
-			// 	}),
-			// 	{ isActivated: !deactivatedWholeStatement },
-			// );
+			if (Array.isArray(viewData.labels) && viewData.labels.length) {
+				options.push(`labels=[\n${tab(getLabels(viewData.labels))}\n]`);
+			}
 
-			return '';
+			return assignTemplates(templates.createView, {
+				name: viewName,
+				orReplace: viewData.orReplace ? 'OR REPLACE ' : '',
+				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
+				columns: columns.length ? `\n (${columns.join(', ')})` : '',
+				selectStatement: `\n ${_.trim(viewData.selectStatement ? viewData.selectStatement : generateViewSelectStatement(getFullName)({
+					columns: viewData.keys,
+					datasetName: dbData.databaseName,
+					projectId: dbData.projectId,
+				}))}`,
+				options: options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '',
+			});
 		},
 
 		getDefaultType(type) {
@@ -398,7 +421,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				databaseName: containerData.name,
-				friendlyName: containerData.businessBucketName,
+				friendlyName: containerData.businessName,
 				description: containerData.description,
 				isActivated: containerData.isActivated,
 				ifNotExist: containerData.ifNotExist,
@@ -451,6 +474,11 @@ module.exports = (baseProvider, options, app) => {
 				keys: viewData.keys,
 				orReplace: detailsTab.orReplace,
 				ifNotExist: detailsTab.ifNotExist,
+				selectStatement: detailsTab.selectStatement,
+				labels: detailsTab.labels,
+				description: detailsTab.description,
+				expiration: detailsTab.expiration,
+				friendlyName: detailsTab.businessName,
 			};
 		},
 

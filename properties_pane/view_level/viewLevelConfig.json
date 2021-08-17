@@ -23,7 +23,42 @@
 				"propertyName": "Or replace",
 				"propertyKeyword": "orReplace",
 				"propertyType": "checkbox",
-				"propertyTooltip": "remarks"
+				"propertyTooltip": "remarks",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "ifNotExist",
+						"value": false
+					}, {
+						"key": "ifNotExist",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "If not exist",
+				"propertyKeyword": "ifNotExist",
+				"propertyTooltip": "Cannot appear with OR REPLACE.",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "orReplace",
+						"value": false
+					}, {
+						"key": "orReplace",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "Expiration (ms)",
+				"propertyKeyword": "expiration",
+				"propertyTooltip": "Expiration in MS",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"step": 1,
+				"allowNegative": false
 			},
 			{
 				"propertyKeyword": "pipeline",

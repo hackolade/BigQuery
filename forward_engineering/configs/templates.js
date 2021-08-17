@@ -10,7 +10,6 @@ module.exports = {
 		'${name}${type}${notNull}${options}',
 
 	createView:
-		'CREATE ${orReplace}${algorithm}${sqlSecurity}VIEW ${ifNotExist}${name} AS ${selectStatement}${checkOption};\n',
+		'CREATE ${orReplace}VIEW ${ifNotExist}${name}${columns}${options} AS ${selectStatement};\n',
 
-	viewSelectStatement: 'SELECT ${keys}\n\tFROM ${tableName}',
 };

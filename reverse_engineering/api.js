@@ -89,6 +89,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const dataset = await bigQueryHelper.getDataset(datasetName);
 			const bucketInfo = getBucketInfo({
 				metadata: dataset.metadata,
+				datasetName,
 				_,
 			});
 			const tables = (data.collectionData.collections[datasetName] || []).filter((item) => !getViewName(item));
@@ -99,7 +100,8 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.progress(`Get table metadata`, datasetName, tableName);
 
 				const [table] = await dataset.table(tableName).get();
-				const entityLevelData = getTableInfo({ _, table });
+				const friendlyName = table.metadata.friendlyName;
+				const entityLevelData = getTableInfo({ _, table, tableName });
 				const jsonSchema = createJsonSchema(table.metadata.schema);
 				const maxCountRows = getCount(Number(table?.metadata?.numRows), recordSamplingSettings);
 
@@ -121,8 +123,8 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				const documents = convertValue(rows);
 
 				return {
-					dbName: datasetName,
-					collectionName: tableName,
+					dbName: bucketInfo.name,
+					collectionName: friendlyName || tableName,
 					entityLevel: entityLevelData,
 					documents: documents,
 					standardDoc: documents[0],
@@ -144,11 +146,13 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.info(`Process view: "${viewName}"`);
 				log.progress(`Process view`, datasetName, viewName);
 				
+				const friendlyName = view.metadata.friendlyName;
+
 				const viewJsonSchema = createJsonSchema(view.metadata.schema);
 
 				return {
-					dbName: datasetName,
-					name: viewName,
+					dbName: bucketInfo.name,
+					name: friendlyName || viewName,
 					jsonSchema: createViewSchema({
 						viewQuery: viewData.query,
 						tablePackages: collectionPackages,
@@ -156,9 +160,12 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 						log,
 					}),
 					data: {
+						name: friendlyName || viewName,
+						code: friendlyName ? viewName : '',
 						description: view.metadata.description,
 						selectStatement: viewData.query,
 						labels: getLabels(_, view.metadata.labels),
+						expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : '',
 					},
 				};
 			});
@@ -167,7 +174,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 			if (viewsPackages.length) {
 				result = result.concat({
-					dbName: datasetName,
+					dbName: bucketInfo.name,
 					views: viewsPackages,
 					emptyBucket: false,
 				});
@@ -201,9 +208,13 @@ const createLogger = ({ title, logger, hiddenKeys }) => {
 	};
 };
 
-const getBucketInfo = ({ _, metadata }) => {
+const getBucketInfo = ({ _, metadata, datasetName }) => {
+	const name = metadata?.datasetReference?.datasetId;
+	const friendlyName = metadata.friendlyName;
+
 	return {
-		name: metadata?.datasetReference.datasetId,
+		name: friendlyName || name,
+		code: friendlyName ? name : friendlyName,
 		datasetID: metadata.id,
 		dataLocation: (metadata.location || '').toLowerCase(),
 		description: metadata.description || '',
@@ -228,14 +239,17 @@ const getViewName = (viewName) => {
 	return '';
 };
 
-const getTableInfo = ({ _, table }) => {
+const getTableInfo = ({ _, table, tableName }) => {
 	const metadata = table.metadata || {};
+	const collectionName = metadata.friendlyName || tableName;
 
 	return {
 		...getPartitioning(metadata),
+		collectionName,
+		code: metadata.friendlyName ? tableName : '',
 		tableType: metadata.tableType === 'EXTERNAL' ? 'External' : 'Native',
 		description: metadata.description,
-		expiration: metadata.expirationTime,
+		expiration: metadata.expirationTime ? Number(metadata.expirationTime) : '',
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
 		labels: getLabels(_, metadata.labels),
@@ -410,7 +424,7 @@ const findViewPropertyByTableProperty = (viewSchema, tableProperty) => {
 };
 
 const prepareSql = (sql) => {
-	return sql.replace(/\s+/g, ' ').replace(/\b[a-z0-9-_]+\.([a-z0-9-_]+\.[a-z0-9-_]+)\b/i, '$1');
+	return sql.replace(/\s+/g, ' ').replace(/\b[a-z0-9-_]+\.([a-z0-9-_]+\.[a-z0-9-_]+)\b/i, '$1').replace(/\`/g, '');
 };
 
 const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => {
