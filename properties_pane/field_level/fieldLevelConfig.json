@@ -102,6 +102,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"primaryKey",
 			"foreignCollection",
 			"foreignField",
@@ -156,6 +157,22 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			"description",
+			{
+				"propertyName": "Precision",
+				"propertyKeyword": "precision",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
+			{
+				"propertyName": "Scale",
+				"propertyKeyword": "scale",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
 			"dependencies",
 			"required",
 			"primaryKey",
@@ -192,6 +209,22 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			"description",
+			{
+				"propertyName": "Precision",
+				"propertyKeyword": "precision",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
+			{
+				"propertyName": "Scale",
+				"propertyKeyword": "scale",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
 			"dependencies",
 			"required",
 			"primaryKey",
@@ -326,6 +359,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",
@@ -352,6 +386,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",
@@ -405,6 +440,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",

@@ -180,11 +180,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "numeric",
 				"valueType": "number",
 				"step": 1,
-				"allowNegative": false,
-				"dependency": {
-					"key": "temporary",
-					"value": true
-				}
+				"allowNegative": false
 			},
 			{
 				"propertyName": "Partitioning",

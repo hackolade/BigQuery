@@ -3,10 +3,10 @@
 
 module.exports = {
 	generateScript(data, logger, callback) {
-		callback(null, '');
+		callback(null, '{}');
 	},
 
 	generateContainerScript(data, logger, callback) {
-		callback(null, '');
+		callback(null, '{"type": "container"}');
 	}
 };

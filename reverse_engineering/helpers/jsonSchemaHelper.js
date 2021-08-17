@@ -26,7 +26,7 @@ const convertField = (field) => {
 			type: 'array',
 			items: convertField({
 				...field,
-				mode: 'NULLABLE',
+				mode: 'REQUIRED',
 			}),
 		};
 	}

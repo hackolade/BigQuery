@@ -146,6 +146,11 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "text"
 			},
 			{
+				"propertyName": "If not exist",
+				"propertyKeyword": "ifNotExist",
+				"propertyType": "checkbox"
+			},
+			{
 				"propertyName": "Data location",
 				"propertyKeyword": "dataLocation",
 				"propertyTooltip": "Determines location where your data is stored. The current default location is the US multi-region. All tables within this dataset will share this location. This cannot be changed later.",

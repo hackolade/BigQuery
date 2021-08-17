@@ -163,11 +163,17 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				};
 			});
 
-			return result.concat(collectionPackages).concat({
-				dbName: datasetName,
-				views: viewsPackages,
-				emptyBucket: false,
-			});
+			result = result.concat(collectionPackages);
+
+			if (viewsPackages.length) {
+				result = result.concat({
+					dbName: datasetName,
+					views: viewsPackages,
+					emptyBucket: false,
+				});
+			}
+
+			return result;
 		});
 
 		cb(null, packages, modelInfo);
@@ -229,7 +235,6 @@ const getTableInfo = ({ _, table }) => {
 		...getPartitioning(metadata),
 		tableType: metadata.tableType === 'EXTERNAL' ? 'External' : 'Native',
 		description: metadata.description,
-		temporary: Boolean(metadata.expirationTime),
 		expiration: metadata.expirationTime,
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
