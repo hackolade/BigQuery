@@ -226,11 +226,11 @@ const generateViewSelectStatement = (getFullName) => ({ columns, projectId, data
 		return tables;
 	}, {});
 
-	return columns.map(key => {
+	return Object.keys(keys).map(tableName => {
 		return `SELECT ${
-			keys[key.tableName] ? keys[key.tableName].join(', ') : '*'
+			keys[tableName] ? keys[tableName].join(', ') : '*'
 		} FROM ${
-			getFullName(projectId, datasetName, key.tableName)
+			getFullName(projectId, datasetName, tableName)
 		}`;
 	}).join('\nUNION ALL\n');
 };
@@ -360,7 +360,14 @@ module.exports = (baseProvider, options, app) => {
 
 		createView(viewData, dbData, isActivated) {
 			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
-			const columns = viewData.keys.map(key => key.alias || key.name);
+			const columns = viewData.materialized ? [] : viewData.keys.map(key => key.alias || key.name);
+			const partitions = getTablePartitioning({
+				partitioning: viewData.partitioning,
+				partitioningType: viewData.partitioningType,
+				timeUnitPartitionKey: viewData.timeUnitPartitionKey,
+				rangeOptions: viewData.rangeOptions,
+			});
+			const clustering = Array.isArray(viewData.clusteringKey) && viewData.clusteringKey.length ? '\nCLUSTER BY ' + viewData.clusteringKey.map(key => key.name).join(', ') : '';
 			let options = [];
 
 			if (viewData.friendlyName) {
@@ -379,9 +386,18 @@ module.exports = (baseProvider, options, app) => {
 				options.push(`labels=[\n${tab(getLabels(viewData.labels))}\n]`);
 			}
 
+			if (viewData.enableRefresh) {
+				options.push(`enable_refresh=true`);
+
+				if (viewData.refreshInterval) {
+					options.push(`refresh_interval_minutes=${viewData.refreshInterval}`);
+				}
+			}
+
 			return assignTemplates(templates.createView, {
 				name: viewName,
-				orReplace: viewData.orReplace ? 'OR REPLACE ' : '',
+				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
+				orReplace: (viewData.orReplace && !viewData.materialized) ? 'OR REPLACE ' : '',
 				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
 				columns: columns.length ? `\n (${columns.join(', ')})` : '',
 				selectStatement: `\n ${_.trim(viewData.selectStatement ? viewData.selectStatement : generateViewSelectStatement(getFullName)({
@@ -390,6 +406,8 @@ module.exports = (baseProvider, options, app) => {
 					projectId: dbData.projectId,
 				}))}`,
 				options: options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '',
+				partitions,
+				clustering,
 			});
 		},
 
@@ -472,6 +490,7 @@ module.exports = (baseProvider, options, app) => {
 				name: viewData.name,
 				tableName: viewData.tableName,
 				keys: viewData.keys,
+				materialized: detailsTab.materialized,
 				orReplace: detailsTab.orReplace,
 				ifNotExist: detailsTab.ifNotExist,
 				selectStatement: detailsTab.selectStatement,
@@ -479,6 +498,13 @@ module.exports = (baseProvider, options, app) => {
 				description: detailsTab.description,
 				expiration: detailsTab.expiration,
 				friendlyName: detailsTab.businessName,
+				partitioning: detailsTab.partitioning,
+				partitioningType: detailsTab.partitioningType,
+				timeUnitPartitionKey: detailsTab.timeUnitpartitionKey,
+				clusteringKey: detailsTab.clusteringKey,
+				rangeOptions: detailsTab.rangeOptions,
+				refreshInterval: detailsTab.refreshInterval,
+				enableRefresh: detailsTab.enableRefresh,
 			};
 		},
 

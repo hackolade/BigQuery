@@ -10,6 +10,5 @@ module.exports = {
 		'${name}${type}${notNull}${options}',
 
 	createView:
-		'CREATE ${orReplace}VIEW ${ifNotExist}${name}${columns}${options} AS ${selectStatement};\n',
-
+		'CREATE ${orReplace}${materialized}VIEW ${ifNotExist}${name}${columns}${partitions}${clustering}${options} AS ${selectStatement};\n',
 };

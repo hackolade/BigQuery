@@ -162,10 +162,15 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 					data: {
 						name: friendlyName || viewName,
 						code: friendlyName ? viewName : '',
+						materialized: view.metadata.type === 'MATERIALIZED_VIEW',
 						description: view.metadata.description,
 						selectStatement: viewData.query,
 						labels: getLabels(_, view.metadata.labels),
 						expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : '',
+						clusteringKey: view.metadata.clustering?.fields || [],
+						...getPartitioning(view.metadata),
+						enableRefresh: Boolean(viewData?.enableRefresh),
+						refreshInterval: isNaN(viewData?.refreshIntervalMs) ? '' : Number(viewData?.refreshIntervalMs) / (60 * 1000),
 					},
 				};
 			});
