@@ -166,7 +166,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 						description: view.metadata.description,
 						selectStatement: viewData.query,
 						labels: getLabels(_, view.metadata.labels),
-						expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : '',
+						expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : undefined,
 						clusteringKey: view.metadata.clustering?.fields || [],
 						...getPartitioning(view.metadata),
 						enableRefresh: Boolean(viewData?.enableRefresh),
@@ -225,7 +225,7 @@ const getBucketInfo = ({ _, metadata, datasetName }) => {
 		description: metadata.description || '',
 		labels: getLabels(_, metadata.labels),
 		enableTableExpiration: Boolean(metadata.defaultTableExpirationMs),
-		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs) ? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24) : '',
+		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs) ? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24) : undefined,
 		...getEncryption(metadata.defaultEncryptionConfiguration),
 	};
 };
@@ -254,7 +254,7 @@ const getTableInfo = ({ _, table, tableName }) => {
 		code: metadata.friendlyName ? tableName : '',
 		tableType: metadata.tableType === 'EXTERNAL' ? 'External' : 'Native',
 		description: metadata.description,
-		expiration: metadata.expirationTime ? Number(metadata.expirationTime) : '',
+		expiration: metadata.expirationTime ? Number(metadata.expirationTime) : undefined,
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
 		labels: getLabels(_, metadata.labels),

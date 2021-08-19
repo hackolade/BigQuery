@@ -10,16 +10,24 @@
 	"options": [
 		{
 			"name": "Standard SQL",
-			"keyword": "standardSql",
+			"keyword": "sql",
 			"type": "ddl",
 			"ddlType": "plugin",
 			"mode": "sql",
-			"disableApplyScriptToInstance": true
+			"disableApplyScriptToInstance": true,
+			"fileExtensions": [{
+				"label": "SQL",
+				"value": "sql"
+			}]
 		},
 		{
 			"name": "JSON Schema",
-			"keyword": "jsonSchema",
-			"disableApplyScriptToInstance": true
+			"keyword": "json",
+			"disableApplyScriptToInstance": true,
+			"fileExtensions": [{
+				"label": "JSON",
+				"value": "json"
+			}]
 		}
 	]
 }

@@ -23,20 +23,15 @@
             },
             "nestedCollections": false,
             "disablePatternField": false,
-            "enableForwardEngineering": {
-                "jsonDocument": true,
-                "jsonSchema": true,
-                "excel": true,
-                "plugin": true
-            },
+            "enableForwardEngineering": true,
             "enableReverseEngineering": true,
             "disableChoices": true,
-            "enableJsonType": true,
-            "reverseSchemaIntoOneColumn": true,
-            "disableDenormalization": true,
-            "enableComplexTypesNormalization": true,
+            "enableJsonType": false,
+            "reverseSchemaIntoOneColumn": false,
+            "disableDenormalization": false,
+            "enableComplexTypesNormalization": false,
             "relationships": {
-                "compositeRelationships": true
+                "compositeRelationships": false
             },
             "FEScriptCommentsSupported": true
         }
