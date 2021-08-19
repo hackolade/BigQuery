@@ -22,6 +22,22 @@ const getPartitioningByIntegerRange = (rangeOptions = {}) => {
 	return `RANGE_BUCKET(${name}, GENERATE_ARRAY(${start}, ${end}${isNaN(interval) ? '' : `, ${interval}`}))`;
 };
 
+const isActivatedPartition = ({
+	partitioning,
+	timeUnitPartitionKey,
+	rangeOptions,
+}) => {
+	if (partitioning === 'By time-unit column') {
+		return timeUnitPartitionKey?.[0]?.isActivated;
+	}
+
+	if (partitioning === 'By integer-range') {
+		return rangeOptions?.[0]?.rangePartitionKey?.[0]?.isActivated;
+	}
+
+	return true;
+};
+
 const getTablePartitioning = ({
 	partitioning,
 	partitioningType,
@@ -33,18 +49,41 @@ const getTablePartitioning = ({
 	}
 
 	if (partitioning === 'By ingestion time') {
-		return '\nPARTITION BY ' + getPartitioningByIngestionTime(partitioningType);
+		return 'PARTITION BY ' + getPartitioningByIngestionTime(partitioningType);
 	}
 
 	if (partitioning === 'By time-unit column') {
-		return `\nPARTITION BY DATE(${timeUnitPartitionKey?.[0].name})`;
+		return `PARTITION BY DATE(${timeUnitPartitionKey?.[0].name})`;
 	}
 
 	if (partitioning === 'By integer-range') {
-		return '\nPARTITION BY ' + getPartitioningByIntegerRange(rangeOptions[0]);
+		return 'PARTITION BY ' + getPartitioningByIntegerRange(rangeOptions[0]);
 	}
 
 	return '';
+};
+
+const getClusteringKey = (clusteringKey, isParentActivated) => {
+	if (!Array.isArray(clusteringKey) || clusteringKey.length === 0) {
+		return '';
+	}
+
+	const activated = clusteringKey.filter(key => key.isActivated).map(key => key.name).join(', ');
+	const deActivated = clusteringKey.filter(key => !key.isActivated).map(key => key.name).join(', ');
+
+	if (!isParentActivated) {
+		return '\nCLUSTER BY ' + clusteringKey.map(key => key.name).join(', ');
+	}
+
+	if (activated.length === 0) {
+		return '\n-- CLUSTER BY ' + deActivated;
+	}
+
+	if (deActivated.length === 0) {
+		return '\nCLUSTER BY ' + activated;
+	}
+
+	return '\nCLUSTER BY ' + activated + ' /*' + deActivated + '*/';
 };
 
 const getTableOptions = (tab, getLabels) => ({
@@ -321,13 +360,18 @@ module.exports = (baseProvider, options, app) => {
 			const orReplaceTable = orReplace ? 'OR REPLACE ' : '';
 			const temporaryTable = temporary ? 'TEMPORARY ' : '';
 			const ifNotExistTable = ifNotExist ? 'IF NOT EXISTS ' : '';
+			const isPartitionActivated = isActivatedPartition({
+				partitioning,
+				timeUnitPartitionKey,
+				rangeOptions,
+			});
 			const partitions = getTablePartitioning({
 				partitioning,
 				partitioningType,
 				timeUnitPartitionKey,
 				rangeOptions,
 			});
-			const clustering = Array.isArray(clusteringKey) && clusteringKey.length ? '\nCLUSTER BY ' + clusteringKey.map(key => key.name).join(', ') : '';
+			const clustering = getClusteringKey(clusteringKey, isActivated);
 			const options = getTableOptions(tab, getLabels)({
 				partitioningFilterRequired,
 				customerEncryptionKey,
@@ -338,14 +382,17 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 			});
 			const external = tableType === 'External' ? 'EXTERNAL ' : '';
+			const activatedColumns = columns.filter(column => column.isActivated).map(({ column }) => column);
+			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
+			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
-				column_definitions: tab(columns.join(',\n')),
+				column_definitions: tab([activatedColumns.join(',\n'), deActivatedColumns.join(',\n')].filter(Boolean).join('\n')),
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
 				ifNotExist: ifNotExistTable,
-				partitions,
+				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
 				clustering,
 				external,
 				options,
@@ -355,19 +402,30 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		convertColumnDefinition(columnDefinition) {
-			return getColumnSchema({ assignTemplates, tab })(columnDefinition);
+			return {
+				column: commentIfDeactivated(
+					getColumnSchema({ assignTemplates, tab })(columnDefinition),
+					{ isActivated: columnDefinition.isActivated }
+				),
+				isActivated: columnDefinition.isActivated,
+			};
 		},
 
 		createView(viewData, dbData, isActivated) {
 			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
 			const columns = viewData.materialized ? [] : viewData.keys.map(key => key.alias || key.name);
+			const isPartitionActivated = isActivatedPartition({
+				partitioning: viewData.partitioning,
+				timeUnitPartitionKey: viewData.partitioningType,
+				rangeOptions: viewData.rangeOptions,
+			});
 			const partitions = getTablePartitioning({
 				partitioning: viewData.partitioning,
 				partitioningType: viewData.partitioningType,
 				timeUnitPartitionKey: viewData.timeUnitPartitionKey,
 				rangeOptions: viewData.rangeOptions,
 			});
-			const clustering = Array.isArray(viewData.clusteringKey) && viewData.clusteringKey.length ? '\nCLUSTER BY ' + viewData.clusteringKey.map(key => key.name).join(', ') : '';
+			const clustering = getClusteringKey(viewData.clusteringKey, isActivated)
 			let options = [];
 
 			if (viewData.friendlyName) {
@@ -393,6 +451,7 @@ module.exports = (baseProvider, options, app) => {
 					options.push(`refresh_interval_minutes=${viewData.refreshInterval}`);
 				}
 			}
+			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
 			return assignTemplates(templates.createView, {
 				name: viewName,
@@ -406,7 +465,7 @@ module.exports = (baseProvider, options, app) => {
 					projectId: dbData.projectId,
 				}))}`,
 				options: options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '',
-				partitions,
+				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
 				clustering,
 			});
 		},
@@ -427,6 +486,7 @@ module.exports = (baseProvider, options, app) => {
 			return {
 				name: columnDefinition.name,
 				type: columnDefinition.type,
+				isActivated: columnDefinition.isActivated,
 				description: jsonSchema.description,
 				dataTypeMode: jsonSchema.dataTypeMode,
 				jsonSchema,
@@ -509,7 +569,7 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		commentIfDeactivated(statement, data, isPartOfLine) {
-			return statement;
+			return commentIfDeactivated(statement, data, isPartOfLine);
 		},
 	};
 };
