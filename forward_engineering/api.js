@@ -1,6 +1,8 @@
 'use strict'
 
 const { convertJsonSchemaToBigQuerySchema } = require('./helpers/schemaHelper');
+const reApi = require('../reverse_engineering/api');
+const applyToInstanceHelper = require('./helpers/applyToInstanceHelper');
 
 module.exports = {
 	generateScript(data, logger, callback) {
@@ -70,5 +72,29 @@ module.exports = {
 				stack: e.stack,
 			});
 		}
-	}
+	},
+	testConnection(connectionInfo, logger, callback, app) {
+		reApi.testConnection(connectionInfo, logger, callback, app)
+			.then(
+				callback,
+				callback
+			);
+	},
+	applyToInstance(connectionInfo, logger, callback, app) {
+		logger.clear();
+		logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
+
+		applyToInstanceHelper.applyToInstance(connectionInfo, logger, app)
+			.then(result => {
+				callback(null, result);
+			})
+			.catch(error => {
+				const err = {
+					message: error.message,
+					stack: error.stack,
+				};
+				logger.log('error', err, 'Error when applying to instance');
+				callback(err);
+			});
+	},
 };

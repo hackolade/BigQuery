@@ -14,7 +14,7 @@
 			"type": "ddl",
 			"ddlType": "plugin",
 			"mode": "sql",
-			"disableApplyScriptToInstance": true,
+			"disableApplyScriptToInstance": false,
 			"fileExtensions": [{
 				"label": "SQL",
 				"value": "sql"
