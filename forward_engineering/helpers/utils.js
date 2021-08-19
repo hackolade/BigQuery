@@ -197,7 +197,7 @@ const addParameters = (type, jsonSchema) => {
 };
 
 const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, jsonSchema }, isArrayItem) => {
-	const { assignTemplates, tab } = deps;
+	const { assignTemplates, tab, templates } = deps;
 	let dataType = type;
 	let options = '';
 	let notNull = '';

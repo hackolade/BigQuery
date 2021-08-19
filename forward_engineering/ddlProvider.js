@@ -9,7 +9,7 @@ const {
 	getColumnSchema,
 	generateViewSelectStatement,
 	getTimestamp,
-} = require('./helpers');
+} = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
 	const {
@@ -137,7 +137,7 @@ module.exports = (baseProvider, options, app) => {
 		convertColumnDefinition(columnDefinition) {
 			return {
 				column: commentIfDeactivated(
-					getColumnSchema({ assignTemplates, tab })(columnDefinition),
+					getColumnSchema({ assignTemplates, tab, templates })(columnDefinition),
 					{ isActivated: columnDefinition.isActivated }
 				),
 				isActivated: columnDefinition.isActivated,
