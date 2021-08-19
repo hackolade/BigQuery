@@ -48,7 +48,7 @@ const convertItem = ({ name, jsonSchema }) => {
 const convertJsonSchemaToBigQuerySchema = (jsonSchema) => {
 	let result = [];
 
-	result = Object.keys(jsonSchema.properties).flatMap(name => {
+	result = Object.keys(jsonSchema.properties || {}).flatMap(name => {
 		return convertItem({ name, jsonSchema: jsonSchema.properties[name] });
 	});
 

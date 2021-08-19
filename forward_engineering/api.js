@@ -16,7 +16,10 @@ module.exports = {
 			callback(null, JSON.stringify(schema, null, 4));
 		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Error ocurred during generation schema on dataset level');
-			callback(e);
+			callback({
+				message: e.message,
+				stack: e.stack,
+			});
 		}
 	},
 
@@ -58,11 +61,14 @@ module.exports = {
 	
 			callback(null, JSON.stringify({
 				...entities,
-				...views,
+				...(views || {}),
 			}, null, 4));
 		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Error ocurred during generation schema on dataset level');
-			callback(e);
+			callback({
+				message: e.message,
+				stack: e.stack,
+			});
 		}
 	}
 };
