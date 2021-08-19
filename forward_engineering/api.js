@@ -20,6 +20,10 @@ module.exports = {
 		}
 	},
 
+	generateViewScript(...args) {
+		return this.generateScript(...args);
+	},
+
 	generateContainerScript(data, logger, callback) {
 		try {
 			logger.log('info', { message: 'Start generating schema' });
@@ -36,10 +40,26 @@ module.exports = {
 					),
 				};
 			}, {});
+
+			const views = (data.views || []).reduce((result, viewId) => {
+				const name = data.viewData[viewId]?.[0]?.name;
+	
+				logger.log('info', { message: 'Generate "' + name + '" schema' });
+	
+				return {
+					...result,
+					[name]: convertJsonSchemaToBigQuerySchema(
+						JSON.parse(data.jsonSchema[viewId]),
+					),
+				};
+			}, {});
 	
 			logger.log('info', { message: 'Generating schema finished' });
 	
-			callback(null, JSON.stringify(entities, null, 4));
+			callback(null, JSON.stringify({
+				...entities,
+				...views,
+			}, null, 4));
 		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Error ocurred during generation schema on dataset level');
 			callback(e);
