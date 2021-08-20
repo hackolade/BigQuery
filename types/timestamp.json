@@ -3,6 +3,7 @@
 	"erdAbbreviation": "<ts>",
 	"dtdAbbreviation": "{ts}",
 	"useSample": true,
+	"parentType": "string",
 	"defaultValues": {
 		"primaryKey": false,
 		"relationshipType": "",
@@ -12,5 +13,14 @@
 		"foreignField": [],
 		"default": "",
 		"sample": ""
-	}
+	},
+	"descriptor": [
+		{
+			"schema": {},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnZ"
+		}, {
+			"schema": {},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnnZ"
+		}
+	]
 }

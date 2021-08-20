@@ -5,15 +5,16 @@
 		"dbVendor": "BigQuery"
 	},
 	"container": {
-		"name": "New dataset",
+		"name": "New_dataset",
 		"unlimitedQuota": false
 	},
 	"collection": {
 		"collectionName": "New table",
-		"type": "string"
+		"tableType": "Native",
+		"partitioning": "No partitioning"
 	},
 	"field": {
-		"name": "New column"
+		"name": "New_column"
 	},
 	"patternField": {
 		"name": "^[a-zA-Z0-9_.-]+$"
@@ -27,6 +28,7 @@
 	"relationship": {},
 	"user": {},
 	"view": {
+		"name": "New_view",
 		"viewOn": "",
 		"pipeline": "",
 		"autoSortKey": false

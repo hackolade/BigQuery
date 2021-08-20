@@ -12,6 +12,12 @@
 		"lowerTab": "Details",
 		"structure": [
 			{
+				"propertyName": "Materialized",
+				"propertyKeyword": "materialized",
+				"propertyTooltip": "Specify whether view is materialized",
+				"propertyType": "checkbox"
+			},
+			{
 				"propertyName": "Description",
 				"propertyKeyword": "description",
 				"propertyTooltip": "comments",
@@ -23,7 +29,42 @@
 				"propertyName": "Or replace",
 				"propertyKeyword": "orReplace",
 				"propertyType": "checkbox",
-				"propertyTooltip": "remarks"
+				"propertyTooltip": "remarks",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "ifNotExist",
+						"value": false
+					}, {
+						"key": "ifNotExist",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "If not exist",
+				"propertyKeyword": "ifNotExist",
+				"propertyTooltip": "Cannot appear with OR REPLACE.",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "or",
+					"values": [{
+						"key": "orReplace",
+						"value": false
+					}, {
+						"key": "orReplace",
+						"exists": false
+					}]
+				}
+			},
+			{
+				"propertyName": "Expiration (ms)",
+				"propertyKeyword": "expiration",
+				"propertyTooltip": "Expiration in MS",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"step": 1,
+				"allowNegative": false
 			},
 			{
 				"propertyKeyword": "pipeline",
@@ -36,6 +77,154 @@
 				"propertyTooltip": "A query (in the form of a SELECT statement) that evaluates to a table. This table defines the columns and rows in the view.",
 				"template": "textarea",
 				"markdown": false
+			},
+			{
+				"propertyName": "Partitioning",
+				"propertyKeyword": "partitioning",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"No partitioning",
+					"By time-unit column",
+					"By integer-range"
+				],
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Partition by",
+				"propertyKeyword": "timeUnitpartitionKey",
+				"propertyType": "primaryKeySetter",
+				"abbr": "PK",
+				"templateOptions": {
+					"maxFields": 4
+				},
+				"dependency": {
+					"type": "and",
+					"values": [{
+						"key": "materialized",
+						"value": true
+					}, {
+						"key": "partitioning",
+						"value": "By time-unit column"
+					}]
+				}
+			},
+			{
+				"propertyName": "Range partition",
+				"propertyType": "group",
+				"propertyTooltip": "",
+				"propertyKeyword": "rangeOptions",
+				"groupItemLimit": 1,
+				"structure": [
+					{
+						"propertyName": "Partition by",
+						"propertyKeyword": "rangePartitionKey",
+						"propertyType": "fieldList",
+						"template": "orderedList",
+						"abbr": "PK",
+						"templateOptions": {
+							"maxFields": 4
+						}
+					},
+					{
+						"propertyName": "Start",
+						"propertyKeyword": "rangeStart",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					},
+					{
+						"propertyName": "End",
+						"propertyKeyword": "rangeEnd",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					},
+					{
+						"propertyName": "Interval",
+						"propertyKeyword": "rangeinterval",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"step": 1,
+						"allowNegative": false
+					}
+				],
+				"dependency": {
+					"type": "and",
+					"values": [{
+						"key": "materialized",
+						"value": true
+					}, {
+						"key": "partitioning",
+						"value": "By integer-range"
+					}]
+				}
+			},
+			{
+				"propertyName": "Cluster by",
+				"propertyKeyword": "clusteringKey",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				},
+				"propertyType": "fieldList",
+				"disabledItemStrategy": "default",
+				"abbr": "CK",
+				"setPrimaryKey": false,
+				"template": "orderedList",
+				"isCompositeKey": true,
+				"templateOptions": {
+					"maxFields": 4
+				}
+			},
+			{
+				"propertyName": "Enable refresh",
+				"propertyKeyword": "enableRefresh",
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Refresh interval (minutes)",
+				"propertyKeyword": "refreshInterval",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"step": 1,
+				"allowNegative": false,
+				"dependency": {
+					"type": "and",
+					"values": [{
+						"key": "materialized",
+						"value": true
+					}, {
+						"key": "enableRefresh",
+						"value": true
+					}]
+				}
+			},
+			{
+				"propertyName": "Labels",
+				"propertyType": "group",
+				"propertyKeyword": "labels",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "labelKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "labelValue",
+						"propertyType": "text"
+					}
+				]
 			},
 			{
 				"propertyName": "Comments",

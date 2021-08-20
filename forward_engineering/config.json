@@ -1,14 +1,33 @@
 {
-	"extension": "sql",
-	"filterName": "SQL",
-	"type": "ddl",
-	"ddlType": "snowflake",
-	"namePrefix": "Snowflake",
-	"hasUpdateScript": true,
-	"resolvedDefinitions": true,
+	"namePrefix": "BigQuery",
 	"level": {
 		"container": true,
 		"entity": true,
 		"view": true
-	}
+	},
+	"resolvedDefinitions": true,
+	"applyScriptToInstance": true,
+	"options": [
+		{
+			"name": "Standard SQL",
+			"keyword": "sql",
+			"type": "ddl",
+			"ddlType": "plugin",
+			"mode": "sql",
+			"disableApplyScriptToInstance": false,
+			"fileExtensions": [{
+				"label": "SQL",
+				"value": "sql"
+			}]
+		},
+		{
+			"name": "JSON Schema",
+			"keyword": "json",
+			"disableApplyScriptToInstance": true,
+			"fileExtensions": [{
+				"label": "JSON",
+				"value": "json"
+			}]
+		}
+	]
 }

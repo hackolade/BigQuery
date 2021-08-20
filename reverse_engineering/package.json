@@ -1,12 +1,11 @@
 {
-  "name": "Snowflake",
+  "name": "BigQuery",
   "version": "1.0.0",
   "description": "",
   "author": "Hackolade",
   "dependencies": {
-    "axios": "^0.21.1",
-    "snowflake-sdk": "^1.5.1",
-    "uuid": "^7.0.3"
+    "@google-cloud/bigquery": "^5.7.1",
+    "flora-sql-parser": "^0.9.4"
   },
   "installed": true
 }

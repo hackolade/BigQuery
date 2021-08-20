@@ -15,5 +15,9 @@
 		"default": "",
 		"format": "",
 		"sample": ""
-	}
+	},
+	"descriptor": [{
+		"schema": {},
+		"format": "YYYY-MM-DD"
+	}]
 }

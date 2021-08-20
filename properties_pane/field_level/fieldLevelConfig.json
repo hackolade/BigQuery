@@ -100,8 +100,18 @@ making sure that you maintain a proper JSON format.
 					"Repeated"
 				]
 			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"minValue": 1,
+				"step": 1,
+				"typeDecorator": true
+			},
 			"description",
 			"dependencies",
+			"required",
 			"primaryKey",
 			"foreignCollection",
 			"foreignField",
@@ -133,6 +143,15 @@ making sure that you maintain a proper JSON format.
 					"Repeated"
 				]
 			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"minValue": 1,
+				"step": 1,
+				"typeDecorator": true
+			},
 			"description",
 			"dependencies",
 			"required",
@@ -156,6 +175,22 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			"description",
+			{
+				"propertyName": "Precision",
+				"propertyKeyword": "precision",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
+			{
+				"propertyName": "Scale",
+				"propertyKeyword": "scale",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
 			"dependencies",
 			"required",
 			"primaryKey",
@@ -192,6 +227,22 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			"description",
+			{
+				"propertyName": "Precision",
+				"propertyKeyword": "precision",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
+			{
+				"propertyName": "Scale",
+				"propertyKeyword": "scale",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true
+			},
 			"dependencies",
 			"required",
 			"primaryKey",
@@ -326,6 +377,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",
@@ -352,6 +404,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",
@@ -405,6 +458,7 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
+			"required",
 			"pattern",
 			"default",
 			"enum",
@@ -416,7 +470,6 @@ making sure that you maintain a proper JSON format.
 			"name",
 			"schemaId",
 			"type",
-			"subtype",
 			{
 				"propertyName": "Type mode",
 				"propertyKeyword": "dataTypeMode",
@@ -476,6 +529,10 @@ making sure that you maintain a proper JSON format.
 					"Required",
 					"Repeated"
 				]
+			},
+			{
+				"propertyKeyword": "subtype",
+				"hidden": true
 			},
 			"description",
 			"dependencies",
