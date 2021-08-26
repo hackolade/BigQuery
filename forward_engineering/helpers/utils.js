@@ -15,6 +15,10 @@ const getPartitioningByIntegerRange = (rangeOptions = {}) => {
 	const end = Number(rangeOptions.rangeEnd);
 	const interval = Number(rangeOptions.rangeinterval);
 
+	if (!name) {
+		return '';
+	}
+
 	return `RANGE_BUCKET(${name}, GENERATE_ARRAY(${start}, ${end}${isNaN(interval) ? '' : `, ${interval}`}))`;
 };
 
@@ -40,6 +44,8 @@ const getTablePartitioning = ({
 	timeUnitPartitionKey,
 	rangeOptions,
 }) => {
+	const partitionTimeColumn = timeUnitPartitionKey?.[0]?.name;
+
 	if (partitioning === 'No partitioning') {
 		return '';
 	}
@@ -48,12 +54,18 @@ const getTablePartitioning = ({
 		return 'PARTITION BY ' + getPartitioningByIngestionTime(partitioningType);
 	}
 
-	if (partitioning === 'By time-unit column') {
-		return `PARTITION BY DATE(${timeUnitPartitionKey?.[0].name})`;
+	if (partitioning === 'By time-unit column' && partitionTimeColumn) {
+		return `PARTITION BY DATE(${partitionTimeColumn})`;
 	}
 
 	if (partitioning === 'By integer-range') {
-		return 'PARTITION BY ' + getPartitioningByIntegerRange(rangeOptions[0]);
+		const partitionByIntegerRanger = getPartitioningByIntegerRange(rangeOptions?.[0]);
+
+		if (!partitionByIntegerRanger) {
+			return '';
+		}
+
+		return 'PARTITION BY ' + partitionByIntegerRanger;
 	}
 
 	return '';
