@@ -105,8 +105,9 @@ module.exports = (baseProvider, options, app) => {
 				rangeOptions,
 			});
 			const clustering = getClusteringKey(clusteringKey, isActivated);
+			const isExternal = tableType === 'External';
 			const options = getTableOptions(tab, getLabels)({
-				partitioningFilterRequired,
+				partitioningFilterRequired: isExternal ? false : partitioningFilterRequired,
 				customerEncryptionKey,
 				partitioning,
 				friendlyName,
@@ -114,7 +115,7 @@ module.exports = (baseProvider, options, app) => {
 				expiration,
 				labels,
 			});
-			const external = tableType === 'External' ? 'EXTERNAL ' : '';
+			const external = isExternal ? 'EXTERNAL ' : '';
 			const activatedColumns = columns.filter(column => column.isActivated).map(({ column }) => column);
 			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
@@ -125,8 +126,8 @@ module.exports = (baseProvider, options, app) => {
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
 				ifNotExist: ifNotExistTable,
-				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
-				clustering,
+				partitions: (partitionsStatement && !isExternal) ? '\n' + partitionsStatement : '',
+				clustering: isExternal ? '' : clustering,
 				external,
 				options,
 			});
