@@ -1,4 +1,8 @@
 const getPartitioningByIngestionTime = (partitioningType) => {
+	if (!partitioningType) {
+		return '_PARTITIONDATE';
+	}
+	
 	const type = {
 		'By day': 'DAY',
 		'By hour': 'HOUR',
