@@ -262,7 +262,6 @@ module.exports = (baseProvider, options, app) => {
 				expiration: data.expiration,
 				tableType: data.tableType,
 				clusteringKey: data.clusteringKey,
-				clusteringOrder: data.clusteringOrder,
 				customerEncryptionKey: data.encryption ? data.customerEncryptionKey : '',
 				labels: data.labels,
 			};
