@@ -8,7 +8,6 @@
 		"subtype": "struct<str>",
 		"keyType": "string",
 		"dependencies": [],
-		"primaryKey": false,
 		"properties": [],
 		"minProperties": "",
 		"maxProperties": "",

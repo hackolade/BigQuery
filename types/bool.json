@@ -6,7 +6,6 @@
 	"sample": true,
 	"useSample": true,
 	"defaultValues": {
-		"primaryKey": false,
 		"default": "",
 		"enum": [],
 		"sample": ""
