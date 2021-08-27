@@ -1,0 +1,29 @@
+{
+	"field": {
+		"dtd": [{
+			"value": {
+				"border-style": "solid"
+			},
+			"dependency": {
+				"key": "dataTypeMode",
+				"value": "Required"
+			}
+		}],
+		"erd": [
+			"keys",
+			"type",
+			[
+				{
+					"value": "*",
+					"dependency": {
+						"key": "dataTypeMode",
+						"value": "Required"
+					},
+					"width": 20
+				}
+			],
+			"indexes",
+			"refType"
+		]
+	}
+}

@@ -103,7 +103,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				const friendlyName = table.metadata.friendlyName;
 				const entityLevelData = getTableInfo({ _, table, tableName });
 				const jsonSchema = createJsonSchema(table.metadata.schema);
-				const maxCountRows = getCount(Number(table?.metadata?.numRows), recordSamplingSettings);
 
 				log.info(`Get table rows: "${tableName}"`);
 				log.progress(`Get table rows`, datasetName, tableName);
@@ -114,7 +113,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 							return Number(n);
 						}
 					},
-					maxResults: Number(maxCountRows),
+					maxResults: 1,
 				});
 
 				log.info(`Convert rows: "${tableName}"`);
