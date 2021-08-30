@@ -20,7 +20,8 @@ const applyToInstance = async (connectionInfo, logger, app) => {
 	const _ = app.require('lodash');
 	const async = app.require('async');
 	const connection = connectionHelper.connect(connectionInfo);
-	const location = connectionInfo.containerData?.[0]?.dataLocation;
+	const dataLocation = connectionInfo.containerData?.[0]?.dataLocation;
+	const location = dataLocation === 'default' ? '' : dataLocation;
 
 	const queries = connectionInfo.script.split('\n\n').map((query) => {
 		return _.trim(query);

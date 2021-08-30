@@ -14,13 +14,14 @@
 		"partitioning": "No partitioning"
 	},
 	"field": {
-		"name": "New_column"
+		"name": "New_column",
+		"dataTypeMode": "Nullable"
 	},
 	"patternField": {
-		"name": "^[a-zA-Z0-9_.-]+$"
+		"name": "^[a-zA-Z0-9_.-]+$",
+		"dataTypeMode": "Nullable"
 	},
 	"multipleField": {
-		"primaryKey": false
 	},
 	"subschema": {},
 	"arrayItem": {},

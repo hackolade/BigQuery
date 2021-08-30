@@ -8,7 +8,6 @@
 		"maxLength": "",
 		"pattern": "",
 		"default": "",
-		"primaryKey": false,
 		"relationshipType": "",
 		"parentRelationship": "",
 		"childRelationships": [],

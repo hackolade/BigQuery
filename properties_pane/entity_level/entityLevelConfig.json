@@ -195,8 +195,11 @@ making sure that you maintain a proper JSON format.
 					"By integer-range"
 				],
 				"dependency": {
-					"key": "tableType",
-					"value": "Native"
+					"type": "not",
+					"values": {
+						"key": "tableType",
+						"value": "External"
+					}
 				}
 			},
 			{
@@ -204,25 +207,49 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "partitioningFilterRequired",
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "partitioning",
-					"value": "By ingestion time"
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"key": "tableType",
+								"value": "External"
+							}
+						},
+						{
+							"key": "partitioning",
+							"value": "By ingestion time"
+						}
+					]
 				}
-
 			},
 			{
 				"propertyName": "Partitioning type",
 				"propertyKeyword": "partitioningType",
-				"defaultValue": "By day",
+				"defaultValue": "",
 				"propertyType": "select",
 				"options": [
+					"",
 					"By day",
 					"By hour",
 					"By month",
 					"By year"
 				],
 				"dependency": {
-					"key": "partitioning",
-					"value": "By ingestion time"
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"key": "tableType",
+								"value": "External"
+							}
+						},
+						{
+							"key": "partitioning",
+							"value": "By ingestion time"
+						}
+					]
 				}
 			},
 			{
@@ -234,8 +261,20 @@ making sure that you maintain a proper JSON format.
 					"maxFields": 4
 				},
 				"dependency": {
-					"key": "partitioning",
-					"value": "By time-unit column"
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"key": "tableType",
+								"value": "External"
+							}
+						},
+						{
+							"key": "partitioning",
+							"value": "By time-unit column"
+						}
+					]
 				}
 			},
 			{
@@ -280,18 +319,20 @@ making sure that you maintain a proper JSON format.
 					}
 				],
 				"dependency": {
-					"key": "partitioning",
-					"value": "By integer-range"
-				}
-			},
-			{
-				"propertyName": "Clustering order",
-				"propertyKeyword": "clusteringOrder",
-				"propertyType": "fieldList",
-				"template": "orderedList",
-				"dependency": {
-					"key": "tableType",
-					"value": "Native"
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"key": "tableType",
+								"value": "External"
+							}
+						},
+						{
+							"key": "partitioning",
+							"value": "By integer-range"
+						}
+					]
 				}
 			},
 			{
@@ -300,8 +341,8 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "external",
-						"value": true
+						"key": "tableType",
+						"value": "External"
 					}
 				},
 				"propertyType": "compositeKeySetter",

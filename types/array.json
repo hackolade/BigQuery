@@ -7,7 +7,6 @@
 	"useSample": true,
 	"defaultValues": {
 		"properties": [],
-		"primaryKey": false,
 		"relationshipType": "",
 		"parentRelationship": "",
 		"childRelationships": [],
