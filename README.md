@@ -1,7 +1,5 @@
 # BigQuery Standard SQL
 
-!!! NOT READY FOR PRODUCTION - DO NOT USE UNTIL OFFICIALLY RELEASED !!!
-
 Plugin to enable Google BigQuery database as a target in [Hackolade](https://hackolade.com) data modeling.  Requires prior download of the Hackolade application from our [download page](https://hackolade.com/download.html)
 
 Note: this plugin does **not** support the earlier Legacy SQL version of BigQuery
