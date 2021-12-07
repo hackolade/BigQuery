@@ -13,7 +13,7 @@
 			"keyword": "sql",
 			"type": "ddl",
 			"ddlType": "plugin",
-			"mode": "sql",
+			"mode": "mysql",
 			"disableApplyScriptToInstance": false,
 			"fileExtensions": [{
 				"label": "SQL",

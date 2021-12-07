@@ -1,3 +1,7 @@
+const escapeQuotes = (str = '') => {
+	return str.replace(/(")/gi, '\\$1').replace(/\n/gi, '\\n');
+};
+
 const getPartitioningByIngestionTime = (partitioningType) => {
 	if (!partitioningType) {
 		return '_PARTITIONDATE';
@@ -114,7 +118,7 @@ const getTableOptions = (tab, getLabels) => ({
 	}
 
 	if (description) {
-		options.push(`description="${description}"`);
+		options.push(`description="${escapeQuotes(description)}"`);
 	}
 
 	if (expiration) {
@@ -245,7 +249,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 	}
 
 	if (description) {
-		options += ` OPTIONS( description="${description}" )`;
+		options += ` OPTIONS( description="${escapeQuotes(description)}" )`;
 	}
 
 	if (dataTypeMode === 'Required' && !isArrayItem) {
@@ -294,4 +298,5 @@ module.exports = {
 	getColumnSchema,
 	generateViewSelectStatement,
 	getTimestamp,
+	escapeQuotes
 };

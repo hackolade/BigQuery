@@ -9,6 +9,7 @@ const {
 	getColumnSchema,
 	generateViewSelectStatement,
 	getTimestamp,
+	escapeQuotes
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -39,7 +40,7 @@ module.exports = (baseProvider, options, app) => {
 			}
 
 			if (description) {
-				dbOptions.push(`description="${description}"`);
+				dbOptions.push(`description="${escapeQuotes(description)}"`);
 			}
 
 			if (customerEncryptionKey) {
@@ -167,7 +168,7 @@ module.exports = (baseProvider, options, app) => {
 			}
 
 			if (viewData.description) {
-				options.push(`description="${viewData.description}"`);
+				options.push(`description="${escapeQuotes(viewData.description)}"`);
 			}
 
 			if (viewData.expiration) {

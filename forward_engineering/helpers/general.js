@@ -17,10 +17,6 @@ module.exports = (_) => {
 		return '`' + name.join('.') + '`';
 	};
 
-	const escapeQuotes = (str = '') => {
-		return str.replace(/(')/gi, '\\$1');
-	};
-
 	const getLabels = (labels) => {
 		return labels.map(({ labelKey, labelValue }) => {
 			return `("${labelKey}", "${labelValue}")`;
@@ -28,7 +24,6 @@ module.exports = (_) => {
 	};
 
 	return {
-		escapeQuotes,
 		getLabels,
 		getFullName,
 	};
