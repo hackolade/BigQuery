@@ -6,5 +6,6 @@
 	"excludeDocKind": ["id"],
 	"connectionList": ["name", "projectId"],
 	"widestColumn": "projectId",
-	"probabilisticSchema": false
+	"probabilisticSchema": false,
+	"helpUrl": "https://hackolade.com/help/ConnecttoaBigQueryinstance.html"
 }
