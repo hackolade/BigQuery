@@ -15,19 +15,37 @@
 			"ddlType": "plugin",
 			"mode": "mysql",
 			"disableApplyScriptToInstance": false,
-			"fileExtensions": [{
-				"label": "SQL",
-				"value": "sql"
-			}]
+			"supportsDeltaModel": true,
+			"fileExtensions": [
+				{
+					"label": "SQL",
+					"value": "sql"
+				}
+			]
 		},
 		{
 			"name": "JSON Schema",
 			"keyword": "json",
 			"disableApplyScriptToInstance": true,
-			"fileExtensions": [{
-				"label": "JSON",
-				"value": "json"
-			}]
+			"fileExtensions": [
+				{
+					"label": "JSON",
+					"value": "json"
+				}
+			]
+		}
+	],
+	"compMode": {
+		"entity": true,
+		"container": true
+	},
+	"additionalOptions": [
+		{
+			"id": "applyDropStatements",
+			"value": false,
+			"forUpdate": true,
+			"name": "Apply Drop Statements",
+			"isDropInStatements": true
 		}
 	]
 }
