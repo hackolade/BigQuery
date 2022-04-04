@@ -485,7 +485,6 @@ const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => 
 			};
 		}, viewJsonSchema);
 	} catch (e) {
-		debugger;
 		log.info('Error with processing view select statement: ' + viewQuery);
 		log.error(e);
 
