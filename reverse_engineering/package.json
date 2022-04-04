@@ -5,7 +5,7 @@
   "author": "Hackolade",
   "dependencies": {
     "@google-cloud/bigquery": "^5.7.1",
-    "flora-sql-parser": "^0.9.4"
+    "@hackolade/sql-select-statement-parser": "0.0.5"
   },
   "installed": true
 }

@@ -11,7 +11,7 @@ const {
 	Geography,
 } = require('@google-cloud/bigquery');
 const { Big } = require('big.js');
-const { Parser } = require('flora-sql-parser');
+const parseSelectStatement = require('@hackolade/sql-select-statement-parser');
 
 const connect = (connectionInfo, logger) => {
 	logger.clear();
@@ -427,29 +427,29 @@ const findViewPropertyByTableProperty = (viewSchema, tableProperty) => {
 	return Object.keys(viewSchema.properties).find(key => equalByStructure(viewSchema.properties[key], tableProperty));
 };
 
-const prepareSql = (sql) => {
-	return sql.replace(/\s+/g, ' ').replace(/\b[a-z0-9-_]+\.([a-z0-9-_]+\.[a-z0-9-_]+)\b/i, '$1').replace(/\`/g, '');
-};
-
 const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => {
 	try {
-		const result = (new Parser()).parse(prepareSql(viewQuery));
-		const columns = result.columns.map((column) => {
+		const result = parseSelectStatement(viewQuery);
+		const columns = result.selectItems.map((column) => {
 			return {
-				alias: column.as, 
-				name: column.expr.column,
-				table: column.expr.table,
+				alias: column.alias, 
+				name: column.name || column.fieldReferences[column.fieldReferences.length - 1] || column.alias,
+				table: column.tableName || '',
 			};
 		});
-	
+
 		const tablesProperties = result.from.reduce((result, fromItem) => {
-			const pack = tablePackages.find(pack => pack.dbName === fromItem.db && (pack.collectionName === fromItem.table));
+			const nameArray = fromItem.table.split('.');
+			const tableName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : nameArray[0];
+			const schemaName = nameArray.length > 1 ? nameArray[nameArray.length - 2] : fromItem.schemaName;
+
+			const pack = tablePackages.find(pack => (pack.dbName === schemaName || !schemaName) && (pack.collectionName === tableName));
 	
 			if (!pack) {
 				return result;
 			}
 	
-			const tableColumns = columns.filter(column => column.table === fromItem.table || column.table === fromItem.as || column.table === null);
+			const tableColumns = columns.filter(column => column.table === tableName || column.table === fromItem.alias || !column.table);
 			const tableSchema = pack.validation.jsonSchema;
 			const tableProperties = tableColumns.map((column) => {
 				if (!tableSchema.properties[column.name]) {
@@ -458,7 +458,7 @@ const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => 
 				
 				return {
 					...tableSchema.properties[column.name],
-					table: fromItem.table,
+					table: tableName,
 					name: column.name,
 					alias: column.alias,
 				};
@@ -485,6 +485,7 @@ const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => 
 			};
 		}, viewJsonSchema);
 	} catch (e) {
+		debugger;
 		log.info('Error with processing view select statement: ' + viewQuery);
 		log.error(e);
 
