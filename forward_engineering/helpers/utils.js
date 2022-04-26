@@ -241,7 +241,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 	} else if (type === 'struct') {
 		dataType = ` STRUCT<\n${
 			tab(
-				convertPropertiesToType(deps)(jsonSchema.properties).join(',\n'),
+				convertPropertiesToType(deps)(jsonSchema.properties || {}).join(',\n'),
 			)
 		}\n>`;
 	} else {

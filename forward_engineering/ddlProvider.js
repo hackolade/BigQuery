@@ -180,7 +180,7 @@ module.exports = (baseProvider, options, app) => {
 				name: columnDefinition.name,
 				type: columnDefinition.type,
 				isActivated: columnDefinition.isActivated,
-				description: jsonSchema.description,
+				description: jsonSchema.refDescription || jsonSchema.description,
 				dataTypeMode: jsonSchema.dataTypeMode,
 				jsonSchema,
 			};
