@@ -18,7 +18,7 @@ const convertItem = ({ name, jsonSchema }) => {
 		name,
 		type: toUpper(getType(jsonSchema)),
 		mode: toUpper(jsonSchema.dataTypeMode || 'Nullable'),
-		description: jsonSchema.description,
+		description: jsonSchema.refDescription || jsonSchema.description,
 	});
 
 	if (jsonSchema.properties) {
