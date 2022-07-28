@@ -22,5 +22,11 @@
 		"enum": [],
 		"mode": "",
 		"sample": ""
-	}
+	},
+	"descriptor": [
+		{
+			"schema": {},
+			"capacity": 8
+		}
+	]
 }
