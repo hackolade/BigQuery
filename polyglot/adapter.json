@@ -44,10 +44,11 @@
 		"field": [
 			{
 				"from": {
-					"childType": "integer"
+					"type": "integer"
 				},
 				"to": {
-					"childType": "int64"
+					"type": "integer",
+					"mode": "int64"
 				}
 			}
 		]
