@@ -34,7 +34,7 @@
                 "compositeRelationships": false
             },
             "FEScriptCommentsSupported": true,
-			"discoverRelationships": true
+            "discoverRelationships": true
         }
     },
     "description": "Hackolade plugin for Google BigQuery Standard SQL",
