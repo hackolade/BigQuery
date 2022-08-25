@@ -14,6 +14,9 @@ const getType = (jsonSchema) => {
 };
 
 const convertItem = ({ name, jsonSchema }) => {
+	if (!jsonSchema.isActivated) {
+		return [];
+	}
 	const schema = cleanUp({
 		name,
 		type: toUpper(getType(jsonSchema)),
