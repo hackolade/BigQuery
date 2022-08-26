@@ -1,7 +1,7 @@
 {
     "name": "BigQuery",
-    "version": "0.1.7",
-    "versionDate": "2022-07-29",
+    "version": "0.1.8",
+    "versionDate": "2022-08-26",
     "author": "hackolade",
     "engines": {
         "hackolade": "6.0.2",
