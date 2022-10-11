@@ -127,7 +127,19 @@ module.exports = (baseProvider, options, app) => {
 
 		createView(viewData, dbData, isActivated) {
 			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
-			const columns = viewData.materialized ? [] : viewData.keys.map(key => key.alias || key.name);
+			let columns = '';
+			const allDeactivated = viewData.keys.length && viewData.keys.every(key => !key.isActivated);
+			
+			if (!viewData.materialized) {
+				if (isActivated && !allDeactivated) {
+					const activated = viewData.keys.filter(key => key.isActivated).map(key => (key.alias || key.name)).filter(Boolean);
+					const deActivated = viewData.keys.filter(key => !key.isActivated).map(key => (key.alias || key.name)).filter(Boolean);
+				
+					columns = activated.join(', ') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
+				} else {
+					columns = viewData.keys.map(key => (key.alias || key.name)).filter(Boolean).join(', ');
+				}
+			}
 			const isPartitionActivated = isActivatedPartition({
 				partitioning: viewData.partitioning,
 				timeUnitPartitionKey: viewData.partitioningType,
@@ -142,16 +154,16 @@ module.exports = (baseProvider, options, app) => {
 			const clustering = getClusteringKey(viewData.clusteringKey, isActivated);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
-			return assignTemplates(templates.createView, {
+			const statement = assignTemplates(templates.createView, {
 				name: viewName,
 				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
 				orReplace: viewData.orReplace && !viewData.materialized ? 'OR REPLACE ' : '',
 				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
-				columns: columns.length ? `\n (${columns.join(', ')})` : '',
+				columns: columns.length ? `\n (${columns})` : '',
 				selectStatement: `\n ${_.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
-						: generateViewSelectStatement(getFullName)({
+						: generateViewSelectStatement(getFullName, isActivated && !allDeactivated)({
 								columns: viewData.keys,
 								datasetName: dbData.databaseName,
 								projectId: dbData.projectId,
@@ -161,6 +173,12 @@ module.exports = (baseProvider, options, app) => {
 				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
 				clustering,
 			});
+
+			if (isActivated && allDeactivated) {
+				return commentIfDeactivated(statement, { isActivated: false });
+			} else {
+				return statement;
+			}
 		},
 
 		getDefaultType(type) {
@@ -232,6 +250,7 @@ module.exports = (baseProvider, options, app) => {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
+				isActivated: data.isActivated,
 			};
 		},
 

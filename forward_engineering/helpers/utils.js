@@ -264,7 +264,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 	});
 };
 
-const generateViewSelectStatement = (getFullName) => ({ columns, projectId, datasetName }) => {
+const generateViewSelectStatement = (getFullName, isActivated) => ({ columns, projectId, datasetName }) => {
 	const keys = columns.reduce((tables, key) => {
 		let column = key.name;
 
@@ -272,18 +272,28 @@ const generateViewSelectStatement = (getFullName) => ({ columns, projectId, data
 			column = `${column} as ${key.alias}`;
 		}
 
-		if (!Array.isArray(tables[key.tableName])) {
-			tables[key.tableName] = [];
+		if (!tables[key.tableName]) {
+			tables[key.tableName] = {
+				activated: [],
+				deactivated: [],
+			};
 		}
 
-		tables[key.tableName].push(column);
+		if (isActivated && !key.isActivated) {
+			tables[key.tableName].deactivated.push(column);
+		} else {
+			tables[key.tableName].activated.push(column);
+		}
 
 		return tables;
 	}, {});
 
 	return Object.keys(keys).map(tableName => {
+		const { deactivated, activated } = keys[tableName];
+		const columns = activated.join(', ') + (deactivated.length ? `/*, ${deactivated.join(', ')}*/` : '');
+
 		return `SELECT ${
-			keys[tableName] ? keys[tableName].join(', ') : '*'
+			columns || '*'
 		} FROM ${
 			getFullName(projectId, datasetName, tableName)
 		}`;
