@@ -107,14 +107,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.info(`Get table rows: "${tableName}"`);
 				log.progress(`Get table rows`, datasetName, tableName);
 
-				const [rows] = await table.getRows({
-					wrapIntegers: {
-						integerTypeCastFunction(n) {
-							return Number(n);
-						}
-					},
-					maxResults: 1,
-				});
+				const [rows] = await bigQueryHelper.getRows(tableName, table, log);
 
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
@@ -199,6 +192,10 @@ const createLogger = ({ title, logger, hiddenKeys }) => {
 			logger.log('info', { message }, title, hiddenKeys);
 		},
 
+		warn(message, context) {
+			logger.log('info', { message: '[warning] ' + message, context }, title, hiddenKeys);
+		},
+
 		progress(message, dbName = '', tableName = '') {
 			logger.progress({ message, containerName: dbName, entityName: tableName });
 		},
@@ -251,7 +248,7 @@ const getTableInfo = ({ _, table, tableName }) => {
 		...getPartitioning(metadata),
 		collectionName,
 		code: metadata.friendlyName ? tableName : '',
-		tableType: metadata.tableType === 'EXTERNAL' ? 'External' : 'Native',
+		tableType: metadata.tableType === 'EXTERNAL' || metadata.type === 'EXTERNAL' ? 'External' : 'Native',
 		description: metadata.description,
 		expiration: metadata.expirationTime ? Number(metadata.expirationTime) : undefined,
 		clusteringKey: metadata.clustering?.fields || [],
