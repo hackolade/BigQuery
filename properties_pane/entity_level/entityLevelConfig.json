@@ -394,6 +394,347 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Table options",
+				"propertyKeyword": "tableOptions",
+				"propertyType": "block",
+				"propertyTooltip": "The option list specifies options for creating the external table.",
+				"structure": [
+					{
+						"propertyName": "Format",
+						"propertyKeyword": "format",
+						"propertyTooltip": "The format of the external data.",
+						"propertyType": "select",
+						"requiredProperty": true,
+						"options": [
+							"",
+							"AVRO",
+							"CSV",
+							"DATASTORE_BACKUP",
+							"GOOGLE_SHEETS",
+							"JSON",
+							"ORC",
+							"PARQUET",
+							"CLOUD_BIGTABLE"
+						]
+					},
+					{
+						"propertyName": "uris",
+						"propertyKeyword": "uris",
+						"propertyTooltip": "An array of fully qualified URIs for the external data locations.",
+						"propertyType": "group",
+						"requiredProperty": true,
+						"structure": [
+							{
+								"propertyName": "uri",
+								"propertyKeyword": "uri",
+								"propertyTooltip": "",
+								"propertyType": "text"
+							}
+						],
+						"dependency": {
+							"type": "not",
+							"values": {
+								"key": "format",
+								"value": "CLOUD_BIGTABLE"
+							}
+						}
+					},
+					{
+						"propertyName": "uris",
+						"propertyKeyword": "bigtableUri",
+						"propertyTooltip": "The URI identifying the Bigtable table to use as a data source.",
+						"propertyType": "details",
+						"template": "textarea",
+						"valueType": "string",
+						"markdown": false,
+						"dependency": {
+							"key": "format",
+							"value": "CLOUD_BIGTABLE"
+						}
+					},
+					{
+						"propertyName": "description",
+						"propertyKeyword": "description",
+						"propertyTooltip": "A description of this table.",
+						"propertyType": "details",
+						"template": "textarea",
+						"valueType": "string"
+					},
+					{
+						"propertyName": "max_staleness",
+						"propertyKeyword": "max_staleness",
+						"propertyTooltip": "Specifies whether cached metadata is used by operations against the table, and how fresh the cached metadata must be in order for the operation to use it.",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "metadata_cache_mode",
+						"propertyKeyword": "metadata_cache_mode",
+						"propertyTooltip": "Specifies whether the metadata cache for the table is refreshed automatically or manually. You must set metadata_cache_mode if max_staleness is set to a value greater than 0.",
+						"propertyType": "select",
+						"options": [
+							"",
+							"AUTOMATIC",
+							"MANUAL"
+						]
+					},
+					{
+						"propertyName": "object_metadata",
+						"propertyKeyword": "object_metadata",
+						"propertyTooltip": "Only required when creating an object table.",
+						"propertyType": "details",
+						"template": "textarea",
+						"valueType": "string",
+						"markdown": false
+					},
+					{
+						"propertyName": "expiration_timestamp",
+						"propertyKeyword": "expiration_timestamp",
+						"propertyTooltip": "The time when this table expires. If not specified, the table does not expire.",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "decimal_target_types",
+						"propertyKeyword": "decimal_target_types",
+						"propertyTooltip": "Determines how to convert a Decimal type.",
+						"propertyType": "group",
+						"structure": [
+							{
+								"propertyName": "value",
+								"propertyKeyword": "value",
+								"propertyTooltip": "",
+								"propertyType": "text"
+							}
+						]
+					},
+					{
+						"propertyName": "allow_quoted_newlines",
+						"propertyKeyword": "allow_quoted_newlines",
+						"propertyTooltip": "If true, allow quoted data sections that contain newline characters in the file.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "allow_jagged_rows",
+						"propertyKeyword": "allow_jagged_rows",
+						"propertyTooltip": "If true, allow rows that are missing trailing optional columns.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "quote",
+						"propertyKeyword": "quote",
+						"propertyTooltip": "The string used to quote data sections in a CSV file. If your data contains quoted newline characters, also set the allow_quoted_newlines property to true.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "skip_leading_rows",
+						"propertyKeyword": "skip_leading_rows",
+						"propertyTooltip": "The number of rows at the top of a file to skip when reading the data.",
+						"propertyType": "numeric",
+						"valueType": "integer",
+						"allowNegative": false,
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "preserve_ascii_control_characters",
+						"propertyKeyword": "preserve_ascii_control_characters",
+						"propertyTooltip": "If true, then the embedded ASCII control characters which are the first 32 characters in the ASCII table, ranging from '\\x00' to '\\x1F', are preserved.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "null_marker",
+						"propertyKeyword": "null_marker",
+						"propertyTooltip": "The string that represents NULL values in a CSV file.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "field_delimiter",
+						"propertyKeyword": "field_delimiter",
+						"propertyTooltip": "The separator for fields in a CSV file.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "encoding",
+						"propertyKeyword": "encoding",
+						"propertyTooltip": "The character encoding of the data. Supported values include: UTF8 (or UTF-8), ISO_8859_1 (or ISO-8859-1).",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "CSV"
+						}
+					},
+					{
+						"propertyName": "ignore_unknown_values",
+						"propertyKeyword": "ignore_unknown_values",
+						"propertyTooltip": "If true, ignore extra values that are not represented in the table schema, without returning an error.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": ["JSON", "CSV"]
+						}
+					},
+					{
+						"propertyName": "compression",
+						"propertyKeyword": "compression",
+						"propertyTooltip": "The compression type of the data source. Supported values include: GZIP. If not specified, the data source is uncompressed.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": ["CSV", "JSON"]
+						}
+					},
+					{
+						"propertyName": "max_bad_records",
+						"propertyKeyword": "max_bad_records",
+						"propertyTooltip": "The maximum number of bad records to ignore when reading the data.",
+						"propertyType": "numeric",
+						"valueType": "integer",
+						"allowNegative": false,
+						"dependency": {
+							"key": "format",
+							"value": ["CSV", "JSON", "GOOGLE_SHEETS"]
+						}
+					},
+					{
+						"propertyName": "require_hive_partition_filter",
+						"propertyKeyword": "require_hive_partition_filter",
+						"propertyTooltip": "If true, all queries over this table require a partition filter that can be used to eliminate partitions when reading data.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": [
+								"AVRO",
+								"CSV",
+								"JSON",
+								"ORC",
+								"PARQUET"
+							]
+						}
+					},
+					{
+						"propertyName": "hive_partition_uri_prefix",
+						"propertyKeyword": "hive_partition_uri_prefix",
+						"propertyTooltip": "A common prefix for all source URIs before the partition key encoding begins. Applies only to hive-partitioned external tables.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": ["JSON", "CSV", "AVRO", "ORC", "PARQUET"]
+						}
+					},
+					{
+						"propertyName": "sheet_range",
+						"propertyKeyword": "sheet_range",
+						"propertyTooltip": "Range of a Google Sheets spreadsheet to query from. Example: sheet1!A1:B20",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "GOOGLE_SHEETS"
+						}
+					},
+					{
+						"propertyName": "reference_file_schema_uri",
+						"propertyKeyword": "reference_file_schema_uri",
+						"propertyTooltip": "User provided reference file with the table schema.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": [
+								"AVRO",
+								"ORC",
+								"PARQUET"
+							]
+						}
+					},
+					{
+						"propertyName": "projection_fields",
+						"propertyKeyword": "projection_fields",
+						"propertyTooltip": "A list of entity properties to load.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "DATASTORE_BACKUP"
+						}
+					},
+					{
+						"propertyName": "json_extension",
+						"propertyKeyword": "json_extension",
+						"propertyTooltip": "For JSON data, indicates a particular JSON interchange format. If not specified, BigQuery reads the data as generic JSON records.",
+						"propertyType": "text",
+						"dependency": {
+							"key": "format",
+							"value": "JSON"
+						}
+					},
+					{
+						"propertyName": "enable_list_inference",
+						"propertyKeyword": "enable_list_inference",
+						"propertyTooltip": "If true, use schema inference specifically for Parquet LIST logical type.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "PARQUET"
+						}
+					},
+					{
+						"propertyName": "enum_as_string",
+						"propertyKeyword": "enum_as_string",
+						"propertyTooltip": "If true, infer Parquet ENUM logical type as STRING instead of BYTES by default.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "PARQUET"
+						}
+					},
+					{
+						"propertyName": "enable_logical_types",
+						"propertyKeyword": "enable_logical_types",
+						"propertyTooltip": "If true, convert Avro logical types into their corresponding SQL types.",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "format",
+							"value": "AVRO"
+						}
+					},
+					{
+						"propertyName": "bigtable_options",
+						"propertyKeyword": "bigtable_options",
+						"propertyTooltip": "Only required when creating a Bigtable external table. Specifies the schema of the Bigtable external table in JSON format.",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"helpUrl": "https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#bigtableoptions",
+						"dependency": {
+							"key": "format",
+							"value": "CLOUD_BIGTABLE"
+						}
+					}
+				]
+			},
+			{
 				"propertyName": "Comments",
 				"propertyKeyword": "comments",
 				"propertyTooltip": "comments",
