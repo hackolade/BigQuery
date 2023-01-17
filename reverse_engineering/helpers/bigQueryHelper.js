@@ -43,11 +43,38 @@ const createBigQueryHelper = (client) => {
 		return dataset;
 	};
 
+	const getRows = async (name, table, logger) => {
+		const wrapIntegers = {
+			integerTypeCastFunction(n) {
+				return Number(n);
+			},
+		};
+
+		if (table.metadata.type !== 'EXTERNAL') {
+			return table.getRows({
+				wrapIntegers,
+				maxResults: 1,
+			});
+		}
+
+		try {
+			return await table.query({
+				query: `SELECT * FROM ${name} LIMIT 1;`,
+				wrapIntegers,
+			});
+		} catch (e) {
+			logger.warn(`There is an issue during getting data from external table ${name}. Error: ${e.message}`, e);
+
+			return [[]];
+		}
+	};
+
 	return {
 		getDatasets,
 		getTables,
 		getProjectInfo,
 		getDataset,
+		getRows,
 	};
 };
 
