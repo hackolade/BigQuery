@@ -254,6 +254,56 @@ const getTableInfo = ({ _, table, tableName }) => {
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
 		labels: getLabels(_, metadata.labels),
+		tableOptions: getExternalOptions(metadata),
+	};
+};
+
+const getExternalOptions = (metadata) => {
+	const options = metadata.externalDataConfiguration || {};
+	const format = ({
+		CSV: 'CSV',
+		GOOGLE_SHEETS: 'GOOGLE_SHEETS',
+		NEWLINE_DELIMITED_JSON: 'JSON',
+		AVRO: 'AVRO',
+		DATASTORE_BACKUP: 'DATASTORE_BACKUP',
+		ORC: 'ORC',
+		PARQUET: 'PARQUET',
+		BIGTABLE: 'CLOUD_BIGTABLE',
+		JSON: 'JSON',
+		CLOUD_BIGTABLE: 'CLOUD_BIGTABLE',
+	})[(options.sourceFormat || '').toUpperCase()] || '';
+	return {
+		format: format,
+		uris: (options.sourceUris || []).map(uri => ({ uri })),
+		bigtableUri: format === 'CLOUD_BIGTABLE' ? (options.sourceUris?.[0] || '') : '',
+		autodetect: options.autodetect,
+		max_staleness: metadata.maxStaleness,
+		metadata_cache_mode: ({
+			AUTOMATIC: 'AUTOMATIC',
+			MANUAL: 'MANUAL',
+		})[(options.metadataCacheMode || '').toUpperCase()] || '',
+		object_metadata: options.objectMetadata || '',
+		decimal_target_types: (options.decimalTargetTypes || []).map(value => ({ value })),
+		allow_quoted_newlines: options.csvOptions?.allowQuotedNewlines,
+		allow_jagged_rows: options.csvOptions?.allowJaggedRows,
+		quote: options.csvOptions?.quote,
+		skip_leading_rows: options.csvOptions?.skipLeadingRows || options.googleSheetsOptions?.skipLeadingRows,
+		preserve_ascii_control_characters: options.csvOptions?.preserveAsciiControlCharacters,
+		null_marker: options.csvOptions?.nullMarker,
+		field_delimiter: options.csvOptions?.fieldDelimiter,
+		encoding: options.csvOptions?.encoding,
+		ignore_unknown_values: options.ignoreUnknownValues,
+		compression: options.compression,
+		max_bad_records: options.maxBadRecords,
+		require_hive_partition_filter: options.hivePartitioningOptions?.requirePartitionFilter,
+		hive_partition_uri_prefix: options.hivePartitioningOptions?.sourceUriPrefix,
+		sheet_range: options.googleSheetsOptions?.range,
+		reference_file_schema_uri: options.referenceFileSchemaUri,
+		enable_list_inference: options.parquetOptions?.enableListInference,
+		enum_as_string: options.parquetOptions?.enumAsString,
+		enable_logical_types: options.avroOptions?.useAvroLogicalTypes,
+		bigtable_options: JSON.stringify(options.bigtableOptions, null, 4),
+		json_extension: options.jsonExtension,
 	};
 };
 

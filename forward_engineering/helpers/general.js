@@ -53,7 +53,7 @@ module.exports = app => {
 			dbOptions.push(`labels=[\n${tab(getLabels(labels))}\n]`);
 		}
 
-		return dbOptions.length ? `OPTIONS(\n${tab(dbOptions.join(',\n'))}\n)` : '';
+		return dbOptions.length ? `\nOPTIONS(\n${tab(dbOptions.join(',\n'))}\n)` : '';
 	};
 
 	const getViewOptions = viewData => {
@@ -86,10 +86,21 @@ module.exports = app => {
 		return options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
 	};
 
+	const cleanObject = (obj) => Object.entries(obj)
+		.filter(([name, value]) => value)
+		.reduce(
+			(result, [name, value]) => ({
+				...result,
+				[name]: value,
+			}),
+			{},
+		);
+
 	return {
 		getLabels,
 		getFullName,
 		getContainerOptions,
 		getViewOptions,
+		cleanObject,
 	};
 };

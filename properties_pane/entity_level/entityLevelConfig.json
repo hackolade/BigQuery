@@ -398,6 +398,10 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "tableOptions",
 				"propertyType": "block",
 				"propertyTooltip": "The option list specifies options for creating the external table.",
+				"dependency": {
+					"key": "tableType",
+					"value": "External"
+				},
 				"structure": [
 					{
 						"propertyName": "Format",
@@ -453,44 +457,10 @@ making sure that you maintain a proper JSON format.
 						}
 					},
 					{
-						"propertyName": "description",
-						"propertyKeyword": "description",
-						"propertyTooltip": "A description of this table.",
-						"propertyType": "details",
-						"template": "textarea",
-						"valueType": "string"
-					},
-					{
-						"propertyName": "max_staleness",
-						"propertyKeyword": "max_staleness",
-						"propertyTooltip": "Specifies whether cached metadata is used by operations against the table, and how fresh the cached metadata must be in order for the operation to use it.",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "metadata_cache_mode",
-						"propertyKeyword": "metadata_cache_mode",
-						"propertyTooltip": "Specifies whether the metadata cache for the table is refreshed automatically or manually. You must set metadata_cache_mode if max_staleness is set to a value greater than 0.",
-						"propertyType": "select",
-						"options": [
-							"",
-							"AUTOMATIC",
-							"MANUAL"
-						]
-					},
-					{
-						"propertyName": "object_metadata",
-						"propertyKeyword": "object_metadata",
-						"propertyTooltip": "Only required when creating an object table.",
-						"propertyType": "details",
-						"template": "textarea",
-						"valueType": "string",
-						"markdown": false
-					},
-					{
-						"propertyName": "expiration_timestamp",
-						"propertyKeyword": "expiration_timestamp",
-						"propertyTooltip": "The time when this table expires. If not specified, the table does not expire.",
-						"propertyType": "text"
+						"propertyName": "autodetect",
+						"propertyKeyword": "autodetect",
+						"propertyTooltip": "Specify whether BigQuery should detect schema automatically.",
+						"propertyType": "checkbox"
 					},
 					{
 						"propertyName": "decimal_target_types",
@@ -545,7 +515,7 @@ making sure that you maintain a proper JSON format.
 						"allowNegative": false,
 						"dependency": {
 							"key": "format",
-							"value": "CSV"
+							"value": ["CSV", "GOOGLE_SHEETS"]
 						}
 					},
 					{
