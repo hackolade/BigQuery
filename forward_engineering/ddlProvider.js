@@ -13,10 +13,10 @@ const {
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
-	const { tab, commentIfDeactivated, hasType } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated, hasType, clean } = app.require('@hackolade/ddl-fe-utils').general;
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 	const _ = app.require('lodash');
-	const { getLabels, getFullName, getContainerOptions, getViewOptions } = require('./helpers/general')(app);
+	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject } = require('./helpers/general')(app);
 
 	return {
 		createDatabase({
@@ -62,6 +62,7 @@ module.exports = (baseProvider, options, app) => {
 				customerEncryptionKey,
 				labels,
 				friendlyName,
+				externalTableOptions,
 			},
 			isActivated,
 		) {
@@ -86,6 +87,7 @@ module.exports = (baseProvider, options, app) => {
 				tab,
 				getLabels,
 			)({
+				externalTableOptions: isExternal ? _.omit(externalTableOptions, 'autodetect') : null,
 				partitioningFilterRequired: isExternal ? false : partitioningFilterRequired,
 				customerEncryptionKey,
 				partitioning,
@@ -101,9 +103,9 @@ module.exports = (baseProvider, options, app) => {
 
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
-				column_definitions: tab(
+				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
 					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n')].filter(Boolean).join('\n'),
-				),
+				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
 				ifNotExist: ifNotExistTable,
@@ -223,6 +225,15 @@ module.exports = (baseProvider, options, app) => {
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const data = entityData[0];
+			const tableOptions = data.tableOptions || {};
+			const uris = (tableOptions.uris || []).map(uri => uri.uri).filter(Boolean);
+			const decimal_target_types = (tableOptions.decimal_target_types || []).map(({ value }) => value);
+			const commonOptions = {
+				format: tableOptions.format,
+				uris: !_.isEmpty(uris) ? uris : undefined,
+				decimal_target_types: !_.isEmpty(decimal_target_types) ? decimal_target_types : undefined,
+				autodetect: tableOptions.autodetect,
+			};
 
 			return {
 				...tableData,
@@ -242,6 +253,82 @@ module.exports = (baseProvider, options, app) => {
 				clusteringKey: data.clusteringKey,
 				customerEncryptionKey: data.encryption ? data.customerEncryptionKey : '',
 				labels: data.labels,
+				externalTableOptions: cleanObject(({
+					AVRO: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'require_hive_partition_filter',
+							'hive_partition_uri_prefix',
+							'reference_file_schema_uri',
+							'enable_logical_types',
+						]),
+					},
+					CSV: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'allow_quoted_newlines',
+							'allow_jagged_rows',
+							'quote',
+							'skip_leading_rows',
+							'preserve_ascii_control_characters',
+							'null_marker',
+							'field_delimiter',
+							'encoding',
+							'ignore_unknown_values',
+							'compression',
+							'max_bad_records',
+							'require_hive_partition_filter',
+							'hive_partition_uri_prefix',
+						]),
+					},
+					DATASTORE_BACKUP: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'projection_fields',
+						]),
+					},
+					GOOGLE_SHEETS: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'max_bad_records',
+							'sheet_range',
+						]),
+					},
+					JSON: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'ignore_unknown_values',
+							'compression',
+							'max_bad_records',
+							'require_hive_partition_filter',
+							'hive_partition_uri_prefix',
+							'json_extension',
+						]),
+					},
+					ORC: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'require_hive_partition_filter',
+							'hive_partition_uri_prefix',
+							'reference_file_schema_uri',
+						]),
+					},
+					PARQUET: {
+						...commonOptions,
+						..._.pick(tableOptions, [
+							'require_hive_partition_filter',
+							'hive_partition_uri_prefix',
+							'reference_file_schema_uri',
+							'enable_list_inference',
+							'enum_as_string',
+						]),
+					},
+					CLOUD_BIGTABLE: {
+						...commonOptions,
+						uris: [tableOptions.bigtableUri],
+						bigtable_options: tableOptions.bigtable_options,
+					},
+				})[tableOptions.format] || {}),
 			};
 		},
 

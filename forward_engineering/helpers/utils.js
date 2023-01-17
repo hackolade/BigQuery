@@ -110,6 +110,7 @@ const getTableOptions = (tab, getLabels) => ({
 	description,
 	labels,
 	friendlyName,
+	externalTableOptions,
 }) => {
 	const options = [];
 
@@ -135,6 +136,35 @@ const getTableOptions = (tab, getLabels) => ({
 
 	if (Array.isArray(labels) && labels.length) {
 		options.push(`labels=[\n${tab(getLabels(labels))}\n]`);
+	}
+
+	if (externalTableOptions) {
+		const stringValues = [
+			'format',
+			'bigtableUri',
+			'quote',
+			'null_marker',
+			'field_delimiter',
+			'encoding',
+			'compression',
+			'sheet_range',
+			'reference_file_schema_uri',
+			'hive_partition_uri_prefix',
+			'projection_fields',
+			'json_extension',
+		];
+		Object.entries(externalTableOptions).forEach(([ key, value ]) => {
+			if (stringValues.includes(key)) {
+				value = `"${escapeQuotes(value)}"`;
+			}
+			if (typeof value === 'boolean') {
+				value = value === true ? 'true' : 'false';
+			}
+			if (Array.isArray(value)) {
+				value = '[\n' + value.map(v => tab(`"${v}"`)).join(',\n') + '\n]';
+			}
+			options.push(`${key}=${value}`);
+		});
 	}
 
 	if (!options.length) {

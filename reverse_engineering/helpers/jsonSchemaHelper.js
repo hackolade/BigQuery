@@ -1,6 +1,6 @@
 
 const createJsonSchema = (schema) => {
-	const properties = getProperties(schema.fields);
+	const properties = getProperties(schema.fields || []);
 
 	return {
 		properties,
