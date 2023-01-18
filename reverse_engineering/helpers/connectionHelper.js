@@ -1,12 +1,12 @@
-const {BigQuery} = require('@google-cloud/bigquery');
+const { BigQuery } = require('@google-cloud/bigquery');
 
 let client = null;
 
-const connect = (connectionInfo) => {
+const connect = connectionInfo => {
 	if (client) {
 		return client;
 	}
-	
+
 	const projectId = connectionInfo.projectId;
 	const keyFilename = connectionInfo.keyFilename;
 	const location = connectionInfo.location;

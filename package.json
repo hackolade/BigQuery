@@ -1,42 +1,43 @@
 {
-    "name": "BigQuery",
-    "version": "0.1.10",
-    "versionDate": "2023-01-17",
-    "author": "hackolade",
-    "engines": {
-        "hackolade": "6.0.2",
-        "hackoladePlugin": "1.2.0"
-    },
-    "contributes": {
-        "target": {
-            "applicationTarget": "BigQuery",
-            "title": "BigQuery Standard SQL",
-            "versions": [
-                "Standard SQL"
-            ]
-        },
-        "features": {
-            "views": {
-                "enabled": true,
-                "viewLevel": "model",
-                "disablePipelines": true
-            },
-            "nestedCollections": false,
-            "disablePatternField": false,
-            "enableForwardEngineering": true,
-            "enableReverseEngineering": true,
-            "disableChoices": true,
-            "enableJsonType": false,
-            "reverseSchemaIntoOneColumn": false,
-            "disableDenormalization": false,
-            "enableComplexTypesNormalization": false,
-            "relationships": {
-                "compositeRelationships": false
-            },
-            "FEScriptCommentsSupported": true,
-            "discoverRelationships": true
-        }
-    },
-    "description": "Hackolade plugin for Google BigQuery Standard SQL",
-    "disabled": false
+	"name": "BigQuery",
+	"version": "0.1.10",
+	"versionDate": "2023-01-17",
+	"author": "hackolade",
+	"engines": {
+		"hackolade": "6.0.2",
+		"hackoladePlugin": "1.2.0"
+	},
+	"contributes": {
+		"target": {
+			"applicationTarget": "BigQuery",
+			"title": "BigQuery Standard SQL",
+			"versions": [
+				"Standard SQL"
+			]
+		},
+		"features": {
+			"views": {
+				"enabled": true,
+				"viewLevel": "model",
+				"disablePipelines": true
+			},
+			"nestedCollections": false,
+			"disablePatternField": false,
+			"enableForwardEngineering": true,
+			"enableReverseEngineering": true,
+			"disableChoices": true,
+			"enableJsonType": true,
+			"useJsonTypesWithComplexTypes": true,
+			"reverseSchemaIntoOneColumn": true,
+			"disableDenormalization": false,
+			"enableComplexTypesNormalization": false,
+			"relationships": {
+				"compositeRelationships": false
+			},
+			"FEScriptCommentsSupported": true,
+			"discoverRelationships": true
+		}
+	},
+	"description": "Hackolade plugin for Google BigQuery Standard SQL",
+	"disabled": false
 }

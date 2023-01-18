@@ -34,7 +34,8 @@
 				"string",
 				"struct",
 				"time",
-				"timestamp"
+				"timestamp",
+				"json"
 			]
 		}
 	}
