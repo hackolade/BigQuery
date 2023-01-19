@@ -35,7 +35,8 @@
 				"compositeRelationships": false
 			},
 			"FEScriptCommentsSupported": true,
-			"discoverRelationships": true
+			"discoverRelationships": true,
+			"disableJsonDataMaxLength": true
 		}
 	},
 	"description": "Hackolade plugin for Google BigQuery Standard SQL",
