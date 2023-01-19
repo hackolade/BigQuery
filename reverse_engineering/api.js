@@ -22,8 +22,13 @@ const connect = (connectionInfo, logger) => {
 
 const testConnection = async (connectionInfo, logger, cb) => {
 	try {
+		const log = createLogger({
+			title: 'Reverse-engineering process',
+			hiddenKeys: connectionInfo.hiddenKeys,
+			logger,
+		});
 		const client = connect(connectionInfo, logger);
-		const bigQueryHelper = createBigQueryHelper(client);
+		const bigQueryHelper = createBigQueryHelper(client, log);
 		await bigQueryHelper.getDatasets();
 
 		cb();
@@ -40,10 +45,15 @@ const disconnect = async (connectionInfo, logger, cb) => {
 const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 	try {
 		const async = app.require('async');
+		const log = createLogger({
+			title: 'Reverse-engineering process',
+			hiddenKeys: connectionInfo.hiddenKeys,
+			logger,
+		});
 		const client = connect(connectionInfo, logger);
-		const bigQueryHelper = createBigQueryHelper(client);
+		const bigQueryHelper = createBigQueryHelper(client, log);
 		const datasets = await bigQueryHelper.getDatasets();
-		const tablesByDataset = await async.mapSeries(datasets, async (dataset) => {
+		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
 			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
@@ -73,13 +83,13 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			hiddenKeys: data.hiddenKeys,
 			logger,
 		});
-		const bigQueryHelper = createBigQueryHelper(client);
+		const bigQueryHelper = createBigQueryHelper(client, log);
 		const project = await bigQueryHelper.getProjectInfo();
 		const recordSamplingSettings = data.recordSamplingSettings;
 
 		const modelInfo = {
 			projectID: project.id,
-			projectName: project.friendlyName, 
+			projectName: project.friendlyName,
 		};
 
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
@@ -92,26 +102,26 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const tables = (data.collectionData.collections[datasetName] || []).filter((item) => !getViewName(item));
+			const tables = (data.collectionData.collections[datasetName] || []).filter(item => !getViewName(item));
 			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
 
-			const collectionPackages = await async.mapSeries(tables, async (tableName) => {
+			const collectionPackages = await async.mapSeries(tables, async tableName => {
 				log.info(`Get table metadata: "${tableName}"`);
 				log.progress(`Get table metadata`, datasetName, tableName);
 
 				const [table] = await dataset.table(tableName).get();
 				const friendlyName = table.metadata.friendlyName;
 				const entityLevelData = getTableInfo({ _, table, tableName });
-				const jsonSchema = createJsonSchema(table.metadata.schema);
 
 				log.info(`Get table rows: "${tableName}"`);
 				log.progress(`Get table rows`, datasetName, tableName);
 
-				const [rows] = await bigQueryHelper.getRows(tableName, table, log);
+				const [rows] = await bigQueryHelper.getRows(tableName, table, recordSamplingSettings);
 
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
 
+				const jsonSchema = createJsonSchema(table.metadata.schema, rows);
 				const documents = convertValue(rows);
 
 				return {
@@ -128,7 +138,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 					bucketInfo,
 				};
 			});
-			const viewsPackages = await async.mapSeries(views, async (viewName) => {
+			const viewsPackages = await async.mapSeries(views, async viewName => {
 				log.info(`Get view metadata: "${viewName}"`);
 				log.progress(`Get view metadata`, datasetName, viewName);
 
@@ -137,7 +147,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 				log.info(`Process view: "${viewName}"`);
 				log.progress(`Process view`, datasetName, viewName);
-				
+
 				const friendlyName = view.metadata.friendlyName;
 
 				const viewJsonSchema = createJsonSchema(view.metadata.schema);
@@ -162,7 +172,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 						clusteringKey: view.metadata.clustering?.fields || [],
 						...getPartitioning(view.metadata),
 						enableRefresh: Boolean(viewData?.enableRefresh),
-						refreshInterval: isNaN(viewData?.refreshIntervalMs) ? '' : Number(viewData?.refreshIntervalMs) / (60 * 1000),
+						refreshInterval: isNaN(viewData?.refreshIntervalMs)
+							? ''
+							: Number(viewData?.refreshIntervalMs) / (60 * 1000),
 					},
 				};
 			});
@@ -201,11 +213,15 @@ const createLogger = ({ title, logger, hiddenKeys }) => {
 		},
 
 		error(error) {
-			logger.log('error', {
-				message: error.message,
-				stack: error.stack,
-			}, title);
-		}
+			logger.log(
+				'error',
+				{
+					message: error.message,
+					stack: error.stack,
+				},
+				title,
+			);
+		},
 	};
 };
 
@@ -221,18 +237,20 @@ const getBucketInfo = ({ _, metadata, datasetName }) => {
 		description: metadata.description || '',
 		labels: getLabels(_, metadata.labels),
 		enableTableExpiration: Boolean(metadata.defaultTableExpirationMs),
-		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs) ? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24) : undefined,
+		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs)
+			? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24)
+			: undefined,
 		...getEncryption(metadata.defaultEncryptionConfiguration),
 	};
 };
 
 const getLabels = (_, labels) => {
-	return _.keys(labels).map((labelKey) => ({ labelKey, labelValue: labels[labelKey] }));
+	return _.keys(labels).map(labelKey => ({ labelKey, labelValue: labels[labelKey] }));
 };
 
-const getViewName = (viewName) => {
+const getViewName = viewName => {
 	const regExp = / \(v\)$/i;
-	
+
 	if (regExp.test(viewName)) {
 		return viewName.replace(regExp, '');
 	}
@@ -258,30 +276,32 @@ const getTableInfo = ({ _, table, tableName }) => {
 	};
 };
 
-const getExternalOptions = (metadata) => {
+const getExternalOptions = metadata => {
 	const options = metadata.externalDataConfiguration || {};
-	const format = ({
-		CSV: 'CSV',
-		GOOGLE_SHEETS: 'GOOGLE_SHEETS',
-		NEWLINE_DELIMITED_JSON: 'JSON',
-		AVRO: 'AVRO',
-		DATASTORE_BACKUP: 'DATASTORE_BACKUP',
-		ORC: 'ORC',
-		PARQUET: 'PARQUET',
-		BIGTABLE: 'CLOUD_BIGTABLE',
-		JSON: 'JSON',
-		CLOUD_BIGTABLE: 'CLOUD_BIGTABLE',
-	})[(options.sourceFormat || '').toUpperCase()] || '';
+	const format =
+		{
+			CSV: 'CSV',
+			GOOGLE_SHEETS: 'GOOGLE_SHEETS',
+			NEWLINE_DELIMITED_JSON: 'JSON',
+			AVRO: 'AVRO',
+			DATASTORE_BACKUP: 'DATASTORE_BACKUP',
+			ORC: 'ORC',
+			PARQUET: 'PARQUET',
+			BIGTABLE: 'CLOUD_BIGTABLE',
+			JSON: 'JSON',
+			CLOUD_BIGTABLE: 'CLOUD_BIGTABLE',
+		}[(options.sourceFormat || '').toUpperCase()] || '';
 	return {
 		format: format,
 		uris: (options.sourceUris || []).map(uri => ({ uri })),
-		bigtableUri: format === 'CLOUD_BIGTABLE' ? (options.sourceUris?.[0] || '') : '',
+		bigtableUri: format === 'CLOUD_BIGTABLE' ? options.sourceUris?.[0] || '' : '',
 		autodetect: options.autodetect,
 		max_staleness: metadata.maxStaleness,
-		metadata_cache_mode: ({
-			AUTOMATIC: 'AUTOMATIC',
-			MANUAL: 'MANUAL',
-		})[(options.metadataCacheMode || '').toUpperCase()] || '',
+		metadata_cache_mode:
+			{
+				AUTOMATIC: 'AUTOMATIC',
+				MANUAL: 'MANUAL',
+			}[(options.metadataCacheMode || '').toUpperCase()] || '',
 		object_metadata: options.objectMetadata || '',
 		decimal_target_types: (options.decimalTargetTypes || []).map(value => ({ value })),
 		allow_quoted_newlines: options.csvOptions?.allowQuotedNewlines,
@@ -307,14 +327,14 @@ const getExternalOptions = (metadata) => {
 	};
 };
 
-const getEncryption = (encryptionConfiguration) => {
+const getEncryption = encryptionConfiguration => {
 	return {
 		encryption: encryptionConfiguration ? 'Customer-managed' : 'Google-managed',
 		customerEncryptionKey: encryptionConfiguration?.kmsKeyName,
 	};
 };
 
-const getPartitioning = (metadata) => {
+const getPartitioning = metadata => {
 	const partitioning = getPartitioningCategory(metadata);
 
 	return {
@@ -326,7 +346,7 @@ const getPartitioning = (metadata) => {
 	};
 };
 
-const getPartitioningCategory = (metadata) => {
+const getPartitioningCategory = metadata => {
 	if (metadata.timePartitioning) {
 		if (metadata.timePartitioning.field) {
 			return 'By time-unit column';
@@ -342,7 +362,7 @@ const getPartitioningCategory = (metadata) => {
 	return 'No partitioning';
 };
 
-const getPartitioningType = (timePartitioning) => {
+const getPartitioningType = timePartitioning => {
 	if (timePartitioning.type === 'HOUR') {
 		return 'By hour';
 	}
@@ -358,46 +378,37 @@ const getPartitioningType = (timePartitioning) => {
 	return 'By day';
 };
 
-const getPartitioningRange = (rangePartitioning) => {
+const getPartitioningRange = rangePartitioning => {
 	if (!rangePartitioning) {
 		return [];
 	}
 
-	return [{
-		rangePartitionKey: [rangePartitioning.field],
-		rangeStart: rangePartitioning.range?.start,
-		rangeEnd: rangePartitioning.range?.end,
-		rangeinterval: rangePartitioning.range?.interval,
-	}];
-};
-
-const getCount = (count, recordSamplingSettings) => {
-	const per = recordSamplingSettings.relative.value;
-	const size = (recordSamplingSettings.active === 'absolute')
-		? recordSamplingSettings.absolute.value
-		: Math.round(count / 100 * per);
-	return size;
+	return [
+		{
+			rangePartitionKey: [rangePartitioning.field],
+			rangeStart: rangePartitioning.range?.start,
+			rangeEnd: rangePartitioning.range?.end,
+			rangeinterval: rangePartitioning.range?.interval,
+		},
+	];
 };
 
 const prepareError = (logger, error) => {
 	const err = {
 		message: error.message,
 		stack: error.stack,
-	};	
+	};
 
 	logger.log('error', err, 'Reverse Engineering error');
 
 	return err;
 };
 
-const convertValue = (value) => {
+const convertValue = value => {
 	if (
-		value instanceof BigQueryDate
-		||
-		value instanceof BigQueryDatetime
-		||
-		value instanceof BigQueryTime
-		||
+		value instanceof BigQueryDate ||
+		value instanceof BigQueryDatetime ||
+		value instanceof BigQueryTime ||
 		value instanceof BigQueryTimestamp
 	) {
 		return value.value;
@@ -420,11 +431,13 @@ const convertValue = (value) => {
 	}
 
 	if (value && typeof value === 'object') {
-		return Object.keys(value)
-			.reduce((result, key) => ({
+		return Object.keys(value).reduce(
+			(result, key) => ({
 				...result,
-				[key]: convertValue(value[key])
-			}),	{});
+				[key]: convertValue(value[key]),
+			}),
+			{},
+		);
 	}
 
 	return value;
@@ -434,25 +447,22 @@ const equalByStructure = (a, b) => {
 	if (!a || !b) {
 		return false;
 	}
-	
+
 	if (a.type !== b.type) {
 		return false;
 	}
 
 	if (
-		(a.properties && !b.properties)
-		||
-		(!a.properties && b.properties)
-		||
-		(!a.items && b.items)
-		||
+		(a.properties && !b.properties) ||
+		(!a.properties && b.properties) ||
+		(!a.items && b.items) ||
 		(a.items && !b.items)
 	) {
 		return false;
 	}
 
 	if (a.properties && b.properties) {
-		return Object.keys(a.properties).every((key) => equalByStructure(a.properties[key], b.properties[key]));
+		return Object.keys(a.properties).every(key => equalByStructure(a.properties[key], b.properties[key]));
 	}
 
 	if (Array.isArray(a.items) && Array.isArray(b.items)) {
@@ -477,9 +487,9 @@ const findViewPropertyByTableProperty = (viewSchema, tableProperty) => {
 const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => {
 	try {
 		const result = parseSelectStatement(viewQuery);
-		const columns = result.selectItems.map((column) => {
+		const columns = result.selectItems.map(column => {
 			return {
-				alias: column.alias, 
+				alias: column.alias,
 				name: column.name || column.fieldReferences[column.fieldReferences.length - 1] || column.alias,
 				table: column.tableName || '',
 			};
@@ -490,37 +500,43 @@ const createViewSchema = ({ viewQuery, tablePackages, viewJsonSchema, log }) => 
 			const tableName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : nameArray[0];
 			const schemaName = nameArray.length > 1 ? nameArray[nameArray.length - 2] : fromItem.schemaName;
 
-			const pack = tablePackages.find(pack => (pack.dbName === schemaName || !schemaName) && (pack.collectionName === tableName));
-	
+			const pack = tablePackages.find(
+				pack => (pack.dbName === schemaName || !schemaName) && pack.collectionName === tableName,
+			);
+
 			if (!pack) {
 				return result;
 			}
-	
-			const tableColumns = columns.filter(column => column.table === tableName || column.table === fromItem.alias || !column.table);
+
+			const tableColumns = columns.filter(
+				column => column.table === tableName || column.table === fromItem.alias || !column.table,
+			);
 			const tableSchema = pack.validation.jsonSchema;
-			const tableProperties = tableColumns.map((column) => {
-				if (!tableSchema.properties[column.name]) {
-					return;
-				}
-				
-				return {
-					...tableSchema.properties[column.name],
-					table: tableName,
-					name: column.name,
-					alias: column.alias,
-				};
-			}).filter(Boolean);
-	
+			const tableProperties = tableColumns
+				.map(column => {
+					if (!tableSchema.properties[column.name]) {
+						return;
+					}
+
+					return {
+						...tableSchema.properties[column.name],
+						table: tableName,
+						name: column.name,
+						alias: column.alias,
+					};
+				})
+				.filter(Boolean);
+
 			return result.concat(tableProperties);
 		}, []);
-	
+
 		return tablesProperties.reduce((resultSchema, property, i) => {
 			const viewProperty = findViewPropertyByTableProperty(resultSchema, property);
-	
+
 			if (!viewProperty) {
 				return resultSchema;
 			}
-	
+
 			return {
 				...resultSchema,
 				properties: {
@@ -544,4 +560,4 @@ module.exports = {
 	testConnection,
 	getDbCollectionsNames,
 	getDbCollectionsData,
-}
+};

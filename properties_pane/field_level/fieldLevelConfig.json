@@ -91,11 +91,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			{
 				"propertyName": "Length",
@@ -114,13 +110,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -148,11 +147,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			{
 				"propertyName": "Length",
@@ -171,13 +166,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -194,11 +192,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -208,13 +202,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			{
@@ -260,11 +257,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -274,13 +267,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			{
@@ -326,11 +322,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -340,13 +332,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -376,11 +371,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -390,13 +381,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -427,11 +421,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			"dependencies",
@@ -450,11 +440,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -464,13 +450,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -492,11 +481,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -506,13 +491,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -534,11 +522,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -548,13 +532,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -576,11 +563,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -590,13 +573,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"dependencies",
@@ -617,11 +603,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			{
@@ -631,13 +613,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"disabledOnCondition": {
 					"type": "or",
-					"values": [{
-						"key": "timeUnitpartitionKey",
-						"value": true
-					}, {
-						"key": "rangePartitionKey",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
 				}
 			},
 			"comments"
@@ -655,11 +640,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Nullable",
-					"Required",
-					"Repeated"
-				]
+				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
 			"dependencies",
@@ -680,10 +661,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Required",
-					"Repeated"
-				]
+				"options": ["Required", "Repeated"]
 			},
 			{
 				"propertyKeyword": "subtype",
@@ -695,6 +673,72 @@ making sure that you maintain a proper JSON format.
 			"maxItems",
 			"uniqueItems",
 			"additionalItems",
+			"comments"
+		],
+		"___3": [],
+		"json": [
+			"name",
+			"code",
+			"sampleName",
+			"schemaId",
+			"type",
+			{
+				"propertyKeyword": "mode",
+				"propertyType": "select",
+				"options": ["json"],
+				"hidden": true
+			},
+			{
+				"propertyName": "JSON Types",
+				"propertyKeyword": "subtype",
+				"propertyType": "select",
+				"options": [
+					{
+						"name": "object",
+						"value": "object"
+					},
+					{
+						"name": "array",
+						"value": "array"
+					},
+					{
+						"name": "string",
+						"value": "string"
+					},
+					{
+						"name": "number",
+						"value": "number"
+					},
+					{
+						"name": "boolean",
+						"value": "boolean"
+					},
+					{
+						"name": "null",
+						"value": "null"
+					}
+				],
+				"defaultValue": "object"
+			},
+			{
+				"propertyName": "Type mode",
+				"propertyKeyword": "dataTypeMode",
+				"shouldValidate": false,
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": ["Nullable", "Required", "Repeated"]
+			},
+			{
+				"propertyName": "JSON Type",
+				"propertyKeyword": "physicalType",
+				"propertyType": "select",
+				"hidden": true
+			},
+			"description",
+			"dependencies",
+			"minProperties",
+			"maxProperties",
+			"additionalProperties",
 			"comments"
 		]
 	}
