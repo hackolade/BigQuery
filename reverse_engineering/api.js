@@ -118,7 +118,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 				const [rows] = await bigQueryHelper.getRows({
 					name: tableName,
-					logger: log,
 					recordSamplingSettings,
 					datasetName,
 					table,

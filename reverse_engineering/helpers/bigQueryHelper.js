@@ -43,7 +43,7 @@ const createBigQueryHelper = (client, log) => {
 		return dataset;
 	};
 
-	const getRows = async ({ name, table, logger, recordSamplingSettings, datasetName }) => {
+	const getRows = async ({ name, table, recordSamplingSettings, datasetName }) => {
 		const numberOfRows = await getTableRowsCount(datasetName, name);
 		const limit = getCount(numberOfRows, recordSamplingSettings);
 
@@ -66,7 +66,7 @@ const createBigQueryHelper = (client, log) => {
 				wrapIntegers,
 			});
 		} catch (e) {
-			logger.warn(`There is an issue during getting data from external table ${name}. Error: ${e.message}`, e);
+			log.warn(`There is an issue during getting data from external table ${name}. Error: ${e.message}`, e);
 
 			return [[]];
 		}
