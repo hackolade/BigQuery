@@ -116,12 +116,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.info(`Get table rows: "${tableName}"`);
 				log.progress(`Get table rows`, datasetName, tableName);
 
-				const [rows] = await bigQueryHelper.getRows({
-					name: tableName,
-					recordSamplingSettings,
-					datasetName,
-					table,
-				});
+				const [rows] = await bigQueryHelper.getRows(tableName, table, recordSamplingSettings);
 
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);

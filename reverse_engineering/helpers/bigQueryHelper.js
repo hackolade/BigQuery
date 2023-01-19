@@ -43,9 +43,8 @@ const createBigQueryHelper = (client, log) => {
 		return dataset;
 	};
 
-	const getRows = async ({ name, table, recordSamplingSettings, datasetName }) => {
-		const numberOfRows = await getTableRowsCount(datasetName, name);
-		const limit = getCount(numberOfRows, recordSamplingSettings);
+	const getRows = async (name, table, recordSamplingSettings) => {
+		const limit = await getLimit(table, name, recordSamplingSettings);
 
 		const wrapIntegers = {
 			integerTypeCastFunction(n) {
@@ -72,10 +71,20 @@ const createBigQueryHelper = (client, log) => {
 		}
 	};
 
-	const getTableRowsCount = async (datasetName, tableName) => {
+	const getLimit = async (table, name, recordSamplingSettings) => {
+		if (recordSamplingSettings.active === 'absolute') {
+			return Number(recordSamplingSettings.absolute.value);
+		}
+
+		const numberOfRows = await getTableRowsCount(table, name);
+
+		return Math.round((numberOfRows / 100) * recordSamplingSettings.relative.value);
+	};
+
+	const getTableRowsCount = async (table, name) => {
 		try {
-			const [result] = await client.query({
-				query: `SELECT COUNT(*) AS rows_count FROM \`${datasetName}.${tableName}\``,
+			const [result] = await table.query({
+				query: `SELECT COUNT(*) AS rows_count FROM ${name}`,
 			});
 
 			return result[0]?.rows_count || 1000;
@@ -84,15 +93,6 @@ const createBigQueryHelper = (client, log) => {
 
 			return 1000;
 		}
-	};
-
-	const getCount = (count, recordSamplingSettings) => {
-		const per = recordSamplingSettings.relative.value;
-		const size =
-			recordSamplingSettings.active === 'absolute'
-				? recordSamplingSettings.absolute.value
-				: Math.round((count / 100) * per);
-		return size;
 	};
 
 	return {
