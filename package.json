@@ -4,7 +4,7 @@
 	"versionDate": "2023-01-17",
 	"author": "hackolade",
 	"engines": {
-		"hackolade": "6.0.2",
+		"hackolade": "6.8.4",
 		"hackoladePlugin": "1.2.0"
 	},
 	"contributes": {
@@ -22,7 +22,7 @@
 				"disablePipelines": true
 			},
 			"nestedCollections": false,
-			"disablePatternField": false,
+			"disablePatternField": true,
 			"enableForwardEngineering": true,
 			"enableReverseEngineering": true,
 			"disableChoices": true,
@@ -36,7 +36,8 @@
 			},
 			"FEScriptCommentsSupported": true,
 			"discoverRelationships": true,
-			"disableJsonDataMaxLength": true
+			"disableJsonDataMaxLength": true,
+			"disableMultipleTypes": true
 		}
 	},
 	"description": "Hackolade plugin for Google BigQuery Standard SQL",
