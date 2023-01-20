@@ -45,4 +45,7 @@ module.exports = {
 	TIMESTAMP: {
 		format: 'YYYY-MM-DD hh:mm:ss.nnnnnnZ',
 	},
+	JSON: {
+		format: 'semi-structured',
+	},
 };
