@@ -30,7 +30,6 @@
 			"useJsonTypesWithComplexTypes": true,
 			"reverseSchemaIntoOneColumn": true,
 			"disableDenormalization": false,
-			"enableComplexTypesNormalization": false,
 			"relationships": {
 				"compositeRelationships": false
 			},
