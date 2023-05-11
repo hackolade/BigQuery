@@ -7,8 +7,7 @@
 	"jsonType": {
 		"order": 1,
 		"name": "json",
-		"jsonRoot": true,
-		"source": true
+		"jsonRoot": true
 	},
 	"defaultValues": {
 		"mode": "json",
