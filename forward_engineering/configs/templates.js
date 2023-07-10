@@ -4,7 +4,7 @@ module.exports = {
 	createTable:
 		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
-	columnDefinition: '${name}${type}${notNull}${options}',
+	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
 
 	createView:
 		'CREATE ${orReplace}${materialized}VIEW ${ifNotExist}${name}${columns}${partitions}${clustering}${options} AS ${selectStatement};\n',
