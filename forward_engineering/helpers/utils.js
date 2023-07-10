@@ -287,7 +287,6 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 		notNull = ' NOT NULL';
 	}
 
-	debugger
 	return assignTemplates(templates.columnDefinition, {
 		name,
 		type: dataType,
