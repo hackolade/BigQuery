@@ -5,6 +5,35 @@ const createBigQueryHelper = (client, log) => {
 		return datasets;
 	};
 
+	const getConstraints = async (projectId, datasetId) => {
+		try {
+			return await client.query({
+				query: `SELECT * FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS;`
+			})
+		} catch (error) {
+			log.warn('Error while getting table constraints', error)
+		}
+	}
+
+	const getColumnsToConstraints = async (projectId, datasetId) => {
+		try {
+			return await client.query({
+				query: `SELECT * FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE;`
+			})
+		} catch (error) {
+			log.warn('Error while getting table constraints', error)
+		}
+	}
+
+	const getConstraintsData = async (projectId, datasetId) => {
+		const constraints = (await getConstraints(projectId, datasetId)).flat();
+		const columnsToConstraints = (await getColumnsToConstraints(projectId, datasetId)).flat();
+		return columnsToConstraints.map(columnsToConstraintDto => {
+			const constraint = constraints.find(({constraint_name}) => constraint_name === columnsToConstraintDto.constraint_name);
+			return {...columnsToConstraintDto, ...constraint}
+		})
+	}
+
 	const getTables = async datasetId => {
 		const [tables] = await client.dataset(datasetId).getTables();
 
@@ -102,6 +131,7 @@ const createBigQueryHelper = (client, log) => {
 		getDataset,
 		getRows,
 		getTableRowsCount,
+		getConstraintsData
 	};
 };
 
