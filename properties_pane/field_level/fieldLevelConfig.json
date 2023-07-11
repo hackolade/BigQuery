@@ -159,25 +159,6 @@ making sure that you maintain a proper JSON format.
 				"typeDecorator": true
 			},
 			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						}
-					]
-				}
-			},
 			"dependencies",
 			"comments"
 		],
@@ -374,25 +355,6 @@ making sure that you maintain a proper JSON format.
 				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						}
-					]
-				}
-			},
 			"dependencies",
 			"foreignCollection",
 			"foreignField",
@@ -424,6 +386,25 @@ making sure that you maintain a proper JSON format.
 				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
+			{
+				"propertyName": "Primary key",
+				"propertyKeyword": "primaryKey",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"disabledOnCondition": {
+					"type": "or",
+					"values": [
+						{
+							"key": "timeUnitpartitionKey",
+							"value": true
+						},
+						{
+							"key": "rangePartitionKey",
+							"value": true
+						}
+					]
+				}
+			},
 			"dependencies",
 			"comments"
 		],
@@ -484,25 +465,6 @@ making sure that you maintain a proper JSON format.
 				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						}
-					]
-				}
-			},
 			"dependencies",
 			"pattern",
 			"default",
@@ -606,25 +568,6 @@ making sure that you maintain a proper JSON format.
 				"options": ["Nullable", "Required", "Repeated"]
 			},
 			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						}
-					]
-				}
-			},
 			"comments"
 		],
 		"___2": [],

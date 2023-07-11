@@ -249,6 +249,7 @@ const addParameters = (type, jsonSchema) => {
 const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, jsonSchema }, isArrayItem) => {
 	const { assignTemplates, tab, templates } = deps;
 	let dataType = type;
+	let primaryKey = jsonSchema.primaryKey ? ' PRIMARY KEY NOT ENFORCED' : '';
 	let options = '';
 	let notNull = '';
 
@@ -287,10 +288,11 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 	}
 
 	return assignTemplates(templates.columnDefinition, {
-		type: dataType,
-		options,
-		notNull,
 		name,
+		type: dataType,
+		primaryKey,
+		notNull,
+		options,
 	});
 };
 

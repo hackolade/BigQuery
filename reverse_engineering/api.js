@@ -3,6 +3,7 @@
 const connectionHelper = require('./helpers/connectionHelper');
 const createBigQueryHelper = require('./helpers/bigQueryHelper');
 const { createJsonSchema } = require('./helpers/jsonSchemaHelper');
+const { injectConstraintsIntoTable } = require('./helpers/constraintsHelper')
 const {
 	BigQueryDate,
 	BigQueryDatetime,
@@ -105,6 +106,10 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const tables = (data.collectionData.collections[datasetName] || []).filter(item => !getViewName(item));
 			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
 
+			const constraintsData = await bigQueryHelper.getConstraintsData(project.id, datasetName)
+			log.info(`Getting dataset constraints "${datasetName}"`);
+			log.progress(`Getting dataset constraints "${datasetName}"`, datasetName);
+
 			const collectionPackages = await async.mapSeries(tables, async tableName => {
 				log.info(`Get table metadata: "${tableName}"`);
 				log.progress(`Get table metadata`, datasetName, tableName);
@@ -117,11 +122,13 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.progress(`Get table rows`, datasetName, tableName);
 
 				const [rows] = await bigQueryHelper.getRows(tableName, table, recordSamplingSettings);
-
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
-
-				const jsonSchema = createJsonSchema(table.metadata.schema, rows);
+				const rawJsonSchema = createJsonSchema(table.metadata.schema, rows);
+				const jsonSchema = {
+					...rawJsonSchema,
+					properties: injectConstraintsIntoTable(dataset.id, tableName, rawJsonSchema.properties, constraintsData)
+				}
 				const documents = convertValue(rows);
 
 				return {
