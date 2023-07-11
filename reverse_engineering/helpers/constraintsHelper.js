@@ -12,9 +12,12 @@ const primaryKeyConstraintIntoPropertyInjector = (property, constraintData) => {
 
 const constraintsInjectors = [primaryKeyConstraintIntoPropertyInjector]
 
-const injectConstraintsIntoTable = (properties, constraintsData) => {
+const injectConstraintsIntoTable = (datasetId, tableName, properties, constraintsData) => {
 	return Object.fromEntries(Object.entries(properties).map(([propertyName, propertyValue]) => {
-		const propertyConstraintData = constraintsData.find(({column_name}) => column_name === propertyName)
+		const propertyConstraintData = constraintsData.find(({table_schema, table_name, column_name}) => 
+        table_schema === datasetId && 
+        table_name === tableName && 
+        column_name === propertyName)
 
 		if (!propertyConstraintData) {
 			return [propertyName, propertyValue]

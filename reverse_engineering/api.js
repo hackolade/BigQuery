@@ -127,7 +127,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				const rawJsonSchema = createJsonSchema(table.metadata.schema, rows);
 				const jsonSchema = {
 					...rawJsonSchema,
-					properties: injectConstraintsIntoTable(rawJsonSchema.properties, constraintsData)
+					properties: injectConstraintsIntoTable(dataset.id, tableName, rawJsonSchema.properties, constraintsData)
 				}
 				const documents = convertValue(rows);
 
