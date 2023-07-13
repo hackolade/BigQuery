@@ -249,7 +249,7 @@ const addParameters = (type, jsonSchema) => {
 const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, jsonSchema }, isArrayItem) => {
 	const { assignTemplates, tab, templates } = deps;
 	let dataType = type;
-	let primaryKey = jsonSchema.primaryKey ? ' PRIMARY KEY NOT ENFORCED' : '';
+	let primaryKey = jsonSchema.primaryKey && !jsonSchema.compositePrimaryKey ? ' PRIMARY KEY NOT ENFORCED' : '';
 	let options = '';
 	let notNull = '';
 
