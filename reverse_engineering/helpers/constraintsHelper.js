@@ -1,4 +1,4 @@
-const primaryKeyConstraintIntoPropertyInjector = (property, constraintData) => ({isConstraintComposed, constraintType}) =>  {
+const primaryKeyConstraintIntoPropertyInjector = (property) => ({isConstraintComposed, constraintType}) =>  {
     if (constraintType !== 'PRIMARY KEY') {
         return property
     }

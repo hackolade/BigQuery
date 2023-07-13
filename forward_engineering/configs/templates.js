@@ -2,7 +2,7 @@ module.exports = {
 	createDatabase: 'CREATE SCHEMA${ifNotExist} ${name}${dbOptions};\n',
 
 	createTable:
-		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${primaryKeyConstraint}${partitions}${clustering}${options};\n',
+		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
 	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
 

@@ -102,8 +102,7 @@ module.exports = (baseProvider, options, app) => {
 			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
-			const [compositePK] = primaryKey
-			const compositePkFieldsNamesList = compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName)
+			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
 			const compositePrimaryKeyOutlineConstraint = `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
