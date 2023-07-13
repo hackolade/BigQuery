@@ -118,6 +118,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -191,6 +206,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -256,6 +286,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -321,6 +366,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -401,6 +461,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -439,6 +514,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -502,6 +592,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}
@@ -543,6 +648,21 @@ making sure that you maintain a proper JSON format.
 						{
 							"key": "rangePartitionKey",
 							"value": true
+						},
+						{
+							"key": "compositePrimaryKey",
+							"value": true
+						}
+					]
+				},
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true 
+							}
 						}
 					]
 				}

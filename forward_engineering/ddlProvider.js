@@ -63,6 +63,7 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 				friendlyName,
 				externalTableOptions,
+				primaryKey
 			},
 			isActivated,
 		) {
@@ -101,10 +102,12 @@ module.exports = (baseProvider, options, app) => {
 			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
+			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
+			const compositePrimaryKeyOutlineConstraint = `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n')].filter(Boolean).join('\n'),
+					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint].filter(Boolean).join('\n'),
 				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
@@ -225,6 +228,7 @@ module.exports = (baseProvider, options, app) => {
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const data = entityData[0];
+			const primaryKey = entityData[1].primaryKey
 			const tableOptions = data.tableOptions || {};
 			const uris = (tableOptions.uris || []).map(uri => uri.uri).filter(Boolean);
 			const decimal_target_types = (tableOptions.decimal_target_types || []).map(({ value }) => value);
@@ -253,6 +257,7 @@ module.exports = (baseProvider, options, app) => {
 				clusteringKey: data.clusteringKey,
 				customerEncryptionKey: data.encryption ? data.customerEncryptionKey : '',
 				labels: data.labels,
+				primaryKey,
 				externalTableOptions: cleanObject(({
 					AVRO: {
 						...commonOptions,

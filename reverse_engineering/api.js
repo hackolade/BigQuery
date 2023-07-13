@@ -116,7 +116,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 				const [table] = await dataset.table(tableName).get();
 				const friendlyName = table.metadata.friendlyName;
-				const entityLevelData = getTableInfo({ _, table, tableName });
 
 				log.info(`Get table rows: "${tableName}"`);
 				log.progress(`Get table rows`, datasetName, tableName);
@@ -125,16 +124,17 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
 				const rawJsonSchema = createJsonSchema(table.metadata.schema, rows);
+				const { propertiesWithInjectedConstraints, primaryKey } = injectConstraintsIntoTable({datasetId: dataset.id, properties: rawJsonSchema.properties, tableName, constraintsData})
 				const jsonSchema = {
 					...rawJsonSchema,
-					properties: injectConstraintsIntoTable(dataset.id, tableName, rawJsonSchema.properties, constraintsData)
+					properties: propertiesWithInjectedConstraints,
 				}
 				const documents = convertValue(rows);
 
 				return {
 					dbName: bucketInfo.name,
 					collectionName: friendlyName || tableName,
-					entityLevel: entityLevelData,
+					entityLevel: {...getTableInfo({ _, table, tableName }), primaryKey},
 					documents: documents,
 					standardDoc: documents[0],
 					views: [],
