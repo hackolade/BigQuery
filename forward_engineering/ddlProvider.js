@@ -228,7 +228,7 @@ module.exports = (baseProvider, options, app) => {
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const data = entityData[0];
-			const primaryKey = entityData[1].primaryKey
+			const primaryKey = entityData[1]?.primaryKey ?? []
 			const tableOptions = data.tableOptions || {};
 			const uris = (tableOptions.uris || []).map(uri => uri.uri).filter(Boolean);
 			const decimal_target_types = (tableOptions.decimal_target_types || []).map(({ value }) => value);
