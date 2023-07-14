@@ -103,12 +103,13 @@ module.exports = (baseProvider, options, app) => {
 			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
+			const foreignKeysConstraintsStatements = foreignKeyConstraints.map(({statement}) => statement)
 			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
 			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint, foreignKeyConstraints.map(({statement}) => statement)].filter(Boolean).join('\n'),
+					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint, foreignKeysConstraintsStatements].filter(script => script.length).join('\n'),
 				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
