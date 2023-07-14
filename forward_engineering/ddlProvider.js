@@ -103,7 +103,7 @@ module.exports = (baseProvider, options, app) => {
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
 			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
-			const compositePrimaryKeyOutlineConstraint = `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`
+			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
