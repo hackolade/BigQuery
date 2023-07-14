@@ -6,6 +6,9 @@ module.exports = {
 
 	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
 
+	createForeignKeyConstraint:
+		'CONSTRAINT ${name} FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
+
 	createView:
 		'CREATE ${orReplace}${materialized}VIEW ${ifNotExist}${name}${columns}${partitions}${clustering}${options} AS ${selectStatement};\n',
 

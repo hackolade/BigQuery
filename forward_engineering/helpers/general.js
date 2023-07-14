@@ -86,6 +86,31 @@ module.exports = app => {
 		return options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
 	};
 
+	const foreignKeysToString = keys => {
+		if (Array.isArray(keys)) {
+			const activatedKeys = keys
+				.filter(key => _.get(key, 'isActivated', true))
+				.map(key => key.name.trim());
+			const deactivatedKeys = keys
+				.filter(key => !_.get(key, 'isActivated', true))
+				.map(key => key.name.trim());
+			const deactivatedKeysAsString = deactivatedKeys.length
+				? commentIfDeactivated(deactivatedKeys, { isActivated: false }, true)
+				: '';
+
+			return activatedKeys.join(', ') + deactivatedKeysAsString;
+		}
+		return keys;
+	};
+
+	const foreignActiveKeysToString = keys => {
+		return keys.map(key => key.name.trim()).join(', ');
+	};
+
+	const getTableName = ({tableName, datasetName}) => {
+		return `${datasetName}.${tableName}`
+	}
+
 	const cleanObject = (obj) => Object.entries(obj)
 		.filter(([name, value]) => value)
 		.reduce(
@@ -102,5 +127,8 @@ module.exports = app => {
 		getContainerOptions,
 		getViewOptions,
 		cleanObject,
+		foreignKeysToString,
+		foreignActiveKeysToString,
+		getTableName
 	};
 };
