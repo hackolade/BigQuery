@@ -107,7 +107,13 @@ const createBigQueryHelper = (client, log) => {
 
 		const numberOfRows = await getTableRowsCount(table, name);
 
-		return Math.round((numberOfRows / 100) * recordSamplingSettings.relative.value);
+		return getSampleDocSize(numberOfRows, recordSamplingSettings);
+	};
+
+	const getSampleDocSize = (count, recordSamplingSettings) => {
+		const limit = Math.ceil((count * recordSamplingSettings.relative.value) / 100);
+
+		return Math.min(limit, recordSamplingSettings.maxValue);
 	};
 
 	const getTableRowsCount = async (table, name) => {
