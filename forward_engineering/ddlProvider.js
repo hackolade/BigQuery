@@ -9,6 +9,7 @@ const {
 	getColumnSchema,
 	generateViewSelectStatement,
 	escapeQuotes,
+	wrapStatementWithComma
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -109,7 +110,7 @@ module.exports = (baseProvider, options, app) => {
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint, foreignKeysConstraintsStatements].filter(script => script.length).join('\n'),
+					[wrapStatementWithComma(activatedColumns.join(',\n')), wrapStatementWithComma(deActivatedColumns.join(',\n')), wrapStatementWithComma(compositePrimaryKeyOutlineConstraint), foreignKeysConstraintsStatements.join(',\n')].filter(script => script.length).join('\n'),
 				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,

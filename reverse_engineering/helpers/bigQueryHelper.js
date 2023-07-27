@@ -5,20 +5,41 @@ const createBigQueryHelper = (client, log) => {
 		return datasets;
 	};
 
-	const getConstraints = async (projectId, datasetId) => {
+	const getPrimaryKeyConstraintsData = async (projectId, datasetId) => {
 		try {
 			return await client.query({
-				query: `SELECT * FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS;`
+				query: `SELECT * 
+				FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU
+				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
+				USING(constraint_name)
+				WHERE TC.constraint_type = "PRIMARY KEY";`
 			})
 		} catch (error) {
 			log.warn('Error while getting table constraints', error)
 		}
 	}
 
-	const getColumnsToConstraints = async (projectId, datasetId) => {
+	const getForeignKeyConstraintsData = async (projectId, datasetId) => {
 		try {
 			return await client.query({
-				query: `SELECT * FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE;`
+				query: `SELECT 
+				CCU.column_name as \`parent_column\`,
+				KCU.column_name as \`child_column\`,
+				TC.constraint_catalog, 
+				TC.constraint_name, 
+				TC.constraint_schema, 
+				TC.constraint_type, 
+				TC.table_catalog,
+				CCU.table_schema as \`parent_schema\`,
+				KCU.table_schema as \`child_schema\`,
+				CCU.table_name as \`parent_table\`,
+				KCU.table_name as \`child_table\`
+				FROM (${projectId}.${datasetId}.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS CCU 
+				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU
+				USING(constraint_name)) 
+				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
+				USING(constraint_name)
+				WHERE TC.constraint_type = "FOREIGN KEY";`
 			})
 		} catch (error) {
 			log.warn('Error while getting table constraints', error)
@@ -26,12 +47,11 @@ const createBigQueryHelper = (client, log) => {
 	}
 
 	const getConstraintsData = async (projectId, datasetId) => {
-		const constraints = (await getConstraints(projectId, datasetId)).flat();
-		const columnsToConstraints = (await getColumnsToConstraints(projectId, datasetId)).flat();
-		return columnsToConstraints.map(columnsToConstraintDto => {
-			const constraint = constraints.find(({constraint_name}) => constraint_name === columnsToConstraintDto.constraint_name);
-			return {...columnsToConstraintDto, ...constraint}
-		})
+		const primaryKeyConstraintsData = (await getPrimaryKeyConstraintsData(projectId, datasetId)).flat()
+		const foreignKeyConstraintsData = (await getForeignKeyConstraintsData(projectId, datasetId)).flat()
+		return {
+			primaryKeyConstraintsData, foreignKeyConstraintsData
+		}
 	}
 
 	const getTables = async datasetId => {

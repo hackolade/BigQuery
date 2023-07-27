@@ -3,7 +3,7 @@
 const connectionHelper = require('./helpers/connectionHelper');
 const createBigQueryHelper = require('./helpers/bigQueryHelper');
 const { createJsonSchema } = require('./helpers/jsonSchemaHelper');
-const { injectConstraintsIntoTable } = require('./helpers/constraintsHelper')
+const { injectPrimaryKeyConstraintsIntoTable, reverseForeignKeys } = require('./helpers/constraintsHelper')
 const {
 	BigQueryDate,
 	BigQueryDatetime,
@@ -93,6 +93,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			projectName: project.friendlyName,
 		};
 
+		let relationships = []
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
 			log.info(`Process dataset "${datasetName}"`);
 			log.progress(`Process dataset "${datasetName}"`, datasetName);
@@ -106,7 +107,10 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const tables = (data.collectionData.collections[datasetName] || []).filter(item => !getViewName(item));
 			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
 
-			const constraintsData = await bigQueryHelper.getConstraintsData(project.id, datasetName)
+			const {
+				primaryKeyConstraintsData, foreignKeyConstraintsData
+			} = await bigQueryHelper.getConstraintsData(project.id, datasetName)
+			relationships = foreignKeyConstraintsData ? reverseForeignKeys(foreignKeyConstraintsData) : []
 			log.info(`Getting dataset constraints "${datasetName}"`);
 			log.progress(`Getting dataset constraints "${datasetName}"`, datasetName);
 
@@ -124,7 +128,15 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
 				const rawJsonSchema = createJsonSchema(table.metadata.schema, rows);
-				const { propertiesWithInjectedConstraints, primaryKey } = injectConstraintsIntoTable({datasetId: dataset.id, properties: rawJsonSchema.properties, tableName, constraintsData})
+				const { propertiesWithInjectedConstraints, primaryKey } = 
+				injectPrimaryKeyConstraintsIntoTable(
+						{
+							datasetId: dataset.id, 
+							properties: rawJsonSchema.properties, 
+							tableName, 
+							constraintsData: primaryKeyConstraintsData
+						}
+					)
 				const jsonSchema = {
 					...rawJsonSchema,
 					properties: propertiesWithInjectedConstraints,
@@ -199,7 +211,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			return result;
 		});
 
-		cb(null, packages, modelInfo);
+		cb(null, packages, modelInfo, relationships);
 	} catch (err) {
 		cb(prepareError(logger, err));
 	}

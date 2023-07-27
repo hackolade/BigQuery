@@ -1,4 +1,4 @@
-const primaryKeyConstraintIntoPropertyInjector = (property) => ({isConstraintComposed, constraintType}) =>  {
+const primaryKeyConstraintIntoPropertyInjector = (property, propertyConstraintData) => ({isConstraintComposed, constraintType}) =>  {
     if (constraintType !== 'PRIMARY KEY') {
         return property
     }
@@ -19,43 +19,35 @@ const primaryKeyConstraintIntoPropertyInjector = (property) => ({isConstraintCom
 
 const constraintsInjectors = [primaryKeyConstraintIntoPropertyInjector]
 
-const injectConstraintsIntoTable = ({datasetId, tableName, properties, constraintsData}) => {
+const injectPrimaryKeyConstraintsIntoTable = ({datasetId, tableName, properties, constraintsData}) => {
     let primaryKey = []
 	const propertiesWithInjectedConstraints = Object.fromEntries(Object.entries(properties).map(([propertyName, propertyValue]) => {
-		const propertyConstraintData = constraintsData.find(({table_schema, table_name, column_name}) => 
+		const propertyPKConstraintData = constraintsData.find(({table_schema, table_name, column_name}) => 
         table_schema === datasetId && 
         table_name === tableName && 
         column_name === propertyName)
 
-		if (!propertyConstraintData) {
+		if (!propertyPKConstraintData) {
 			return [propertyName, propertyValue]
 		}
         const propertiesByConstraints = groupPropertiesByConstraints(constraintsData)
-        const constraintName = propertyConstraintData.constraint_name
-        const constraintType = propertyConstraintData.constraint_type
+        const constraintName = propertyPKConstraintData.constraint_name
+        const constraintType = propertyPKConstraintData.constraint_type
         const isConstraintComposed = propertiesByConstraints[constraintName].length > 1
 
         if (constraintType === 'PRIMARY KEY' && isConstraintComposed) {
-            const composedPkToUpdate = primaryKey.find(({name}) => name === constraintName)
-            if (composedPkToUpdate) {
-                const newPrimaryKey = primaryKey.filter(({name}) => name !== constraintName)
-                const newCompositePk = {...composedPkToUpdate, compositePrimaryKey: [...composedPkToUpdate.compositePrimaryKey, propertyName]}
-                primaryKey = [...newPrimaryKey, newCompositePk]
-            } else {
-                primaryKey = [...primaryKey, {name: constraintName, compositePrimaryKey: [{name: propertyName}]}]
-            }
-            
+            primaryKey = getCompositePrimaryKeyFieldModelData({primaryKey, constraintName, propertyName})
         }
 
 		const newPropertyValue = constraintsInjectors.reduce((propertyWithInjectedConstraints, injector) => {
-            return injector(propertyWithInjectedConstraints, propertyConstraintData)({isConstraintComposed, constraintType})
+            return injector(propertyWithInjectedConstraints, propertyPKConstraintData)({isConstraintComposed, constraintType})
         }, propertyValue)
         return [propertyName, newPropertyValue]
 	}))
 
     return {
         propertiesWithInjectedConstraints,
-        primaryKey: primaryKey.map(pk => ({compositePrimaryKey: pk.compositePrimaryKey}))
+        primaryKey: primaryKey.map(pk => ({compositePrimaryKey: pk.compositePrimaryKey})),
     }
 }
 
@@ -71,6 +63,57 @@ const groupPropertiesByConstraints = (constraintsData) => {
     return propertiesByConstraints
 }
 
+const getCompositePrimaryKeyFieldModelData = ({primaryKey, constraintName, propertyName}) => {
+    const composedPkToUpdate = primaryKey.find(({name}) => name === constraintName)
+    if (composedPkToUpdate) {
+        const newPrimaryKey = primaryKey.filter(({name}) => name !== constraintName)
+        const newCompositePk = {...composedPkToUpdate, compositePrimaryKey: [...composedPkToUpdate.compositePrimaryKey, propertyName]}
+        return [...newPrimaryKey, newCompositePk]
+    } else {
+        return [...primaryKey, {name: constraintName, compositePrimaryKey: [{name: propertyName}]}]
+    }
+}
+
+const getConstraintBusinessName = (constraintNameFromCloud) => {
+    const [constraintChildTableName, constraintBusinessName] = constraintNameFromCloud.split('.')
+    return constraintBusinessName
+}
+
+const reverseForeignKeys = (foreignKeyConstraintsData) => {
+    let constraints = []
+    foreignKeyConstraintsData.forEach(fkConstraintData => {
+        const constraintNameToUse = getConstraintBusinessName(fkConstraintData.constraint_name)
+        const constraintInList = constraints.find(({relationshipName}) => relationshipName === constraintNameToUse)
+        const {parent_column, child_column} = fkConstraintData
+        if (constraintInList) {
+            const isParentAdded = constraintInList.parentField.includes(parent_column)
+            const isChildAdded = constraintInList.childField.includes(child_column)
+            const newConstraintData = {
+                ...constraintInList, 
+                childField: isChildAdded ? constraintInList.childField : [...constraintInList.childField, child_column],
+                parentField: isParentAdded ? constraintInList.parentField : [...constraintInList.parentField, parent_column]
+            }
+            constraints = [...constraints.filter(({relationshipName}) => relationshipName !== constraintNameToUse), newConstraintData]
+        } else {
+            constraints = [...constraints, 
+                {
+                    relationshipName: constraintNameToUse, 
+                    relationshipType: 'Foreign Key',
+                    childDbName: fkConstraintData.child_schema,
+                    childCollection: fkConstraintData.child_table,
+                    childField: [fkConstraintData.child_column],
+                    dbName: fkConstraintData.parent_schema,
+                    parentCollection: fkConstraintData.parent_table,
+                    parentField: [fkConstraintData.parent_column],
+                    relationshipInfo: {}
+                }
+            ]
+        }
+    })
+    return constraints
+}
+
 module.exports = {
-    injectConstraintsIntoTable
+    injectPrimaryKeyConstraintsIntoTable,
+    reverseForeignKeys
 }
