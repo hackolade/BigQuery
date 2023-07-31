@@ -28,6 +28,18 @@
 			"schema": {},
 			"capacity": 32,
 			"mode": "decimal"
+		},
+		{
+			"schema": {
+				"mode": "bignumeric"
+			},
+			"mode": "smallint"
+		},
+		{
+			"schema": {
+				"mode": "bignumeric"
+			},
+			"mode": "integer"
 		}
 	]
 }
