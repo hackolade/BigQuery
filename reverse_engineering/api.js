@@ -92,8 +92,8 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			projectID: project.id,
 			projectName: project.friendlyName,
 		};
-
 		let relationships = []
+
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
 			log.info(`Process dataset "${datasetName}"`);
 			log.progress(`Process dataset "${datasetName}"`, datasetName);
@@ -110,7 +110,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
 			} = await bigQueryHelper.getConstraintsData(project.id, datasetName)
-			relationships = foreignKeyConstraintsData ? reverseForeignKeys(foreignKeyConstraintsData) : []
+			const newRelationships = foreignKeyConstraintsData ? reverseForeignKeys(foreignKeyConstraintsData) : []
+			relationships = [...relationships, ...newRelationships]
+			
 			log.info(`Getting dataset constraints "${datasetName}"`);
 			log.progress(`Getting dataset constraints "${datasetName}"`, datasetName);
 

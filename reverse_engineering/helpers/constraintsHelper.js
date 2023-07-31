@@ -95,19 +95,18 @@ const reverseForeignKeys = (foreignKeyConstraintsData) => {
             }
             constraints = [...constraints.filter(({relationshipName}) => relationshipName !== constraintNameToUse), newConstraintData]
         } else {
-            constraints = [...constraints, 
-                {
-                    relationshipName: constraintNameToUse, 
-                    relationshipType: 'Foreign Key',
-                    childDbName: fkConstraintData.child_schema,
-                    childCollection: fkConstraintData.child_table,
-                    childField: [fkConstraintData.child_column],
-                    dbName: fkConstraintData.parent_schema,
-                    parentCollection: fkConstraintData.parent_table,
-                    parentField: [fkConstraintData.parent_column],
-                    relationshipInfo: {}
-                }
-            ]
+            const newConstraint =                 {
+                relationshipName: constraintNameToUse, 
+                relationshipType: 'Foreign Key',
+                childDbName: fkConstraintData.child_schema,
+                childCollection: fkConstraintData.child_table,
+                childField: [fkConstraintData.child_column],
+                dbName: fkConstraintData.parent_schema,
+                parentCollection: fkConstraintData.parent_table,
+                parentField: [fkConstraintData.parent_column],
+                relationshipInfo: {}
+            }
+            constraints = [...constraints, newConstraint]
         }
     })
     return constraints
