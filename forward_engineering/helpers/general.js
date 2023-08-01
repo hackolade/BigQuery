@@ -2,7 +2,7 @@ const { escapeQuotes, getTimestamp } = require('./utils');
 
 module.exports = app => {
 	const _ = app.require('lodash');
-	const { tab, foreignKeysToString, foreignActiveKeysToString } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const getFullName = (projectId, datasetName, tableName) => {
 		let name = [];
@@ -101,8 +101,6 @@ module.exports = app => {
 		getFullName,
 		getContainerOptions,
 		getViewOptions,
-		cleanObject,
-		foreignKeysToString,
-		foreignActiveKeysToString
+		cleanObject
 	};
 };
