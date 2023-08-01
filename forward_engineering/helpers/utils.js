@@ -332,7 +332,13 @@ const generateViewSelectStatement = (getFullName, isActivated) => ({ columns, pr
 	}).join('\nUNION ALL\n');
 };
 
-const wrapStatementWithComma = (statement) => statement ? `${statement},` : ''
+const wrapStatementWithComma = (statement, isCommaAllowedAfterLastStatement = false) => {
+	if (!statement) {
+		return ''
+	}
+	const comma = isCommaAllowedAfterLastStatement ? ',' : ''
+	return Array.isArray(statement) ? `${statement.filter(statementComponent => Boolean(statementComponent)).join(',\n')}${comma}` : `${statement}${comma}`
+}
 
 module.exports = {
 	isActivatedPartition,
