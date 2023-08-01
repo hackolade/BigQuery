@@ -107,10 +107,11 @@ module.exports = (baseProvider, options, app) => {
 			const foreignKeysConstraintsStatements = foreignKeyConstraints.map(({statement}) => statement)
 			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
 			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
+			const foreignKeysConstraintsStatement = foreignKeysConstraintsStatements.join(',\n')
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					[wrapStatementWithComma(activatedColumns.join(',\n')), wrapStatementWithComma(deActivatedColumns.join(',\n')), wrapStatementWithComma(compositePrimaryKeyOutlineConstraint), foreignKeysConstraintsStatements.join(',\n')].filter(script => script.length).join('\n'),
+					[wrapStatementWithComma([activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint], Boolean(foreignKeysConstraintsStatement)), foreignKeysConstraintsStatement].filter(script => script.length).join('\n'),
 				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
