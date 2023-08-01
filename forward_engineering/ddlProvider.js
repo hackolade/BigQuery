@@ -8,15 +8,16 @@ const {
 	getTableOptions,
 	getColumnSchema,
 	generateViewSelectStatement,
-	getTimestamp,
 	escapeQuotes,
+	wrapStatementWithComma
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
-	const { tab, commentIfDeactivated, hasType, clean } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated, foreignKeysToString, foreignActiveKeysToString } = app.require('@hackolade/ddl-fe-utils').general;
+	app.require('@hackolade/ddl-fe-utils').general
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 	const _ = app.require('lodash');
-	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject } = require('./helpers/general')(app);
+	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject} = require('./helpers/general')(app);
 
 	return {
 		createDatabase({
@@ -63,6 +64,7 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 				friendlyName,
 				externalTableOptions,
+				foreignKeyConstraints,
 				primaryKey
 			},
 			isActivated,
@@ -102,12 +104,13 @@ module.exports = (baseProvider, options, app) => {
 			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
+			const foreignKeysConstraintsStatements = foreignKeyConstraints.map(({statement}) => statement)
 			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
 			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
 				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					[activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint].filter(Boolean).join('\n'),
+					[wrapStatementWithComma(activatedColumns.join(',\n')), wrapStatementWithComma(deActivatedColumns.join(',\n')), wrapStatementWithComma(compositePrimaryKeyOutlineConstraint), foreignKeysConstraintsStatements.join(',\n')].filter(script => script.length).join('\n'),
 				) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
@@ -184,6 +187,34 @@ module.exports = (baseProvider, options, app) => {
 			} else {
 				return statement;
 			}
+		},
+
+		createForeignKeyConstraint({
+			name,
+			foreignKey,
+			primaryTable,
+			primaryKey,
+			primaryTableActivated,
+			foreignTableActivated,
+			primarySchemaName,
+		}, dbData, schemaData) {
+			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
+			const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
+			const isActivated =
+				!isAllPrimaryKeysDeactivated &&
+				!isAllForeignKeysDeactivated &&
+				primaryTableActivated &&
+				foreignTableActivated;
+
+			return {
+				statement: assignTemplates(templates.createForeignKeyConstraint, {
+					constraintName: name ? `CONSTRAINT ${name} ` : '',
+					foreignKeys: isActivated ? foreignKeysToString(foreignKey) : foreignActiveKeysToString(foreignKey),
+					primaryTableName: getFullName(null, primarySchemaName, primaryTable),
+					primaryKeys: isActivated ? foreignKeysToString(primaryKey) : foreignActiveKeysToString(primaryKey),
+				}),
+				isActivated,
+			};
 		},
 
 		getDefaultType(type) {

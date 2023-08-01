@@ -31,8 +31,13 @@
 			"reverseSchemaIntoOneColumn": true,
 			"disableDenormalization": false,
 			"relationships": {
-				"compositeRelationships": false
-			},
+                "compositeRelationships": {
+                    "allowRelationshipsByProperties": [
+                        "primaryKey",
+                        "compositePrimaryKey"
+                    ]
+                }
+            },
 			"FEScriptCommentsSupported": true,
 			"discoverRelationships": true,
 			"disableJsonDataMaxLength": true,

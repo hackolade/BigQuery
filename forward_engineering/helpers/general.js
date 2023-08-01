@@ -101,6 +101,6 @@ module.exports = app => {
 		getFullName,
 		getContainerOptions,
 		getViewOptions,
-		cleanObject,
+		cleanObject
 	};
 };

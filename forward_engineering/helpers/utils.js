@@ -332,6 +332,8 @@ const generateViewSelectStatement = (getFullName, isActivated) => ({ columns, pr
 	}).join('\nUNION ALL\n');
 };
 
+const wrapStatementWithComma = (statement) => statement ? `${statement},` : ''
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -340,5 +342,6 @@ module.exports = {
 	getColumnSchema,
 	generateViewSelectStatement,
 	getTimestamp,
-	escapeQuotes
+	escapeQuotes,
+	wrapStatementWithComma
 };
