@@ -80,8 +80,7 @@ const getConstraintBusinessName = (constraintNameFromCloud) => {
 }
 
 const reverseForeignKeys = (foreignKeyConstraintsData) => {
-    let constraints = []
-    foreignKeyConstraintsData.forEach(fkConstraintData => {
+    return foreignKeyConstraintsData.reduce((constraints, fkConstraintData) => {
         const constraintNameToUse = getConstraintBusinessName(fkConstraintData.constraint_name)
         const constraintInList = constraints.find(({relationshipName}) => relationshipName === constraintNameToUse)
         const {parent_column, child_column} = fkConstraintData
@@ -93,9 +92,9 @@ const reverseForeignKeys = (foreignKeyConstraintsData) => {
                 childField: isChildAdded ? constraintInList.childField : [...constraintInList.childField, child_column],
                 parentField: isParentAdded ? constraintInList.parentField : [...constraintInList.parentField, parent_column]
             }
-            constraints = [...constraints.filter(({relationshipName}) => relationshipName !== constraintNameToUse), newConstraintData]
+            return [...constraints.filter(({relationshipName}) => relationshipName !== constraintNameToUse), newConstraintData]
         } else {
-            const newConstraint =                 {
+            const newConstraint = {
                 relationshipName: constraintNameToUse, 
                 relationshipType: 'Foreign Key',
                 childDbName: fkConstraintData.child_schema,
@@ -106,10 +105,9 @@ const reverseForeignKeys = (foreignKeyConstraintsData) => {
                 parentField: [fkConstraintData.parent_column],
                 relationshipInfo: {}
             }
-            constraints = [...constraints, newConstraint]
+            return [...constraints, newConstraint]
         }
-    })
-    return constraints
+    }, [])
 }
 
 module.exports = {
