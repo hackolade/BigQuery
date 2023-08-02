@@ -13,11 +13,11 @@ const {
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
-	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated, foreignKeysToString, foreignActiveKeysToString } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated} = app.require('@hackolade/ddl-fe-utils').general;
 	app.require('@hackolade/ddl-fe-utils').general
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 	const _ = app.require('lodash');
-	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject} = require('./helpers/general')(app);
+	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject, foreignKeysToString, foreignActiveKeysToString } = require('./helpers/general')(app);
 
 	return {
 		createDatabase({
