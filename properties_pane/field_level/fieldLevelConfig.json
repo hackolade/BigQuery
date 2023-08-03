@@ -120,8 +120,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -208,8 +240,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -288,8 +352,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -368,8 +464,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -463,8 +591,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -516,8 +676,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -594,8 +786,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -650,8 +874,40 @@ making sure that you maintain a proper JSON format.
 							"value": true
 						},
 						{
+							"level": "siblings",
 							"key": "compositePrimaryKey",
 							"value": true
+						},
+						{
+							"type": "and",
+							"values": [{
+								"level": "siblings",
+								"value": {
+									"type": "and",
+									"values": [{
+										"key": "primaryKey",
+										"value": true
+									}]
+								}
+							}]
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								}
+							]
 						}
 					]
 				},
