@@ -53,7 +53,7 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasets = await bigQueryHelper.getDatasets();
+		const datasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
