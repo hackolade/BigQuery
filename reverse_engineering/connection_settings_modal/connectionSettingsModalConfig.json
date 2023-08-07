@@ -25,6 +25,13 @@
 				"inputTooltip": "Project ID on Google Cloud Platform"
 			},
 			{
+				"inputLabel": "Dataset id",
+				"inputKeyword": "datasetId",
+				"inputType": "text",
+				"inputPlaceholder": "Optional",
+				"inputTooltip": "Dataset ID on Google Cloud Platform"
+			},
+			{
 				"inputLabel": "Key file",
 				"inputKeyword": "keyFilename",
 				"inputType": "file",
