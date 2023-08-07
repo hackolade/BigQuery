@@ -10,12 +10,8 @@ const createBigQueryHelper = (client, log) => {
 			return getDatasets()
 		}
 
-		try {
-			const dataset = await getDataset(datasetId)
-			return [dataset]
-		} catch (err) {
-			return getDatasets()
-		}
+		const dataset = await getDataset(datasetId)
+		return [dataset]
 	}
 
 	const getPrimaryKeyConstraintsData = async (projectId, datasetId) => {
