@@ -50,6 +50,22 @@
 					"type": "integer",
 					"mode": "int64"
 				}
+			},
+			{
+				"from": {
+					"required": true
+				},
+				"to": {
+					"dataTypeMode": "Required"
+				}
+			},
+			{
+				"from": {
+					"required": false
+				},
+				"to": {
+					"dataTypeMode": "Nullable"
+				}
 			}
 		]
 	}
