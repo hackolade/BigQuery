@@ -14,5 +14,11 @@
 		"gridFS": "",
 		"enum": [],
 		"sample": ""
-	}
+	},
+	"descriptor": [
+		{
+			"schema": {},
+			"mode": "binary"
+		}
+	]
 }
