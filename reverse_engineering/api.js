@@ -16,16 +16,7 @@ const parseSelectStatement = require('@hackolade/sql-select-statement-parser');
 
 const getDatabases = async (connectionInfo, logger, callback, app) => {
 	try {
-		const log = createLogger({
-			title: 'Reverse-engineering process',
-			hiddenKeys: connectionInfo.hiddenKeys,
-			logger,
-		});
-		const client = connect(connectionInfo, logger);
-		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasets = await bigQueryHelper.getDatasets();
-		const formattedDatasets = datasets.map((dataset) => ({name: dataset.id, ...dataset}))
-		callback(null, formattedDatasets);
+		await getDbCollectionsNames(connectionInfo, logger, callback, app)
 	} catch (err) {
 		callback(prepareError(logger, err));
 	}
@@ -42,9 +33,9 @@ const getCollections = async (data, logger, callback, app) => {
 		log.info(`Retrieving dataset ${datasetId} tables`);
 		const client = connect(data, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const tables = await bigQueryHelper.getTables(datasetId);
-		const formattedTables = tables.map(table => ({name: table.id, containerName: table.dataset.id, ...table}))
-		callback(null, formattedTables);
+		const rawTables = await bigQueryHelper.getTables(datasetId);
+		const tables = rawTables.map(table => ({name: table.id, containerName: table.dataset.id, ...table}))
+		callback(null, tables);
 	} catch (err) {
 		callback(prepareError(logger, err));
 	}
