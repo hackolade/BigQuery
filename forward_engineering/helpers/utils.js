@@ -334,6 +334,14 @@ const generateViewSelectStatement = (getFullName, isActivated) => ({ columns, pr
 
 const clearEmptyStatements = (statements) => statements.filter(statementComponent => Boolean(statementComponent))
 
+const prepareConstraintName = name => {
+    const VALID_FULL_NAME_REGEX = /[^A-Za-z0-9_]/g;
+    const VALID_FIRST_NAME_LETTER_REGEX = /^[0-9]/;
+    return (name || '')
+        .replace(VALID_FULL_NAME_REGEX, '_')
+        .replace(VALID_FIRST_NAME_LETTER_REGEX, '_');
+};
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -343,5 +351,6 @@ module.exports = {
 	generateViewSelectStatement,
 	getTimestamp,
 	escapeQuotes,
-	clearEmptyStatements
+	clearEmptyStatements,
+	prepareConstraintName,
 };
