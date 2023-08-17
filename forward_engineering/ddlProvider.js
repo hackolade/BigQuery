@@ -9,7 +9,8 @@ const {
 	getColumnSchema,
 	generateViewSelectStatement,
 	escapeQuotes,
-	clearEmptyStatements
+	clearEmptyStatements,
+	prepareConstraintName
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -210,7 +211,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: assignTemplates(templates.createForeignKeyConstraint, {
-					constraintName: name ? `CONSTRAINT ${name} ` : '',
+					constraintName: name ? `CONSTRAINT ${prepareConstraintName(name)} ` : '',
 					foreignKeys: isActivated ? foreignKeysToString(foreignKey) : foreignActiveKeysToString(foreignKey),
 					primaryTableName: getFullName(null, primarySchemaName, primaryTable),
 					primaryKeys: isActivated ? foreignKeysToString(primaryKey) : foreignActiveKeysToString(primaryKey),
