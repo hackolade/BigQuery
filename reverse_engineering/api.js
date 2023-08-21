@@ -16,26 +16,31 @@ const parseSelectStatement = require('@hackolade/sql-select-statement-parser');
 
 const getDatabases = async (connectionInfo, logger, callback, app) => {
 	try {
-		await getDbCollectionsNames(connectionInfo, logger, callback, app)
-	} catch (err) {
-		callback(prepareError(logger, err));
-	}
-};
-
-const getCollections = async (data, logger, callback, app) => {
-	try {
-		const datasetId = data.name
 		const log = createLogger({
 			title: 'Reverse-engineering process',
-			hiddenKeys: data.hiddenKeys,
+			hiddenKeys: connectionInfo.hiddenKeys,
 			logger,
 		});
-		log.info(`Retrieving dataset ${datasetId} tables`);
-		const client = connect(data, logger);
+		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const rawTables = await bigQueryHelper.getTables(datasetId);
-		const tables = rawTables.map(table => ({name: table.id, containerName: table.dataset.id, ...table}))
-		callback(null, tables);
+		const rawDatasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
+		if (rawDatasets.length === 1 && Boolean(rawDatasets[0])) {
+			const dataset = rawDatasets[0]
+			const tables = await bigQueryHelper.getTables(dataset.id);
+			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
+			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
+			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => table.id);
+
+			callback(null, [{
+				isEmpty: tables.length === 0,
+				dbName: dataset.id,
+				dbCollections,
+				views,
+			}]);
+			return
+		}
+		const datasets = rawDatasets.map((dataset) => ({dbName: dataset.id, ...dataset}))
+		callback(null, datasets);
 	} catch (err) {
 		callback(prepareError(logger, err));
 	}
@@ -80,7 +85,7 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
+		const datasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId || connectionInfo?.data?.name)
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
@@ -608,6 +613,5 @@ module.exports = {
 	testConnection,
 	getDbCollectionsNames,
 	getDbCollectionsData,
-	getDatabases,
-	getCollections
+	getDatabases
 };
