@@ -125,7 +125,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			projectName: project.friendlyName,
 		};
 		let relationships = []
-
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
 			log.info(`Process dataset "${datasetName}"`);
 			log.progress(`Process dataset "${datasetName}"`, datasetName);
@@ -136,8 +135,13 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const tables = (data.collectionData.collections[datasetName] || []).filter(item => !getViewName(item));
-			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
+			const collectionsInContainer = !Boolean(data.collectionData.collections[datasetName]?.length) ? 
+											(await dataset.getTables()).flat() : 
+											[]
+			const tables = (data.collectionData.collections[datasetName] || 
+							collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)).filter(item => !getViewName(item));
+			const views = (data.collectionData.collections[datasetName] || 
+							collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => `${id} (v)`)).map(getViewName).filter(Boolean);
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
