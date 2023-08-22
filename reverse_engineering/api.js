@@ -24,22 +24,7 @@ const getDatabases = async (connectionInfo, logger, callback, app) => {
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
 		const rawDatasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
-		if (rawDatasets.length === 1 && Boolean(rawDatasets[0])) {
-			const dataset = rawDatasets[0]
-			const tables = await bigQueryHelper.getTables(dataset.id);
-			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
-			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
-			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => table.id);
-
-			callback(null, [{
-				isEmpty: tables.length === 0,
-				dbName: dataset.id,
-				dbCollections,
-				views,
-			}]);
-			return
-		}
-		const datasets = rawDatasets.map((dataset) => ({dbName: dataset.id, ...dataset}))
+		const datasets = rawDatasets.map((dataset) => dataset.id)
 		callback(null, datasets);
 	} catch (err) {
 		callback(prepareError(logger, err));
@@ -85,12 +70,13 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId || connectionInfo?.data?.name)
+		const datasetName = connectionInfo.datasetId || connectionInfo.datasetName
+		const datasets = await bigQueryHelper.getRequiredDatasets(datasetName)
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
 			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
-			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => table.id);
+			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => bigQueryHelper.getViewName(table.id));
 
 			return {
 				isEmpty: tables.length === 0,
@@ -138,10 +124,11 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const collectionsInContainer = !Boolean(data.collectionData.collections[datasetName]?.length) ? 
 											(await dataset.getTables()).flat() : 
 											[]
-			const tables = (data.collectionData.collections[datasetName] || 
-							collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)).filter(item => !getViewName(item));
-			const views = (data.collectionData.collections[datasetName] || 
-							collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => `${id} (v)`)).map(getViewName).filter(Boolean);
+			const rawTables = data.collectionData.collections[datasetName] || collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)
+			const tables = rawTables.filter(item => !getViewName(item));
+
+			const rawViews = data.collectionData.collections[datasetName] || collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => `${id} (v)`)
+			const views = rawViews.map(getViewName).filter(Boolean);
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData

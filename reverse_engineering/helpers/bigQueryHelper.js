@@ -159,6 +159,8 @@ const createBigQueryHelper = (client, log) => {
 		}
 	};
 
+	const getViewName = (name) => `${name} (v)`;
+
 	return {
 		getDatasets,
 		getTables,
@@ -167,7 +169,8 @@ const createBigQueryHelper = (client, log) => {
 		getRows,
 		getTableRowsCount,
 		getConstraintsData,
-		getRequiredDatasets
+		getRequiredDatasets,
+		getViewName,
 	};
 };
 
