@@ -5,15 +5,6 @@ const createBigQueryHelper = (client, log) => {
 		return datasets;
 	};
 
-	const getRequiredDatasets = async (datasetId) => {
-		if (!datasetId) {
-			return getDatasets()
-		}
-
-		const dataset = await getDataset(datasetId)
-		return [dataset]
-	}
-
 	const getPrimaryKeyConstraintsData = async (projectId, datasetId) => {
 		try {
 			return await client.query({
@@ -169,7 +160,6 @@ const createBigQueryHelper = (client, log) => {
 		getRows,
 		getTableRowsCount,
 		getConstraintsData,
-		getRequiredDatasets,
 		getViewName,
 	};
 };

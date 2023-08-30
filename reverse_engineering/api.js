@@ -23,7 +23,7 @@ const getDatabases = async (connectionInfo, logger, callback, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const rawDatasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
+		const rawDatasets = connectionInfo.datasetId ? [{id: connectionInfo.datasetId}] : await bigQueryHelper.getDatasets()
 		const datasets = rawDatasets.map((dataset) => dataset.id)
 		callback(null, datasets);
 	} catch (err) {
@@ -70,8 +70,8 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasetName = connectionInfo.datasetId || connectionInfo.datasetName
-		const datasets = await bigQueryHelper.getRequiredDatasets(datasetName)
+		const datasetName = connectionInfo.datasetId || connectionInfo.data.databaseName
+		const datasets = datasetName ? [{id: datasetName}] : await bigQueryHelper.getDatasets()
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
@@ -121,14 +121,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const collectionsInContainer = !Boolean(data.collectionData.collections[datasetName]?.length) ? 
-											(await dataset.getTables()).flat() : 
-											[]
-			const rawTables = data.collectionData.collections[datasetName] || collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)
-			const tables = rawTables.filter(item => !getViewName(item));
-
-			const rawViews = data.collectionData.collections[datasetName] || collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => `${id} (v)`)
-			const views = rawViews.map(getViewName).filter(Boolean);
+			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data) : getTablesAndViews()
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
@@ -241,6 +234,22 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 		cb(prepareError(logger, err));
 	}
 };
+
+const getSpecificTablesAndViews = (data) => {
+	const tables = data.collectionData.collections[datasetName].filter(item => !getViewName(item));
+	const views = data.collectionData.collections[datasetName].map(getViewName).filter(Boolean);
+
+	return { tables, views }
+}
+
+const getTablesAndViews = async () => {
+	const collectionsInContainer = (await dataset.getTables()).flat()
+ 
+	const tables = collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)
+	const views = collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW')
+
+	return {tables, views}
+}
 
 const createLogger = ({ title, logger, hiddenKeys }) => {
 	return {
