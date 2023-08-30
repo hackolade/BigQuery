@@ -121,7 +121,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data) : getTablesAndViews()
+			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data, datasetName) : getTablesAndViews()
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
@@ -235,7 +235,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 	}
 };
 
-const getSpecificTablesAndViews = (data) => {
+const getSpecificTablesAndViews = (data, datasetName) => {
 	const tables = data.collectionData.collections[datasetName].filter(item => !getViewName(item));
 	const views = data.collectionData.collections[datasetName].map(getViewName).filter(Boolean);
 
