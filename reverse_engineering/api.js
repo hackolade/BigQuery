@@ -121,7 +121,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data, datasetName) : getTablesAndViews()
+			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data, datasetName) : await getTablesAndViews(dataset)
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
@@ -242,13 +242,13 @@ const getSpecificTablesAndViews = (data, datasetName) => {
 	return { tables, views }
 }
 
-const getTablesAndViews = async () => {
+const getTablesAndViews = async (dataset) => {
 	const collectionsInContainer = (await dataset.getTables()).flat()
  
 	const tables = collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)
-	const views = collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW')
+	const views = collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => id)
 
-	return {tables, views}
+	return { tables, views }
 }
 
 const createLogger = ({ title, logger, hiddenKeys }) => {
