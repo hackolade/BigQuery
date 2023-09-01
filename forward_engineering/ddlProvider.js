@@ -402,6 +402,7 @@ module.exports = (baseProvider, options, app) => {
 				rangeOptions: detailsTab.rangeOptions,
 				refreshInterval: detailsTab.refreshInterval,
 				enableRefresh: detailsTab.enableRefresh,
+				maxStaleness: detailsTab.maxStaleness,
 			};
 		},
 

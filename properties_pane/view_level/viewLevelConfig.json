@@ -192,6 +192,15 @@
 				}
 			},
 			{
+				"propertyName": "Max staleness",
+				"propertyKeyword": "maxStaleness",
+				"propertyType": "text",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
 				"propertyName": "Refresh interval (minutes)",
 				"propertyKeyword": "refreshInterval",
 				"propertyType": "numeric",
