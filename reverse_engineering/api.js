@@ -196,6 +196,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 						refreshInterval: isNaN(viewData?.refreshIntervalMs)
 							? ''
 							: Number(viewData?.refreshIntervalMs) / (60 * 1000),
+						maxStaleness: view.metadata.maxStaleness,
 					},
 				};
 			});
@@ -209,7 +210,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 					emptyBucket: false,
 				});
 			}
-
+			
 			return result;
 		});
 
