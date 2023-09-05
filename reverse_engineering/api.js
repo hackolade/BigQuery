@@ -14,6 +14,23 @@ const {
 const { Big } = require('big.js');
 const parseSelectStatement = require('@hackolade/sql-select-statement-parser');
 
+const getDatabases = async (connectionInfo, logger, callback, app) => {
+	try {
+		const log = createLogger({
+			title: 'Reverse-engineering process',
+			hiddenKeys: connectionInfo.hiddenKeys,
+			logger,
+		});
+		const client = connect(connectionInfo, logger);
+		const bigQueryHelper = createBigQueryHelper(client, log);
+		const rawDatasets = connectionInfo.datasetId ? [{id: connectionInfo.datasetId}] : await bigQueryHelper.getDatasets()
+		const datasets = rawDatasets.map((dataset) => dataset.id)
+		callback(null, datasets);
+	} catch (err) {
+		callback(prepareError(logger, err));
+	}
+};
+
 const connect = (connectionInfo, logger) => {
 	logger.clear();
 	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
@@ -53,12 +70,13 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasets = await bigQueryHelper.getRequiredDatasets(connectionInfo.datasetId)
+		const datasetName = connectionInfo.datasetId || connectionInfo.data.databaseName
+		const datasets = datasetName ? [{id: datasetName}] : await bigQueryHelper.getDatasets()
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
 			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
-			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => table.id);
+			const views = tables.filter(t => viewTypes.includes(t.metadata.type)).map(table => bigQueryHelper.getViewName(table.id));
 
 			return {
 				isEmpty: tables.length === 0,
@@ -93,7 +111,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			projectName: project.friendlyName,
 		};
 		let relationships = []
-
 		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
 			log.info(`Process dataset "${datasetName}"`);
 			log.progress(`Process dataset "${datasetName}"`, datasetName);
@@ -104,8 +121,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				datasetName,
 				_,
 			});
-			const tables = (data.collectionData.collections[datasetName] || []).filter(item => !getViewName(item));
-			const views = (data.collectionData.collections[datasetName] || []).map(getViewName).filter(Boolean);
+			const { tables, views } = data.collectionData.collections[datasetName]?.length ? getSpecificTablesAndViews(data, datasetName) : await getTablesAndViews(dataset)
 
 			const {
 				primaryKeyConstraintsData, foreignKeyConstraintsData
@@ -219,6 +235,22 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 		cb(prepareError(logger, err));
 	}
 };
+
+const getSpecificTablesAndViews = (data, datasetName) => {
+	const tables = data.collectionData.collections[datasetName].filter(item => !getViewName(item));
+	const views = data.collectionData.collections[datasetName].map(getViewName).filter(Boolean);
+
+	return { tables, views }
+}
+
+const getTablesAndViews = async (dataset) => {
+	const collectionsInContainer = (await dataset.getTables()).flat()
+ 
+	const tables = collectionsInContainer.filter(({metadata}) => metadata.type === 'TABLE').map(({id}) => id)
+	const views = collectionsInContainer.filter(({metadata}) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW').map(({id}) => id)
+
+	return { tables, views }
+}
 
 const createLogger = ({ title, logger, hiddenKeys }) => {
 	return {
@@ -582,4 +614,5 @@ module.exports = {
 	testConnection,
 	getDbCollectionsNames,
 	getDbCollectionsData,
+	getDatabases
 };
