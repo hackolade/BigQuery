@@ -83,6 +83,10 @@ module.exports = app => {
 			}
 		}
 
+		if (viewData.materialized && viewData.maxStaleness) {
+			options.push(`max_staleness=${viewData.maxStaleness}`);
+		}
+
 		return options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
 	};
 
