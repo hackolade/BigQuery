@@ -70,7 +70,7 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 		});
 		const client = connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
-		const datasetName = connectionInfo.datasetId || connectionInfo.data.databaseName
+		const datasetName = connectionInfo.datasetId || connectionInfo.data?.databaseName
 		const datasets = datasetName ? [{id: datasetName}] : await bigQueryHelper.getDatasets()
 		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
 			const tables = await bigQueryHelper.getTables(dataset.id);
