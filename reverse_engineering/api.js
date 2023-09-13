@@ -145,7 +145,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				const [rows] = await bigQueryHelper.getRows(tableName, table, recordSamplingSettings);
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
-				const rawJsonSchema = createJsonSchema(table.metadata.schema, rows);
+				const rawJsonSchema = createJsonSchema(table.metadata.schema ?? {}, rows);
 				const { propertiesWithInjectedConstraints, primaryKey } = 
 				injectPrimaryKeyConstraintsIntoTable(
 						{
@@ -187,7 +187,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 				const friendlyName = view.metadata.friendlyName;
 
-				const viewJsonSchema = createJsonSchema(view.metadata.schema);
+				const viewJsonSchema = createJsonSchema(view.metadata.schema ?? {});
 
 				return {
 					dbName: bucketInfo.name,
