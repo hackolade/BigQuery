@@ -16,6 +16,7 @@ const createBigQueryHelper = (client, log) => {
 			})
 		} catch (error) {
 			log.warn('Error while getting table constraints', error)
+			return []
 		}
 	}
 
@@ -43,6 +44,7 @@ const createBigQueryHelper = (client, log) => {
 			})
 		} catch (error) {
 			log.warn('Error while getting table constraints', error)
+			return []
 		}
 	}
 
