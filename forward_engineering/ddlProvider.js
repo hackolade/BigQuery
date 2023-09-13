@@ -394,7 +394,7 @@ module.exports = (baseProvider, options, app) => {
 				labels: detailsTab.labels,
 				description: detailsTab.description,
 				expiration: detailsTab.expiration,
-				friendlyName: detailsTab.businessName,
+				friendlyName: detailsTab.businessName || detailsTab.friendlyName,
 				partitioning: detailsTab.partitioning,
 				partitioningType: detailsTab.partitioningType,
 				timeUnitPartitionKey: detailsTab.timeUnitpartitionKey,
@@ -403,6 +403,8 @@ module.exports = (baseProvider, options, app) => {
 				refreshInterval: detailsTab.refreshInterval,
 				enableRefresh: detailsTab.enableRefresh,
 				maxStaleness: detailsTab.maxStaleness,
+				allowNonIncrementalDefinition: detailsTab.allowNonIncrementalDefinition,
+				kmsKeyName: detailsTab.kmsKeyName,
 			};
 		},
 

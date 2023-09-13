@@ -219,6 +219,33 @@
 				}
 			},
 			{
+				"propertyName": "Allow non incremental definition",
+				"propertyKeyword": "allowNonIncrementalDefinition",
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Kms key name",
+				"propertyKeyword": "kmsKeyName",
+				"propertyType": "text",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Friendly name",
+				"propertyKeyword": "friendlyName",
+				"propertyType": "text",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
 				"propertyName": "Labels",
 				"propertyType": "group",
 				"propertyKeyword": "labels",
