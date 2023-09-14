@@ -219,6 +219,15 @@
 				}
 			},
 			{
+				"propertyName": "Allow non incremental definition",
+				"propertyKeyword": "allowNonIncrementalDefinition",
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "materialized",
+					"value": true
+				}
+			},
+			{
 				"propertyName": "Labels",
 				"propertyType": "group",
 				"propertyKeyword": "labels",

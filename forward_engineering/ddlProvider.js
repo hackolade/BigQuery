@@ -403,6 +403,7 @@ module.exports = (baseProvider, options, app) => {
 				refreshInterval: detailsTab.refreshInterval,
 				enableRefresh: detailsTab.enableRefresh,
 				maxStaleness: detailsTab.maxStaleness,
+				allowNonIncrementalDefinition: detailsTab.allowNonIncrementalDefinition,
 			};
 		},
 

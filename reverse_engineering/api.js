@@ -213,6 +213,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 							? ''
 							: Number(viewData?.refreshIntervalMs) / (60 * 1000),
 						maxStaleness: view.metadata.maxStaleness,
+						allowNonIncrementalDefinition: view.metadata?.materializedView?.allowNonIncrementalDefinition,
 					},
 				};
 			});

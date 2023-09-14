@@ -56,6 +56,32 @@ module.exports = app => {
 		return dbOptions.length ? `\nOPTIONS(\n${tab(dbOptions.join(',\n'))}\n)` : '';
 	};
 
+	const getMaterializedViewOptions = viewData => {
+		if (!viewData.materialized) {
+			return []
+		}
+
+		let options = []
+
+		if (viewData.enableRefresh) {
+			options.push(`enable_refresh=true`);
+
+			if (viewData.refreshInterval) {
+				options.push(`refresh_interval_minutes=${viewData.refreshInterval}`);
+			}
+		}
+
+		if (viewData.maxStaleness) {
+			options.push(`max_staleness=${viewData.maxStaleness}`);
+		}
+
+		if (viewData.allowNonIncrementalDefinition) {
+			options.push(`allow_non_incremental_definition=${viewData.allowNonIncrementalDefinition}`);
+		}
+
+		return options
+	}
+
 	const getViewOptions = viewData => {
 		let options = [];
 
@@ -75,17 +101,7 @@ module.exports = app => {
 			options.push(`labels=[\n${tab(getLabels(viewData.labels))}\n]`);
 		}
 
-		if (viewData.materialized && viewData.enableRefresh) {
-			options.push(`enable_refresh=true`);
-
-			if (viewData.refreshInterval) {
-				options.push(`refresh_interval_minutes=${viewData.refreshInterval}`);
-			}
-		}
-
-		if (viewData.materialized && viewData.maxStaleness) {
-			options.push(`max_staleness=${viewData.maxStaleness}`);
-		}
+		options = [...options, ...getMaterializedViewOptions(viewData)]
 
 		return options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
 	};
