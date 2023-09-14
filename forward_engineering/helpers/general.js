@@ -79,10 +79,6 @@ module.exports = app => {
 			options.push(`allow_non_incremental_definition=${viewData.allowNonIncrementalDefinition}`);
 		}
 
-		if (viewData.friendlyName) {
-			options.push(`kms_key_name="${viewData.friendlyName}"`);
-		}
-
 		return options
 	}
 
