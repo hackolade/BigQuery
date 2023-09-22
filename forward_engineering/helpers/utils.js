@@ -2,6 +2,10 @@ const escapeQuotes = (str = '') => {
 	return str.replace(/(")/gi, '\\$1').replace(/\n/gi, '\\n');
 };
 
+const wrapByBackticks = (str = '') => {
+	return `\`${str}\``;
+}
+
 const getPartitioningByIngestionTime = (partitioningType) => {
 	if (!partitioningType) {
 		return '_PARTITIONDATE';
@@ -63,7 +67,7 @@ const getTablePartitioning = ({
 	}
 
 	if (partitioning === 'By time-unit column' && partitionTimeColumn) {
-		return `PARTITION BY DATE(${partitionTimeColumn})`;
+		return `PARTITION BY DATE(${wrapByBackticks(partitionTimeColumn)})`;
 	}
 
 	if (partitioning === 'By integer-range') {
@@ -84,11 +88,11 @@ const getClusteringKey = (clusteringKey, isParentActivated) => {
 		return '';
 	}
 
-	const activated = clusteringKey.filter(key => key.isActivated).map(key => key.name).join(', ');
-	const deActivated = clusteringKey.filter(key => !key.isActivated).map(key => key.name).join(', ');
+	const activated = clusteringKey.filter(key => key.isActivated).map(key => wrapByBackticks(key.name)).join(', ');
+	const deActivated = clusteringKey.filter(key => !key.isActivated).map(key => wrapByBackticks(key.name)).join(', ');
 
 	if (!isParentActivated) {
-		return '\nCLUSTER BY ' + clusteringKey.map(key => key.name).join(', ');
+		return '\nCLUSTER BY ' + clusteringKey.map(key => wrapByBackticks(key.name)).join(', ');
 	}
 
 	if (activated.length === 0) {
@@ -288,7 +292,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 	}
 
 	return assignTemplates(templates.columnDefinition, {
-		name,
+		name: name && wrapByBackticks(name),
 		type: dataType,
 		primaryKey,
 		notNull,
@@ -298,7 +302,7 @@ const getColumnSchema = (deps) => ({ type, description, dataTypeMode, name, json
 
 const generateViewSelectStatement = (getFullName, isActivated) => ({ columns, projectId, datasetName }) => {
 	const keys = columns.reduce((tables, key) => {
-		let column = key.name;
+		let column = wrapByBackticks(key.name);
 
 		if (key.alias) {
 			column = `${column} as ${key.alias}`;
@@ -353,4 +357,5 @@ module.exports = {
 	escapeQuotes,
 	clearEmptyStatements,
 	prepareConstraintName,
+	wrapByBackticks,
 };
