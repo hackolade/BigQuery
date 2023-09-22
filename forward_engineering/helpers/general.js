@@ -1,4 +1,4 @@
-const { escapeQuotes, getTimestamp } = require('./utils');
+const { escapeQuotes, getTimestamp, wrapByBackticks} = require('./utils');
 
 module.exports = app => {
 	const _ = app.require('lodash');
@@ -118,8 +118,8 @@ module.exports = app => {
 
 	const foreignKeysToString = keys => {
 		if (Array.isArray(keys)) {
-			const activatedKeys = keys.filter(key => _.get(key, 'isActivated', true)).map(key => key.name.trim());
-			const deactivatedKeys = keys.filter(key => !_.get(key, 'isActivated', true)).map(key => key.name.trim());
+			const activatedKeys = keys.filter(key => _.get(key, 'isActivated', true)).map(key => wrapByBackticks(key.name.trim()));
+			const deactivatedKeys = keys.filter(key => !_.get(key, 'isActivated', true)).map(key => wrapByBackticks(key.name.trim()));
 			const deactivatedKeysAsString = deactivatedKeys.length
 				? commentIfDeactivated(deactivatedKeys, { isActivated: false }, true)
 				: '';
@@ -130,7 +130,7 @@ module.exports = app => {
 	};
 		
 	const foreignActiveKeysToString = keys => {
-		return keys.map(key => key.name.trim()).join(', ');
+		return keys.map(key => wrapByBackticks(key.name.trim())).join(', ');
 	};
 
 	return {

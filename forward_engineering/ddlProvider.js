@@ -10,7 +10,8 @@ const {
 	generateViewSelectStatement,
 	escapeQuotes,
 	clearEmptyStatements,
-	prepareConstraintName
+	prepareConstraintName,
+	wrapByBackticks
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -106,7 +107,7 @@ module.exports = (baseProvider, options, app) => {
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
 
 			const foreignKeysConstraintsStatements = foreignKeyConstraints.map(({statement}) => statement)
-			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(({name: columnName}) => columnName))
+			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(key => wrapByBackticks(key.name)))
 			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
 			const foreignKeysConstraintsStatement = foreignKeysConstraintsStatements.join(',\n')
 			const statementsToAddInsideTable = [activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint, foreignKeysConstraintsStatement]
@@ -143,12 +144,20 @@ module.exports = (baseProvider, options, app) => {
 			
 			if (!viewData.materialized) {
 				if (isActivated && !allDeactivated) {
-					const activated = viewData.keys.filter(key => key.isActivated).map(key => (key.alias || key.name)).filter(Boolean);
-					const deActivated = viewData.keys.filter(key => !key.isActivated).map(key => (key.alias || key.name)).filter(Boolean);
+					const activated = viewData.keys
+						.filter(key => key.isActivated)
+						.map(key => (key.alias || key.name))
+						.filter(Boolean)
+						.map(wrapByBackticks);
+					const deActivated = viewData.keys
+						.filter(key => !key.isActivated)
+						.map(key => (key.alias || key.name))
+						.filter(Boolean)
+						.map(wrapByBackticks);
 				
 					columns = activated.join(', ') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
 				} else {
-					columns = viewData.keys.map(key => (key.alias || key.name)).filter(Boolean).join(', ');
+					columns = viewData.keys.map(key => wrapByBackticks(key.alias || key.name)).filter(Boolean).join(', ');
 				}
 			}
 			const isPartitionActivated = isActivatedPartition({
@@ -480,8 +489,8 @@ module.exports = (baseProvider, options, app) => {
 		alterColumnOptions(tableName, columnName, description) {
 			return assignTemplates(templates.alterColumnOptions, {
 				description: escapeQuotes(description),
-				tableName,
-				columnName,
+				tableName: wrapByBackticks(tableName),
+				columnName: wrapByBackticks(columnName),
 			});
 		},
 
@@ -491,16 +500,16 @@ module.exports = (baseProvider, options, app) => {
 			);
 
 			return assignTemplates(templates.alterColumnType, {
-				columnName: columnDefinition.name,
+				columnName: wrapByBackticks(columnDefinition.name),
 				type: columnSchema,
-				tableName,
+				tableName: wrapByBackticks(columnDefinition.name),
 			});
 		},
 
 		alterColumnDropNotNull(tableName, columnName) {
 			return assignTemplates(templates.alterColumnDropNotNull, {
-				columnName,
-				tableName,
+				columnName: wrapByBackticks(columnName),
+				tableName: wrapByBackticks(columnName),
 			});
 		},
 
@@ -509,7 +518,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return assignTemplates(templates.alterTableAddColumn, {
 				tableName: fullTableName,
-				column,
+				column: column,
 			});
 		},
 
@@ -518,7 +527,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return assignTemplates(templates.alterTableDropColumn, {
 				tableName: fullTableName,
-				columnName,
+				columnName: wrapByBackticks(columnName),
 			});
 		},
 
