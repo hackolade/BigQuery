@@ -10,7 +10,6 @@ jobs:
     steps:
       - uses: LouisBrunner/checks-action@v1.6.1
         with:
-          # The name below needs to match the name of the real test job on TeamCity
           name: Run PR tests (Plugins) (Plugins)
           conclusion: success
           token: ${{ secrets.GITHUB_TOKEN }}
