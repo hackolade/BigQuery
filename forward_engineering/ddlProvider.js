@@ -21,6 +21,8 @@ module.exports = (baseProvider, options, app) => {
 	const _ = app.require('lodash');
 	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject, foreignKeysToString, foreignActiveKeysToString } = require('./helpers/general')(app);
 
+	const { joinActivatedAndDeactivatedStatements } = require('./utils/general');
+
 	return {
 		createDatabase({
 			databaseName,
@@ -102,20 +104,35 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 			});
 			const external = isExternal ? 'EXTERNAL ' : '';
-			const activatedColumns = columns.filter(column => column.isActivated).map(({ column }) => column);
-			const deActivatedColumns = columns.filter(column => !column.isActivated).map(({ column }) => column);
+			const columnStatementDtos = (columns || []).map(columnDto => ({
+				statement: columnDto.column,
+				isActivated: columnDto.isActivated,
+			}));
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
-
-			const foreignKeysConstraintsStatements = foreignKeyConstraints.map(({statement}) => statement)
 			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(key => wrapByBackticks(key.name)))
 			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
-			const foreignKeysConstraintsStatement = foreignKeysConstraintsStatements.join(',\n')
-			const statementsToAddInsideTable = [activatedColumns.join(',\n'), deActivatedColumns.join(',\n'), compositePrimaryKeyOutlineConstraint, foreignKeysConstraintsStatement]
+			const compositePrimaryKeyOutlineConstraintStatementDto = {
+				statement: compositePrimaryKeyOutlineConstraint,
+				isActivated: true,
+			};
+
+			const statementDtosToAddInsideTable = [
+				...columnStatementDtos,
+				compositePrimaryKeyOutlineConstraintStatementDto,
+				...foreignKeyConstraints,
+			]
+				.filter(statementDto => Boolean(statementDto.statement));
+			const joinedStatementsToAddInsideTable = joinActivatedAndDeactivatedStatements({
+				statementDtos: statementDtosToAddInsideTable,
+				delimiter: ',\n',
+				delimiterForLastActivatedStatement: '\n',
+			});
+
 			const tableStatement = assignTemplates(templates.createTable, {
 				name: tableName,
-				column_definitions: externalTableOptions?.autodetect ? '' : '(\n' + tab(
-					clearEmptyStatements(statementsToAddInsideTable).join(',\n'),
-				) + '\n)',
+				column_definitions: externalTableOptions?.autodetect
+					? ''
+					: '(\n' + tab(joinedStatementsToAddInsideTable) + '\n)',
 				orReplace: orReplaceTable,
 				temporary: temporaryTable,
 				ifNotExist: ifNotExistTable,
@@ -141,7 +158,7 @@ module.exports = (baseProvider, options, app) => {
 			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
 			let columns = '';
 			const allDeactivated = viewData.keys.length && viewData.keys.every(key => !key.isActivated);
-			
+
 			if (!viewData.materialized) {
 				if (isActivated && !allDeactivated) {
 					const activated = viewData.keys
@@ -154,7 +171,7 @@ module.exports = (baseProvider, options, app) => {
 						.map(key => (key.alias || key.name))
 						.filter(Boolean)
 						.map(wrapByBackticks);
-				
+
 					columns = activated.join(', ') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
 				} else {
 					columns = viewData.keys.map(key => wrapByBackticks(key.alias || key.name)).filter(Boolean).join(', ');
