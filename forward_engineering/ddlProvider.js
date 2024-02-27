@@ -21,7 +21,7 @@ module.exports = (baseProvider, options, app) => {
 	const _ = app.require('lodash');
 	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject, foreignKeysToString, foreignActiveKeysToString } = require('./helpers/general')(app);
 
-	const { joinActivatedAndDeactivatedStatements } = require('./utils/general');
+	const { joinActivatedAndDeactivatedStatements } = require('./utils/statementJoiner');
 
 	return {
 		createDatabase({
