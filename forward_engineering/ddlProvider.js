@@ -115,11 +115,16 @@ module.exports = (baseProvider, options, app) => {
 				statement: compositePrimaryKeyOutlineConstraint,
 				isActivated: true,
 			};
+			const foreignKeyConstraintStatementDtos = (foreignKeyConstraints || [])
+				.map(constraintDto => ({
+					statement: commentIfDeactivated(constraintDto.statement, { isActivated: constraintDto.isActivated }),
+					isActivated: constraintDto.isActivated,
+				}));
 
 			const statementDtosToAddInsideTable = [
 				...columnStatementDtos,
 				compositePrimaryKeyOutlineConstraintStatementDto,
-				...foreignKeyConstraints,
+				...foreignKeyConstraintStatementDtos,
 			]
 				.filter(statementDto => Boolean(statementDto.statement));
 			const joinedStatementsToAddInsideTable = joinActivatedAndDeactivatedStatements({
@@ -220,6 +225,7 @@ module.exports = (baseProvider, options, app) => {
 
 		createForeignKeyConstraint({
 			name,
+			isActivated,
 			foreignKey,
 			primaryTable,
 			primaryKey,
@@ -229,7 +235,8 @@ module.exports = (baseProvider, options, app) => {
 		}, dbData, schemaData) {
 			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
 			const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
-			const isActivated =
+			const isActivatedBasedOnTableData =
+				isActivated &&
 				!isAllPrimaryKeysDeactivated &&
 				!isAllForeignKeysDeactivated &&
 				primaryTableActivated &&
@@ -238,11 +245,11 @@ module.exports = (baseProvider, options, app) => {
 			return {
 				statement: assignTemplates(templates.createForeignKeyConstraint, {
 					constraintName: name ? `CONSTRAINT ${prepareConstraintName(name)} ` : '',
-					foreignKeys: isActivated ? foreignKeysToString(foreignKey) : foreignActiveKeysToString(foreignKey),
+					foreignKeys: isActivatedBasedOnTableData ? foreignKeysToString(foreignKey) : foreignActiveKeysToString(foreignKey),
 					primaryTableName: getFullName(null, primarySchemaName, primaryTable),
-					primaryKeys: isActivated ? foreignKeysToString(primaryKey) : foreignActiveKeysToString(primaryKey),
+					primaryKeys: isActivatedBasedOnTableData ? foreignKeysToString(primaryKey) : foreignActiveKeysToString(primaryKey),
 				}),
-				isActivated,
+				isActivated: isActivatedBasedOnTableData,
 			};
 		},
 
