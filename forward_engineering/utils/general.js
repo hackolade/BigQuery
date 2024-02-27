@@ -10,8 +10,8 @@ const getDelimiterForJoiningStatementsBasedOnActivation = ({
                                                                index,
                                                                amountOfStatements,
                                                                lastIndexOfActivatedStatement,
-                                                               delimiter = ',\n',
-                                                               delimiterForLastActivatedStatement = '\n',
+                                                               delimiter,
+                                                               delimiterForLastActivatedStatement,
                                                            }) => {
     if (index === amountOfStatements - 1) {
         return '';
@@ -33,13 +33,13 @@ const getDelimiterForJoiningStatementsBasedOnActivation = ({
  * @return {number}
  */
 const getLastIndexOfActivatedStatement = (statementDtos) => {
-     for (let i = statementDtos.length - 1; i >= 0; i--) {
-         const statementDto = statementDtos[i] || {};
-         if (statementDto.isActivated) {
-             return i;
-         }
-     }
-     return -1;
+    for (let i = statementDtos.length - 1; i >= 0; i--) {
+        const statementDto = statementDtos[i] || {};
+        if (statementDto.isActivated) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 
@@ -57,24 +57,20 @@ const joinActivatedAndDeactivatedStatements = ({
                                                    delimiter = ',\n',
                                                    delimiterForLastActivatedStatement = '\n',
                                                }) => {
-    const partsOfFinalStatement = [];
     const lastIndexOfActivatedStatement = getLastIndexOfActivatedStatement(statementDtos);
 
-    for (let i = 0; i < statementDtos.length; i++) {
-        const statementDto = statementDtos[i] || {};
-        const {statement} = statementDto;
-        partsOfFinalStatement.push(statement);
-
-        const currentDelimiter = getDelimiterForJoiningStatementsBasedOnActivation({
-            index: i,
-            amountOfStatements: statementDtos.length,
-            lastIndexOfActivatedStatement,
-            delimiter,
-            delimiterForLastActivatedStatement,
-        });
-        partsOfFinalStatement.push(currentDelimiter);
-    }
-    return partsOfFinalStatement.join('');
+    return statementDtos
+        .map((statementDto, i) => {
+            const {statement} = statementDto;
+            const currentDelimiter = getDelimiterForJoiningStatementsBasedOnActivation({
+                index: i,
+                amountOfStatements: statementDtos.length,
+                lastIndexOfActivatedStatement,
+                delimiter,
+                delimiterForLastActivatedStatement,
+            });
+            return statement + currentDelimiter;
+        }).join('');
 }
 
 module.exports = {
