@@ -32,7 +32,7 @@ const getDelimiterForJoiningStatementsBasedOnActivation = ({
  * }>}
  * @return {number}
  */
-const getLastIndexOfActivatedStatement = (statementDtos) => {
+const getLastIndexOfActivatedStatement = ({statementDtos}) => {
     for (let i = statementDtos.length - 1; i >= 0; i--) {
         const statementDto = statementDtos[i] || {};
         if (statementDto.isActivated) {
@@ -57,7 +57,7 @@ const joinActivatedAndDeactivatedStatements = ({
                                                    delimiter = ',\n',
                                                    delimiterForLastActivatedStatement = '\n',
                                                }) => {
-    const lastIndexOfActivatedStatement = getLastIndexOfActivatedStatement(statementDtos);
+    const lastIndexOfActivatedStatement = getLastIndexOfActivatedStatement({statementDtos});
 
     return statementDtos
         .map((statementDto, i) => {
