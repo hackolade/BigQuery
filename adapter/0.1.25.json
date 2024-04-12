@@ -43,12 +43,6 @@
     "modify": {
 		"container": [
 			["validateContainer", "name", "code"]
-		],
-        "entity": [
-            ["validateEntity", "collectionName", "code"]
-        ],
-        "field": [
-            ["validateField", "name", "code"]
-        ]
+		]
     }
 }
