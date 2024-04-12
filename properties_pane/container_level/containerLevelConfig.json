@@ -120,10 +120,7 @@ making sure that you maintain a proper JSON format.
 		"structure": [
 			{
 				"propertyName": "Dataset name",
-				"propertyKeyword": "name",
-				"validation": {
-					"regex": "^[A-Za-z0-9_]{1,1024}$"
-				}
+				"propertyKeyword": "name"
 			},
 			{
 				"propertyName": "Technical name",
