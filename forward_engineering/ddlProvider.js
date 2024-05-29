@@ -11,15 +11,24 @@ const {
 	escapeQuotes,
 	clearEmptyStatements,
 	prepareConstraintName,
-	wrapByBackticks
+	wrapByBackticks,
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
-	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated} = app.require('@hackolade/ddl-fe-utils').general;
-	app.require('@hackolade/ddl-fe-utils').general
+	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated } =
+		app.require('@hackolade/ddl-fe-utils').general;
+	app.require('@hackolade/ddl-fe-utils').general;
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 	const _ = app.require('lodash');
-	const { getLabels, getFullName, getContainerOptions, getViewOptions, cleanObject, foreignKeysToString, foreignActiveKeysToString } = require('./helpers/general')(app);
+	const {
+		getLabels,
+		getFullName,
+		getContainerOptions,
+		getViewOptions,
+		cleanObject,
+		foreignKeysToString,
+		foreignActiveKeysToString,
+	} = require('./helpers/general')(app);
 
 	const { joinActivatedAndDeactivatedStatements } = require('./utils/statementJoiner');
 
@@ -69,7 +78,7 @@ module.exports = (baseProvider, options, app) => {
 				friendlyName,
 				externalTableOptions,
 				foreignKeyConstraints,
-				primaryKey
+				primaryKey,
 			},
 			isActivated,
 		) {
@@ -109,24 +118,26 @@ module.exports = (baseProvider, options, app) => {
 				isActivated: columnDto.isActivated,
 			}));
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
-			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK => compositePK?.compositePrimaryKey.map(key => wrapByBackticks(key.name)))
-			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length ? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`: ''
+			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK =>
+				compositePK?.compositePrimaryKey.map(key => wrapByBackticks(key.name)),
+			);
+			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length
+				? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`
+				: '';
 			const compositePrimaryKeyOutlineConstraintStatementDto = {
 				statement: compositePrimaryKeyOutlineConstraint,
 				isActivated: true,
 			};
-			const foreignKeyConstraintStatementDtos = (foreignKeyConstraints || [])
-				.map(constraintDto => ({
-					statement: commentIfDeactivated(constraintDto.statement, { isActivated: constraintDto.isActivated }),
-					isActivated: constraintDto.isActivated,
-				}));
+			const foreignKeyConstraintStatementDtos = (foreignKeyConstraints || []).map(constraintDto => ({
+				statement: commentIfDeactivated(constraintDto.statement, { isActivated: constraintDto.isActivated }),
+				isActivated: constraintDto.isActivated,
+			}));
 
 			const statementDtosToAddInsideTable = [
 				...columnStatementDtos,
 				compositePrimaryKeyOutlineConstraintStatementDto,
 				...foreignKeyConstraintStatementDtos,
-			]
-				.filter(statementDto => Boolean(statementDto.statement));
+			].filter(statementDto => Boolean(statementDto.statement));
 			const joinedStatementsToAddInsideTable = joinActivatedAndDeactivatedStatements({
 				statementDtos: statementDtosToAddInsideTable,
 				delimiter: ',\n',
@@ -168,18 +179,21 @@ module.exports = (baseProvider, options, app) => {
 				if (isActivated && !allDeactivated) {
 					const activated = viewData.keys
 						.filter(key => key.isActivated)
-						.map(key => (key.alias || key.name))
+						.map(key => key.alias || key.name)
 						.filter(Boolean)
 						.map(wrapByBackticks);
 					const deActivated = viewData.keys
 						.filter(key => !key.isActivated)
-						.map(key => (key.alias || key.name))
+						.map(key => key.alias || key.name)
 						.filter(Boolean)
 						.map(wrapByBackticks);
 
 					columns = activated.join(', ') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
 				} else {
-					columns = viewData.keys.map(key => wrapByBackticks(key.alias || key.name)).filter(Boolean).join(', ');
+					columns = viewData.keys
+						.map(key => wrapByBackticks(key.alias || key.name))
+						.filter(Boolean)
+						.join(', ');
 				}
 			}
 			const isPartitionActivated = isActivatedPartition({
@@ -205,11 +219,14 @@ module.exports = (baseProvider, options, app) => {
 				selectStatement: `\n ${_.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
-						: generateViewSelectStatement(getFullName, isActivated && !allDeactivated)({
+						: generateViewSelectStatement(
+								getFullName,
+								isActivated && !allDeactivated,
+							)({
 								columns: viewData.keys,
 								datasetName: dbData.databaseName,
 								projectId: dbData.projectId,
-						  }),
+							}),
 				)}`,
 				options: getViewOptions(viewData),
 				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
@@ -223,16 +240,20 @@ module.exports = (baseProvider, options, app) => {
 			}
 		},
 
-		createForeignKeyConstraint({
-			name,
-			isActivated,
-			foreignKey,
-			primaryTable,
-			primaryKey,
-			primaryTableActivated,
-			foreignTableActivated,
-			primarySchemaName,
-		}, dbData, schemaData) {
+		createForeignKeyConstraint(
+			{
+				name,
+				isActivated,
+				foreignKey,
+				primaryTable,
+				primaryKey,
+				primaryTableActivated,
+				foreignTableActivated,
+				primarySchemaName,
+			},
+			dbData,
+			schemaData,
+		) {
 			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
 			const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
 			const isActivatedBasedOnTableData =
@@ -245,9 +266,13 @@ module.exports = (baseProvider, options, app) => {
 			return {
 				statement: assignTemplates(templates.createForeignKeyConstraint, {
 					constraintName: name ? `CONSTRAINT ${prepareConstraintName(name)} ` : '',
-					foreignKeys: isActivatedBasedOnTableData ? foreignKeysToString(foreignKey) : foreignActiveKeysToString(foreignKey),
+					foreignKeys: isActivatedBasedOnTableData
+						? foreignKeysToString(foreignKey)
+						: foreignActiveKeysToString(foreignKey),
 					primaryTableName: getFullName(null, primarySchemaName, primaryTable),
-					primaryKeys: isActivatedBasedOnTableData ? foreignKeysToString(primaryKey) : foreignActiveKeysToString(primaryKey),
+					primaryKeys: isActivatedBasedOnTableData
+						? foreignKeysToString(primaryKey)
+						: foreignActiveKeysToString(primaryKey),
 				}),
 				isActivated: isActivatedBasedOnTableData,
 			};
@@ -295,7 +320,7 @@ module.exports = (baseProvider, options, app) => {
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const data = entityData[0];
-			const primaryKey = entityData[1]?.primaryKey ?? []
+			const primaryKey = entityData[1]?.primaryKey ?? [];
 			const tableOptions = data.tableOptions || {};
 			const uris = (tableOptions.uris || []).map(uri => uri.uri).filter(Boolean);
 			const decimal_target_types = (tableOptions.decimal_target_types || []).map(({ value }) => value);
@@ -325,82 +350,79 @@ module.exports = (baseProvider, options, app) => {
 				customerEncryptionKey: data.encryption ? data.customerEncryptionKey : '',
 				labels: data.labels,
 				primaryKey,
-				externalTableOptions: cleanObject(({
-					AVRO: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'require_hive_partition_filter',
-							'hive_partition_uri_prefix',
-							'reference_file_schema_uri',
-							'enable_logical_types',
-						]),
-					},
-					CSV: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'allow_quoted_newlines',
-							'allow_jagged_rows',
-							'quote',
-							'skip_leading_rows',
-							'preserve_ascii_control_characters',
-							'null_marker',
-							'field_delimiter',
-							'encoding',
-							'ignore_unknown_values',
-							'compression',
-							'max_bad_records',
-							'require_hive_partition_filter',
-							'hive_partition_uri_prefix',
-						]),
-					},
-					DATASTORE_BACKUP: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'projection_fields',
-						]),
-					},
-					GOOGLE_SHEETS: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'max_bad_records',
-							'sheet_range',
-						]),
-					},
-					JSON: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'ignore_unknown_values',
-							'compression',
-							'max_bad_records',
-							'require_hive_partition_filter',
-							'hive_partition_uri_prefix',
-							'json_extension',
-						]),
-					},
-					ORC: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'require_hive_partition_filter',
-							'hive_partition_uri_prefix',
-							'reference_file_schema_uri',
-						]),
-					},
-					PARQUET: {
-						...commonOptions,
-						..._.pick(tableOptions, [
-							'require_hive_partition_filter',
-							'hive_partition_uri_prefix',
-							'reference_file_schema_uri',
-							'enable_list_inference',
-							'enum_as_string',
-						]),
-					},
-					CLOUD_BIGTABLE: {
-						...commonOptions,
-						uris: [tableOptions.bigtableUri],
-						bigtable_options: tableOptions.bigtable_options,
-					},
-				})[tableOptions.format] || {}),
+				externalTableOptions: cleanObject(
+					{
+						AVRO: {
+							...commonOptions,
+							..._.pick(tableOptions, [
+								'require_hive_partition_filter',
+								'hive_partition_uri_prefix',
+								'reference_file_schema_uri',
+								'enable_logical_types',
+							]),
+						},
+						CSV: {
+							...commonOptions,
+							..._.pick(tableOptions, [
+								'allow_quoted_newlines',
+								'allow_jagged_rows',
+								'quote',
+								'skip_leading_rows',
+								'preserve_ascii_control_characters',
+								'null_marker',
+								'field_delimiter',
+								'encoding',
+								'ignore_unknown_values',
+								'compression',
+								'max_bad_records',
+								'require_hive_partition_filter',
+								'hive_partition_uri_prefix',
+							]),
+						},
+						DATASTORE_BACKUP: {
+							...commonOptions,
+							..._.pick(tableOptions, ['projection_fields']),
+						},
+						GOOGLE_SHEETS: {
+							...commonOptions,
+							..._.pick(tableOptions, ['max_bad_records', 'sheet_range']),
+						},
+						JSON: {
+							...commonOptions,
+							..._.pick(tableOptions, [
+								'ignore_unknown_values',
+								'compression',
+								'max_bad_records',
+								'require_hive_partition_filter',
+								'hive_partition_uri_prefix',
+								'json_extension',
+							]),
+						},
+						ORC: {
+							...commonOptions,
+							..._.pick(tableOptions, [
+								'require_hive_partition_filter',
+								'hive_partition_uri_prefix',
+								'reference_file_schema_uri',
+							]),
+						},
+						PARQUET: {
+							...commonOptions,
+							..._.pick(tableOptions, [
+								'require_hive_partition_filter',
+								'hive_partition_uri_prefix',
+								'reference_file_schema_uri',
+								'enable_list_inference',
+								'enum_as_string',
+							]),
+						},
+						CLOUD_BIGTABLE: {
+							...commonOptions,
+							uris: [tableOptions.bigtableUri],
+							bigtable_options: tableOptions.bigtable_options,
+						},
+					}[tableOptions.format] || {},
+				),
 			};
 		},
 

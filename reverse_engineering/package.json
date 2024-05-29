@@ -1,11 +1,7 @@
 {
-  "name": "BigQuery",
-  "version": "1.0.0",
-  "description": "",
-  "author": "Hackolade",
-  "dependencies": {
-    "@google-cloud/bigquery": "^5.7.1",
-    "@hackolade/sql-select-statement-parser": "0.0.5"
-  },
-  "installed": true
+    "name": "BigQuery",
+    "version": "1.0.0",
+    "description": "",
+    "author": "Hackolade",
+    "installed": true
 }

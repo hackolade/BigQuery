@@ -126,16 +126,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -163,7 +167,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -246,16 +250,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -283,7 +291,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -358,16 +366,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -395,7 +407,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -470,16 +482,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -507,7 +523,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -597,16 +613,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -634,7 +654,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -682,16 +702,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -719,7 +743,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -792,16 +816,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -829,7 +857,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
@@ -880,16 +908,20 @@ making sure that you maintain a proper JSON format.
 						},
 						{
 							"type": "and",
-							"values": [{
-								"level": "siblings",
-								"value": {
-									"type": "and",
-									"values": [{
-										"key": "primaryKey",
-										"value": true
-									}]
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											}
+										]
+									}
 								}
-							}]
+							]
 						},
 						{
 							"type": "not",
@@ -917,7 +949,7 @@ making sure that you maintain a proper JSON format.
 							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
 							"dependency": {
 								"key": "compositePrimaryKey",
-								"value": true 
+								"value": true
 							}
 						}
 					]
