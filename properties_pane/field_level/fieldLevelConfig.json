@@ -1056,8 +1056,8 @@ making sure that you maintain a proper JSON format.
 			"description",
 			"dependencies",
 			{
-				"propertyName": "Max Properties",
-				"propertyKeyword": "maxProperties",
+				"propertyName": "Min Properties",
+				"propertyKeyword": "minProperties",
 				"propertyType": "numeric",
 				"valueType": "number",
 				"dependency": {
@@ -1066,8 +1066,8 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Min Properties",
-				"propertyKeyword": "minProperties",
+				"propertyName": "Max Properties",
+				"propertyKeyword": "maxProperties",
 				"propertyType": "numeric",
 				"valueType": "number",
 				"dependency": {
