@@ -2,7 +2,7 @@ const { escapeQuotes, getTimestamp, wrapByBackticks } = require('./utils');
 
 module.exports = app => {
 	const _ = app.require('lodash');
-	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const getFullName = (projectId, datasetName, tableName) => {
 		let name = [];
