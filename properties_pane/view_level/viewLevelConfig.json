@@ -1,11 +1,11 @@
 /*
-* Copyright © 2016-2017 by IntegrIT S.A. dba Hackolade.  All rights reserved.
-*
-* The copyright to the computer software herein is the property of IntegrIT S.A.
-* The software may be used and/or copied only with the written permission of 
-* IntegrIT S.A. or in accordance with the terms and conditions stipulated in 
-* the agreement/contract under which the software has been supplied. 
-*/
+ * Copyright © 2016-2017 by IntegrIT S.A. dba Hackolade.  All rights reserved.
+ *
+ * The copyright to the computer software herein is the property of IntegrIT S.A.
+ * The software may be used and/or copied only with the written permission of
+ * IntegrIT S.A. or in accordance with the terms and conditions stipulated in
+ * the agreement/contract under which the software has been supplied.
+ */
 
 [
 	{
@@ -32,13 +32,16 @@
 				"propertyTooltip": "remarks",
 				"dependency": {
 					"type": "or",
-					"values": [{
-						"key": "ifNotExist",
-						"value": false
-					}, {
-						"key": "ifNotExist",
-						"exists": false
-					}]
+					"values": [
+						{
+							"key": "ifNotExist",
+							"value": false
+						},
+						{
+							"key": "ifNotExist",
+							"exists": false
+						}
+					]
 				}
 			},
 			{
@@ -48,13 +51,16 @@
 				"propertyType": "checkbox",
 				"dependency": {
 					"type": "or",
-					"values": [{
-						"key": "orReplace",
-						"value": false
-					}, {
-						"key": "orReplace",
-						"exists": false
-					}]
+					"values": [
+						{
+							"key": "orReplace",
+							"value": false
+						},
+						{
+							"key": "orReplace",
+							"exists": false
+						}
+					]
 				}
 			},
 			{
@@ -83,11 +89,7 @@
 				"propertyKeyword": "partitioning",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"No partitioning",
-					"By time-unit column",
-					"By integer-range"
-				],
+				"options": ["No partitioning", "By time-unit column", "By integer-range"],
 				"dependency": {
 					"key": "materialized",
 					"value": true
@@ -103,13 +105,16 @@
 				},
 				"dependency": {
 					"type": "and",
-					"values": [{
-						"key": "materialized",
-						"value": true
-					}, {
-						"key": "partitioning",
-						"value": "By time-unit column"
-					}]
+					"values": [
+						{
+							"key": "materialized",
+							"value": true
+						},
+						{
+							"key": "partitioning",
+							"value": "By time-unit column"
+						}
+					]
 				}
 			},
 			{
@@ -156,13 +161,16 @@
 				],
 				"dependency": {
 					"type": "and",
-					"values": [{
-						"key": "materialized",
-						"value": true
-					}, {
-						"key": "partitioning",
-						"value": "By integer-range"
-					}]
+					"values": [
+						{
+							"key": "materialized",
+							"value": true
+						},
+						{
+							"key": "partitioning",
+							"value": "By integer-range"
+						}
+					]
 				}
 			},
 			{
@@ -200,13 +208,16 @@
 				"allowNegative": false,
 				"dependency": {
 					"type": "and",
-					"values": [{
-						"key": "materialized",
-						"value": true
-					}, {
-						"key": "enableRefresh",
-						"value": true
-					}]
+					"values": [
+						{
+							"key": "materialized",
+							"value": true
+						},
+						{
+							"key": "enableRefresh",
+							"value": true
+						}
+					]
 				}
 			},
 			{

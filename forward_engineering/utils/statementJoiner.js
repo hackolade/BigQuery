@@ -7,23 +7,23 @@
  * @return {string}
  * */
 const getDelimiterForJoiningStatementsBasedOnActivation = ({
-                                                               index,
-                                                               amountOfStatements,
-                                                               lastIndexOfActivatedStatement,
-                                                               delimiter,
-                                                               delimiterForLastActivatedStatement,
-                                                           }) => {
-    if (index === amountOfStatements - 1) {
-        return '';
-    }
-    if (lastIndexOfActivatedStatement === -1) {
-        return delimiter;
-    }
-    if (index === lastIndexOfActivatedStatement) {
-        return delimiterForLastActivatedStatement;
-    }
-    return delimiter;
-}
+	index,
+	amountOfStatements,
+	lastIndexOfActivatedStatement,
+	delimiter,
+	delimiterForLastActivatedStatement,
+}) => {
+	if (index === amountOfStatements - 1) {
+		return '';
+	}
+	if (lastIndexOfActivatedStatement === -1) {
+		return delimiter;
+	}
+	if (index === lastIndexOfActivatedStatement) {
+		return delimiterForLastActivatedStatement;
+	}
+	return delimiter;
+};
 
 /**
  * @param statementDtos {Array<{
@@ -32,16 +32,15 @@ const getDelimiterForJoiningStatementsBasedOnActivation = ({
  * }>}
  * @return {number}
  */
-const getLastIndexOfActivatedStatement = ({statementDtos}) => {
-    for (let i = statementDtos.length - 1; i >= 0; i--) {
-        const statementDto = statementDtos[i] || {};
-        if (statementDto.isActivated) {
-            return i;
-        }
-    }
-    return -1;
-}
-
+const getLastIndexOfActivatedStatement = ({ statementDtos }) => {
+	for (let i = statementDtos.length - 1; i >= 0; i--) {
+		const statementDto = statementDtos[i] || {};
+		if (statementDto.isActivated) {
+			return i;
+		}
+	}
+	return -1;
+};
 
 /**
  * @param statementDtos {Array<{
@@ -53,26 +52,27 @@ const getLastIndexOfActivatedStatement = ({statementDtos}) => {
  * @return {string}
  * */
 const joinActivatedAndDeactivatedStatements = ({
-                                                   statementDtos,
-                                                   delimiter = ',\n',
-                                                   delimiterForLastActivatedStatement = '\n',
-                                               }) => {
-    const lastIndexOfActivatedStatement = getLastIndexOfActivatedStatement({statementDtos});
+	statementDtos,
+	delimiter = ',\n',
+	delimiterForLastActivatedStatement = '\n',
+}) => {
+	const lastIndexOfActivatedStatement = getLastIndexOfActivatedStatement({ statementDtos });
 
-    return statementDtos
-        .map((statementDto, i) => {
-            const {statement} = statementDto;
-            const currentDelimiter = getDelimiterForJoiningStatementsBasedOnActivation({
-                index: i,
-                amountOfStatements: statementDtos.length,
-                lastIndexOfActivatedStatement,
-                delimiter,
-                delimiterForLastActivatedStatement,
-            });
-            return statement + currentDelimiter;
-        }).join('');
-}
+	return statementDtos
+		.map((statementDto, i) => {
+			const { statement } = statementDto;
+			const currentDelimiter = getDelimiterForJoiningStatementsBasedOnActivation({
+				index: i,
+				amountOfStatements: statementDtos.length,
+				lastIndexOfActivatedStatement,
+				delimiter,
+				delimiterForLastActivatedStatement,
+			});
+			return statement + currentDelimiter;
+		})
+		.join('');
+};
 
 module.exports = {
-    joinActivatedAndDeactivatedStatements,
-}
+	joinActivatedAndDeactivatedStatements,
+};

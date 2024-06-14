@@ -21,8 +21,7 @@
 		"name": "^[a-zA-Z0-9_.-]+$",
 		"dataTypeMode": "Nullable"
 	},
-	"multipleField": {
-	},
+	"multipleField": {},
 	"subschema": {},
 	"arrayItem": {},
 	"choice": {},

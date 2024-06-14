@@ -15,10 +15,7 @@ const connect = connectionInfo => {
 		keyFilename,
 		location,
 		projectId,
-		scopes: [
-			'https://www.googleapis.com/auth/bigquery',
-			'https://www.googleapis.com/auth/drive',
-		],
+		scopes: ['https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/drive'],
 	});
 
 	return client;

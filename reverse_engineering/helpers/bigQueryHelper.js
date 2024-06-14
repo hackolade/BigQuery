@@ -12,13 +12,13 @@ const createBigQueryHelper = (client, log) => {
 				FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU
 				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 				USING(constraint_name)
-				WHERE TC.constraint_type = "PRIMARY KEY";`
-			})
+				WHERE TC.constraint_type = "PRIMARY KEY";`,
+			});
 		} catch (error) {
-			log.warn('Error while getting table constraints', error)
-			return []
+			log.warn('Error while getting table constraints', error);
+			return [];
 		}
-	}
+	};
 
 	const getForeignKeyConstraintsData = async (projectId, datasetId) => {
 		try {
@@ -40,21 +40,22 @@ const createBigQueryHelper = (client, log) => {
 				USING(constraint_name)) 
 				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 				USING(constraint_name)
-				WHERE TC.constraint_type = "FOREIGN KEY";`
-			})
+				WHERE TC.constraint_type = "FOREIGN KEY";`,
+			});
 		} catch (error) {
-			log.warn('Error while getting table constraints', error)
-			return []
+			log.warn('Error while getting table constraints', error);
+			return [];
 		}
-	}
+	};
 
 	const getConstraintsData = async (projectId, datasetId) => {
-		const primaryKeyConstraintsData = (await getPrimaryKeyConstraintsData(projectId, datasetId)).flat()
-		const foreignKeyConstraintsData = (await getForeignKeyConstraintsData(projectId, datasetId)).flat()
+		const primaryKeyConstraintsData = (await getPrimaryKeyConstraintsData(projectId, datasetId)).flat();
+		const foreignKeyConstraintsData = (await getForeignKeyConstraintsData(projectId, datasetId)).flat();
 		return {
-			primaryKeyConstraintsData, foreignKeyConstraintsData
-		}
-	}
+			primaryKeyConstraintsData,
+			foreignKeyConstraintsData,
+		};
+	};
 
 	const getTables = async datasetId => {
 		const [tables] = await client.dataset(datasetId).getTables();
@@ -152,7 +153,7 @@ const createBigQueryHelper = (client, log) => {
 		}
 	};
 
-	const getViewName = (name) => `${name} (v)`;
+	const getViewName = name => `${name} (v)`;
 
 	return {
 		getDatasets,

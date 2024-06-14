@@ -123,9 +123,7 @@ making sure that you maintain a proper JSON format.
 				"shouldValidate": false,
 				"propertyTooltip": "DB vendor",
 				"propertyType": "select",
-				"options": [
-					"BigQuery"
-				],
+				"options": ["BigQuery"],
 				"disabledOption": true
 			},
 			{
@@ -134,9 +132,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "DB version",
 				"defaultValue": "v2",
 				"propertyType": "select",
-				"options": [
-					"v2"
-				],
+				"options": ["v2"],
 				"disabledOption": true
 			},
 			{
@@ -144,11 +140,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "modelingMethodology",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Relational",
-					"Dimensional",
-					"Vault"
-				]
+				"options": ["Relational", "Dimensional", "Vault"]
 			},
 			{
 				"propertyName": "Project Name",

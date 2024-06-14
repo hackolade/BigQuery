@@ -1,8 +1,8 @@
-const { escapeQuotes, getTimestamp, wrapByBackticks} = require('./utils');
+const { escapeQuotes, getTimestamp, wrapByBackticks } = require('./utils');
 
 module.exports = app => {
 	const _ = app.require('lodash');
-	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const getFullName = (projectId, datasetName, tableName) => {
 		let name = [];
@@ -58,10 +58,10 @@ module.exports = app => {
 
 	const getMaterializedViewOptions = viewData => {
 		if (!viewData.materialized) {
-			return []
+			return [];
 		}
 
-		let options = []
+		let options = [];
 
 		if (viewData.enableRefresh) {
 			options.push(`enable_refresh=true`);
@@ -79,8 +79,8 @@ module.exports = app => {
 			options.push(`allow_non_incremental_definition=${viewData.allowNonIncrementalDefinition}`);
 		}
 
-		return options
-	}
+		return options;
+	};
 
 	const getViewOptions = viewData => {
 		let options = [];
@@ -101,34 +101,39 @@ module.exports = app => {
 			options.push(`labels=[\n${tab(getLabels(viewData.labels))}\n]`);
 		}
 
-		options = [...options, ...getMaterializedViewOptions(viewData)]
+		options = [...options, ...getMaterializedViewOptions(viewData)];
 
 		return options.length ? `\n OPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
 	};
 
-	const cleanObject = (obj) => Object.entries(obj)
-		.filter(([name, value]) => value)
-		.reduce(
-			(result, [name, value]) => ({
-				...result,
-				[name]: value,
-			}),
-			{},
-		);
+	const cleanObject = obj =>
+		Object.entries(obj)
+			.filter(([name, value]) => value)
+			.reduce(
+				(result, [name, value]) => ({
+					...result,
+					[name]: value,
+				}),
+				{},
+			);
 
 	const foreignKeysToString = keys => {
 		if (Array.isArray(keys)) {
-			const activatedKeys = keys.filter(key => _.get(key, 'isActivated', true)).map(key => wrapByBackticks(key.name.trim()));
-			const deactivatedKeys = keys.filter(key => !_.get(key, 'isActivated', true)).map(key => wrapByBackticks(key.name.trim()));
+			const activatedKeys = keys
+				.filter(key => _.get(key, 'isActivated', true))
+				.map(key => wrapByBackticks(key.name.trim()));
+			const deactivatedKeys = keys
+				.filter(key => !_.get(key, 'isActivated', true))
+				.map(key => wrapByBackticks(key.name.trim()));
 			const deactivatedKeysAsString = deactivatedKeys.length
 				? commentIfDeactivated(deactivatedKeys, { isActivated: false }, true)
 				: '';
-		
+
 			return activatedKeys.join(', ') + deactivatedKeysAsString;
 		}
 		return keys;
 	};
-		
+
 	const foreignActiveKeysToString = keys => {
 		return keys.map(key => wrapByBackticks(key.name.trim())).join(', ');
 	};
