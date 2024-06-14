@@ -47,7 +47,7 @@
     "disabled": false,
     "dependencies": {
         "@google-cloud/bigquery": "5.7.1",
-        "@hackolade/sql-select-statement-parser": "0.0.5",
+        "@hackolade/sql-select-statement-parser": "0.0.20",
         "lodash": "4.17.21"
     },
     "lint-staged": {
