@@ -1087,8 +1087,26 @@ making sure that you maintain a proper JSON format.
 			},
 			"description",
 			"dependencies",
-			"minProperties",
-			"maxProperties",
+			{
+				"propertyName": "Min Properties",
+				"propertyKeyword": "minProperties",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"dependency": {
+					"key": "subtype",
+					"value": "object"
+				}
+			},
+			{
+				"propertyName": "Max Properties",
+				"propertyKeyword": "maxProperties",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"dependency": {
+					"key": "subtype",
+					"value": "object"
+				}
+			},
 			"additionalProperties",
 			"comments"
 		]
