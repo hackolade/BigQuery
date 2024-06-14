@@ -7,15 +7,12 @@
 				"inputKeyword": "name",
 				"inputType": "text",
 				"inputPlaceholder": "Name"
-				
 			},
 			{
 				"inputLabel": "Cloud platform",
 				"inputKeyword": "cloudPlatform",
 				"inputType": "select",
-				"options": [
-					{ "value": "", "label": "Google Cloud" }
-				]
+				"options": [{ "value": "", "label": "Google Cloud" }]
 			},
 			{
 				"inputLabel": "Project id",

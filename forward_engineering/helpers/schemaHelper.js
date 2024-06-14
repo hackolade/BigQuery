@@ -1,11 +1,8 @@
+const toUpper = s => String(s || '').toUpperCase();
 
-const toUpper = (s) => String(s || '').toUpperCase();
+const cleanUp = obj => Object.fromEntries(Object.entries(obj).filter(([key, value]) => value !== ''));
 
-const cleanUp = (obj) => Object.fromEntries(
-	Object.entries(obj).filter(([key, value]) => value !== '')
-);
-
-const getType = (jsonSchema) => {
+const getType = jsonSchema => {
 	if (jsonSchema.type === 'struct') {
 		return 'record';
 	}
@@ -25,13 +22,12 @@ const convertItem = ({ name, jsonSchema }) => {
 	});
 
 	if (jsonSchema.properties) {
-		schema.fields = Object.keys(jsonSchema.properties)
-			.flatMap(
-				(name) => convertItem({
-					name,
-					jsonSchema: jsonSchema.properties[name],
-				})
-			);
+		schema.fields = Object.keys(jsonSchema.properties).flatMap(name =>
+			convertItem({
+				name,
+				jsonSchema: jsonSchema.properties[name],
+			}),
+		);
 
 		return [schema];
 	} else if (jsonSchema.items) {
@@ -48,7 +44,7 @@ const convertItem = ({ name, jsonSchema }) => {
 	return [schema];
 };
 
-const convertJsonSchemaToBigQuerySchema = (jsonSchema) => {
+const convertJsonSchemaToBigQuerySchema = jsonSchema => {
 	let result = [];
 
 	result = Object.keys(jsonSchema.properties || {}).flatMap(name => {

@@ -4,8 +4,8 @@ const execute = async (bigquery, query, location) => {
 	const response = await bigquery.createJob({
 		configuration: {
 			query: {
-			  query: query,
-			  useLegacySql: false,
+				query: query,
+				useLegacySql: false,
 			},
 		},
 		location,
@@ -23,9 +23,12 @@ const applyToInstance = async (connectionInfo, logger, app) => {
 	const dataLocation = connectionInfo.containerData?.[0]?.dataLocation;
 	const location = dataLocation === 'default' ? '' : dataLocation;
 
-	const queries = connectionInfo.script.split('\n\n').map((query) => {
-		return _.trim(query);
-	}).filter(Boolean);
+	const queries = connectionInfo.script
+		.split('\n\n')
+		.map(query => {
+			return _.trim(query);
+		})
+		.filter(Boolean);
 
 	await async.mapSeries(queries, async query => {
 		const message = 'Query: ' + query.split('\n').shift().substr(0, 150);

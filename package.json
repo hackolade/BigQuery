@@ -1,36 +1,35 @@
 {
-	"name": "BigQuery",
-	"version": "0.1.25",
-	"versionDate": "2024-04-12",
-	"author": "hackolade",
-	"engines": {
-		"hackolade": "6.8.4",
-		"hackoladePlugin": "1.2.0"
-	},
-	"contributes": {
-		"target": {
-			"applicationTarget": "BigQuery",
-			"title": "BigQuery Standard SQL",
-			"versions": [
-				"Standard SQL"
-			]
-		},
-		"features": {
-			"views": {
-				"enabled": true,
-				"viewLevel": "model",
-				"disablePipelines": true
-			},
-			"nestedCollections": false,
-			"disablePatternField": true,
-			"enableForwardEngineering": true,
-			"enableReverseEngineering": true,
-			"disableChoices": true,
-			"enableJsonType": true,
-			"useJsonTypesWithComplexTypes": true,
-			"reverseSchemaIntoOneColumn": true,
-			"disableDenormalization": false,
-			"relationships": {
+    "name": "BigQuery",
+    "version": "0.2.1",
+    "author": "hackolade",
+    "engines": {
+        "hackolade": "6.8.4",
+        "hackoladePlugin": "1.2.0"
+    },
+    "contributes": {
+        "target": {
+            "applicationTarget": "BigQuery",
+            "title": "BigQuery Standard SQL",
+            "versions": [
+                "Standard SQL"
+            ]
+        },
+        "features": {
+            "views": {
+                "enabled": true,
+                "viewLevel": "model",
+                "disablePipelines": true
+            },
+            "nestedCollections": false,
+            "disablePatternField": true,
+            "enableForwardEngineering": true,
+            "enableReverseEngineering": true,
+            "disableChoices": true,
+            "enableJsonType": true,
+            "useJsonTypesWithComplexTypes": true,
+            "reverseSchemaIntoOneColumn": true,
+            "disableDenormalization": false,
+            "relationships": {
                 "compositeRelationships": {
                     "allowRelationshipsByProperties": [
                         "primaryKey",
@@ -38,12 +37,44 @@
                     ]
                 }
             },
-			"FEScriptCommentsSupported": true,
-			"discoverRelationships": true,
-			"disableJsonDataMaxLength": true,
-			"disableMultipleTypes": true
-		}
-	},
-	"description": "Hackolade plugin for Google BigQuery Standard SQL",
-	"disabled": false
+            "FEScriptCommentsSupported": true,
+            "discoverRelationships": true,
+            "disableJsonDataMaxLength": true,
+            "disableMultipleTypes": true
+        }
+    },
+    "description": "Hackolade plugin for Google BigQuery Standard SQL",
+    "disabled": false,
+    "dependencies": {
+        "@google-cloud/bigquery": "5.7.1",
+        "@hackolade/sql-select-statement-parser": "0.0.20",
+        "lodash": "4.17.21"
+    },
+    "lint-staged": {
+        "*.{js,json}": "prettier --write"
+    },
+    "simple-git-hooks": {
+        "pre-commit": "npx lint-staged",
+        "pre-push": "npx eslint ."
+    },
+    "scripts": {
+        "lint": "eslint . --max-warnings=0",
+        "package": "node esbuild.package.js"
+    },
+    "devDependencies": {
+        "@hackolade/hck-esbuild-plugins-pack": "0.0.1",
+        "@typescript-eslint/eslint-plugin": "7.11.0",
+        "@typescript-eslint/parser": "7.11.0",
+        "esbuild": "0.20.2",
+        "esbuild-plugin-clean": "1.0.1",
+        "eslint": "8.57.0",
+        "eslint-config-prettier": "9.1.0",
+        "eslint-formatter-teamcity": "^1.0.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-prettier": "5.1.3",
+        "eslint-plugin-unused-imports": "3.2.0",
+        "lint-staged": "14.0.1",
+        "prettier": "3.2.5",
+        "simple-git-hooks": "2.11.1"
+    }
 }

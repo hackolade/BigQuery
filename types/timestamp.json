@@ -17,7 +17,8 @@
 		{
 			"schema": {},
 			"format": "YYYY-MM-DD hh:mm:ss.nnnZ"
-		}, {
+		},
+		{
 			"schema": {},
 			"format": "YYYY-MM-DD hh:mm:ss.nnnnnnZ"
 		}
