@@ -1,5 +1,0 @@
-const DROP_STATEMENTS = ['DROP SCHEMA', 'DROP TABLE', 'DROP COLUMN', 'DROP VIEW'];
-
-module.exports = {
-	DROP_STATEMENTS,
-};

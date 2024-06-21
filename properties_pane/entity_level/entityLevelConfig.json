@@ -131,22 +131,14 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"defaultValue": "Native",
 				"propertyType": "select",
-				"options": [
-					"Native",
-					"External"
-				]
+				"options": ["Native", "External"]
 			},
 			{
 				"propertyName": "Table role",
 				"propertyKeyword": "tableRole",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Dimension",
-					"Fact",
-					"Outrigger",
-					"Staging"
-				],
+				"options": ["Dimension", "Fact", "Outrigger", "Staging"],
 				"dependency": {
 					"level": "model",
 					"key": "modelingMethodology",
@@ -158,14 +150,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "vaultComponent",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": [
-					"Hub",
-					"Link",
-					"Satellite",
-					"Bridge",
-					"Point in Time",
-					"Reference"
-				],
+				"options": ["Hub", "Link", "Satellite", "Bridge", "Point in Time", "Reference"],
 				"dependency": {
 					"level": "model",
 					"key": "modelingMethodology",
@@ -179,13 +164,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"dependency": {
 					"type": "or",
-					"values": [{
-						"key": "ifNotExist",
-						"value": false
-					}, {
-						"key": "ifNotExist",
-						"exists": false
-					}]
+					"values": [
+						{
+							"key": "ifNotExist",
+							"value": false
+						},
+						{
+							"key": "ifNotExist",
+							"exists": false
+						}
+					]
 				}
 			},
 			{
@@ -195,13 +183,16 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"dependency": {
 					"type": "or",
-					"values": [{
-						"key": "orReplace",
-						"value": false
-					}, {
-						"key": "orReplace",
-						"exists": false
-					}]
+					"values": [
+						{
+							"key": "orReplace",
+							"value": false
+						},
+						{
+							"key": "orReplace",
+							"exists": false
+						}
+					]
 				}
 			},
 			{
@@ -224,12 +215,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"defaultValue": "No partitioning",
 				"propertyType": "select",
-				"options": [
-					"No partitioning",
-					"By ingestion time",
-					"By time-unit column",
-					"By integer-range"
-				],
+				"options": ["No partitioning", "By ingestion time", "By time-unit column", "By integer-range"],
 				"dependency": {
 					"type": "not",
 					"values": {
@@ -264,13 +250,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "partitioningType",
 				"defaultValue": "",
 				"propertyType": "select",
-				"options": [
-					"",
-					"By day",
-					"By hour",
-					"By month",
-					"By year"
-				],
+				"options": ["", "By day", "By hour", "By month", "By year"],
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -397,10 +377,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Data is encrypted automatically. Select an encryption key management solution.",
 				"defaultValue": "Google-managed",
 				"propertyType": "select",
-				"options": [
-					"Google-managed",
-					"Customer-managed"
-				]
+				"options": ["Google-managed", "Customer-managed"]
 			},
 			{
 				"propertyName": "Encryption key",
@@ -633,13 +610,7 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "checkbox",
 						"dependency": {
 							"key": "format",
-							"value": [
-								"AVRO",
-								"CSV",
-								"JSON",
-								"ORC",
-								"PARQUET"
-							]
+							"value": ["AVRO", "CSV", "JSON", "ORC", "PARQUET"]
 						}
 					},
 					{
@@ -669,11 +640,7 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text",
 						"dependency": {
 							"key": "format",
-							"value": [
-								"AVRO",
-								"ORC",
-								"PARQUET"
-							]
+							"value": ["AVRO", "ORC", "PARQUET"]
 						}
 					},
 					{
@@ -782,7 +749,7 @@ making sure that you maintain a proper JSON format.
 									}
 								]
 							}
-						}, 
+						},
 						{
 							"tooltip": "Remove or update the existing composite primary key definition prior to unlock the possibility to create a new composite primary key definition for this table",
 							"dependency": {

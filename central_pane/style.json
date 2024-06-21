@@ -1,14 +1,16 @@
 {
 	"field": {
-		"dtd": [{
-			"value": {
-				"border-style": "solid"
-			},
-			"dependency": {
-				"key": "dataTypeMode",
-				"value": "Required"
+		"dtd": [
+			{
+				"value": {
+					"border-style": "solid"
+				},
+				"dependency": {
+					"key": "dataTypeMode",
+					"value": "Required"
+				}
 			}
-		}],
+		],
 		"erd": [
 			"keys",
 			"type",

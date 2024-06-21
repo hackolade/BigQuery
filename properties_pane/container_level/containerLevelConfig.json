@@ -156,32 +156,32 @@ making sure that you maintain a proper JSON format.
 				"options": [
 					{ "name": "Default", "value": "default" },
 					{ "name": "United States (us)", "value": "us" },
-					{ "name": "European Union (eu)", "value": "eu"},
-					{ "name": "South Carolina (us-east1)", "value": "us-east1"},
-					{ "name": "Northern Virginia (us-east4)", "value": "us-east4"},
-					{ "name": "Iowa (us-central1)", "value": "us-central1"},
-					{ "name": "Oregon (us-west1)", "value": "us-west1"},
-					{ "name": "Los Angeles (us-west2)", "value": "us-west2"},
-					{ "name": "Salt Lake City (us-west3)", "value": "us-west3"},
-					{ "name": "Las Vegas (us-west4)", "value": "us-west4"},
-					{ "name": "Taiwan (asia-east1)", "value": "asia-east1"},
-					{ "name": "Tokyo (asia-northeast1)", "value": "asia-northeast1"},
-					{ "name": "Singapore (asia-southeast1)", "value": "asia-southeast1"},
-					{ "name": "Mumbai (asia-south1)", "value": "asia-south1"},
-					{ "name": "Hong Kong (asia-east2)", "value": "asia-east2"},
-					{ "name": "Osaka (asia-northeast2)", "value": "asia-northeast2"},
-					{ "name": "Seoul (asia-northeast3)", "value": "asia-northeast3"},
-					{ "name": "Jakarta (asia-southeast2)", "value": "asia-southeast2"},
-					{ "name": "Delhi (asia-south2)", "value": "asia-south2"},
-					{ "name": "Finland (europe-north1)", "value": "europe-north1"},
-					{ "name": "Belgium (europe-west1)", "value": "europe-west1"},
-					{ "name": "London (europe-west2)", "value": "europe-west2"},
-					{ "name": "Frankfurt (europe-west3)", "value": "europe-west3"},
-					{ "name": "Netherlands (europe-west4)", "value": "europe-west4"},
-					{ "name": "Zurich (europe-west6)", "value": "europe-west6"},
-					{ "name": "Warsaw (europe-central2)", "value": "europe-central2"},
-					{ "name": "Montréal (northamerica-northeast1)", "value": "northamerica-northeast1"},
-					{ "name": "São Paulo (southamerica-east1)", "value": "southamerica-east1"},
+					{ "name": "European Union (eu)", "value": "eu" },
+					{ "name": "South Carolina (us-east1)", "value": "us-east1" },
+					{ "name": "Northern Virginia (us-east4)", "value": "us-east4" },
+					{ "name": "Iowa (us-central1)", "value": "us-central1" },
+					{ "name": "Oregon (us-west1)", "value": "us-west1" },
+					{ "name": "Los Angeles (us-west2)", "value": "us-west2" },
+					{ "name": "Salt Lake City (us-west3)", "value": "us-west3" },
+					{ "name": "Las Vegas (us-west4)", "value": "us-west4" },
+					{ "name": "Taiwan (asia-east1)", "value": "asia-east1" },
+					{ "name": "Tokyo (asia-northeast1)", "value": "asia-northeast1" },
+					{ "name": "Singapore (asia-southeast1)", "value": "asia-southeast1" },
+					{ "name": "Mumbai (asia-south1)", "value": "asia-south1" },
+					{ "name": "Hong Kong (asia-east2)", "value": "asia-east2" },
+					{ "name": "Osaka (asia-northeast2)", "value": "asia-northeast2" },
+					{ "name": "Seoul (asia-northeast3)", "value": "asia-northeast3" },
+					{ "name": "Jakarta (asia-southeast2)", "value": "asia-southeast2" },
+					{ "name": "Delhi (asia-south2)", "value": "asia-south2" },
+					{ "name": "Finland (europe-north1)", "value": "europe-north1" },
+					{ "name": "Belgium (europe-west1)", "value": "europe-west1" },
+					{ "name": "London (europe-west2)", "value": "europe-west2" },
+					{ "name": "Frankfurt (europe-west3)", "value": "europe-west3" },
+					{ "name": "Netherlands (europe-west4)", "value": "europe-west4" },
+					{ "name": "Zurich (europe-west6)", "value": "europe-west6" },
+					{ "name": "Warsaw (europe-central2)", "value": "europe-central2" },
+					{ "name": "Montréal (northamerica-northeast1)", "value": "northamerica-northeast1" },
+					{ "name": "São Paulo (southamerica-east1)", "value": "southamerica-east1" },
 					{ "name": "Sydney (australia-southeast1)", "value": "australia-southeast1" },
 					{ "name": "Melbourne (australia-southeast2)", "value": "australia-southeast2" }
 				]
@@ -211,10 +211,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Data is encrypted automatically. Select an encryption key management solution.",
 				"defaultValue": "Google-managed",
 				"propertyType": "select",
-				"options": [
-					"Google-managed",
-					"Customer-managed"
-				]
+				"options": ["Google-managed", "Customer-managed"]
 			},
 			{
 				"propertyName": "Encryption key",
@@ -255,4 +252,3 @@ making sure that you maintain a proper JSON format.
 		"containerLevelKeys": []
 	}
 ]
-
