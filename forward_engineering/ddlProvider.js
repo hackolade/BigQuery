@@ -17,7 +17,7 @@ const {
 module.exports = (baseProvider, options, app) => {
 	const { tab, commentIfDeactivated, hasType, checkAllKeysDeactivated } =
 		app.require('@hackolade/ddl-fe-utils').general;
-	app.require('@hackolade/ddl-fe-utils').general;
+
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 	const _ = app.require('lodash');
 	const {
