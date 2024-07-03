@@ -40,16 +40,16 @@
  * }
  */
 {
-	"modify": {
+	"delete": {
 		"entity": [
 			{
-				"from": {
-					"partitioning": []
-				},
-				"to": {
-					"partitioning": "No partitioning"
-				}
-			},
+				"key": "partitioning",
+				"value": []
+			}
+		]
+	},
+	"modify": {
+		"entity": [
 			{
 				"from": {
 					"primaryKey": false
