@@ -40,16 +40,13 @@
  * }
  */
 {
-	"delete": {
-		"entity": [
-			{
-				"key": "partitioning",
-				"value": []
-			}
-		]
-	},
 	"modify": {
 		"entity": [
+			[
+				"assignProperties",
+				{ "key": "partitioning", "valueType": "array" },
+				{ "partitioning": "No partitioning" }
+			],
 			{
 				"from": {
 					"primaryKey": false
