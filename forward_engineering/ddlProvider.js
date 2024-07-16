@@ -425,7 +425,7 @@ module.exports = (baseProvider, options, app) => {
 						},
 					}[tableOptions.format] || {},
 				),
-				properties: jsonSchema.properties,
+				properties: jsonSchema?.properties || {},
 			};
 		},
 
@@ -462,7 +462,7 @@ module.exports = (baseProvider, options, app) => {
 				enableRefresh: detailsTab.enableRefresh,
 				maxStaleness: detailsTab.maxStaleness,
 				allowNonIncrementalDefinition: detailsTab.allowNonIncrementalDefinition,
-				properties: jsonSchema.properties,
+				properties: jsonSchema?.properties || {},
 			};
 		},
 
