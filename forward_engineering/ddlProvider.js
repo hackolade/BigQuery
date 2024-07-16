@@ -78,6 +78,7 @@ module.exports = (baseProvider, options, app) => {
 				externalTableOptions,
 				foreignKeyConstraints,
 				primaryKey,
+				properties,
 			},
 			isActivated,
 		) {
@@ -95,6 +96,7 @@ module.exports = (baseProvider, options, app) => {
 				partitioningType,
 				timeUnitPartitionKey,
 				rangeOptions,
+				properties,
 			});
 			const clustering = getClusteringKey(clusteringKey, isActivated);
 			const isExternal = tableType === 'External';
@@ -205,6 +207,7 @@ module.exports = (baseProvider, options, app) => {
 				partitioningType: viewData.partitioningType,
 				timeUnitPartitionKey: viewData.timeUnitPartitionKey,
 				rangeOptions: viewData.rangeOptions,
+				properties: viewData.properties,
 			});
 			const clustering = getClusteringKey(viewData.clusteringKey, isActivated);
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
@@ -422,6 +425,7 @@ module.exports = (baseProvider, options, app) => {
 						},
 					}[tableOptions.format] || {},
 				),
+				properties: jsonSchema?.properties || {},
 			};
 		},
 
@@ -434,7 +438,7 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		hydrateView({ viewData, entityData }) {
+		hydrateView({ viewData, entityData, jsonSchema }) {
 			const detailsTab = entityData[0];
 
 			return {
@@ -458,6 +462,7 @@ module.exports = (baseProvider, options, app) => {
 				enableRefresh: detailsTab.enableRefresh,
 				maxStaleness: detailsTab.maxStaleness,
 				allowNonIncrementalDefinition: detailsTab.allowNonIncrementalDefinition,
+				properties: jsonSchema?.properties || {},
 			};
 		},
 
