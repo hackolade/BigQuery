@@ -35,6 +35,14 @@ const getPartitioningByIntegerRange = (rangeOptions = {}) => {
 	return `RANGE_BUCKET(${name}, GENERATE_ARRAY(${start}, ${end}${isNaN(interval) ? '' : `, ${interval}`}))`;
 };
 
+const getPartitioningByTimeUnitColumn = ({ partitionTimeColumn, properties }) => {
+	if (properties?.[partitionTimeColumn]?.type === 'date') {
+		return wrapByBackticks(partitionTimeColumn);
+	}
+
+	return `DATE(${wrapByBackticks(partitionTimeColumn)})`;
+};
+
 const isActivatedPartition = ({ partitioning, timeUnitPartitionKey, rangeOptions }) => {
 	if (partitioning === 'By time-unit column') {
 		return timeUnitPartitionKey?.[0]?.isActivated;
@@ -47,7 +55,7 @@ const isActivatedPartition = ({ partitioning, timeUnitPartitionKey, rangeOptions
 	return true;
 };
 
-const getTablePartitioning = ({ partitioning, partitioningType, timeUnitPartitionKey, rangeOptions }) => {
+const getTablePartitioning = ({ partitioning, partitioningType, timeUnitPartitionKey, rangeOptions, properties }) => {
 	const partitionTimeColumn = timeUnitPartitionKey?.[0]?.name;
 
 	if (partitioning === 'No partitioning') {
@@ -59,7 +67,7 @@ const getTablePartitioning = ({ partitioning, partitioningType, timeUnitPartitio
 	}
 
 	if (partitioning === 'By time-unit column' && partitionTimeColumn) {
-		return `PARTITION BY DATE(${wrapByBackticks(partitionTimeColumn)})`;
+		return 'PARTITION BY ' + getPartitioningByTimeUnitColumn({ partitionTimeColumn, properties });
 	}
 
 	if (partitioning === 'By integer-range') {
