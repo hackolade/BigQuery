@@ -51,6 +51,11 @@ const testConnection = async (connectionInfo, logger, cb) => {
 		const bigQueryHelper = createBigQueryHelper(client, log);
 		await bigQueryHelper.getDatasets();
 
+		const datasetName = connectionInfo.datasetId || connectionInfo.data?.databaseName;
+		if (datasetName) {
+			await bigQueryHelper.getTables(datasetName);
+		}
+
 		cb();
 	} catch (err) {
 		cb(prepareError(logger, err));
@@ -456,6 +461,7 @@ const getPartitioningRange = rangePartitioning => {
 
 const prepareError = (logger, error) => {
 	const err = {
+		code: error.code,
 		message: error.message,
 		stack: error.stack,
 	};

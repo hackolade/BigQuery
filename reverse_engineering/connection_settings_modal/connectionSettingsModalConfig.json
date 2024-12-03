@@ -15,18 +15,18 @@
 				"options": [{ "value": "", "label": "Google Cloud" }]
 			},
 			{
-				"inputLabel": "Project id",
+				"inputLabel": "Project ID",
 				"inputKeyword": "projectId",
 				"inputType": "text",
 				"inputPlaceholder": "Optional",
 				"inputTooltip": "Project ID on Google Cloud Platform"
 			},
 			{
-				"inputLabel": "Dataset id",
+				"inputLabel": "Dataset name",
 				"inputKeyword": "datasetId",
 				"inputType": "text",
 				"inputPlaceholder": "Optional",
-				"inputTooltip": "Dataset ID on Google Cloud Platform"
+				"inputTooltip": "Dataset name on Google Cloud Platform"
 			},
 			{
 				"inputLabel": "Key file",
