@@ -58,6 +58,9 @@ const testConnection = async (connectionInfo, logger, cb) => {
 
 		cb();
 	} catch (err) {
+		if (err.code === 404) {
+			err.customMsgCode = 'PROJECT_DATASET_NOT_FOUND';
+		}
 		cb(prepareError(logger, err));
 	}
 };
@@ -97,6 +100,9 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 
 		cb(null, tablesByDataset);
 	} catch (err) {
+		if (err.code === 404) {
+			err.customMsgCode = 'PROJECT_DATASET_NOT_FOUND';
+		}
 		cb(prepareError(logger, err));
 	}
 };
@@ -464,6 +470,7 @@ const prepareError = (logger, error) => {
 		code: error.code,
 		message: error.message,
 		stack: error.stack,
+		customMsgCode: error.customMsgCode,
 	};
 
 	logger.log('error', err, 'Reverse Engineering error');
