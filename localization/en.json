@@ -154,5 +154,6 @@
 	"MODAL_WINDOW___DB_CONNECTIONS_LIST_TITLE": "BigQuery Connections",
 	"MAIN_MENU___FORWARD_DB_BUCKETS": "BigQuery DDL...",
 	"MODAL_WINDOW___FE_SCRIPT_OPTION_CREATE": "Create",
-	"MODAL_WINDOW___FE_SCRIPT_OPTION_UPDATE": "Alter"
+	"MODAL_WINDOW___FE_SCRIPT_OPTION_UPDATE": "Alter",
+	"PROJECT_DATASET_NOT_FOUND": "The project or dataset could not be located in the BigQuery instance.\nDouble-check the project id and dataset name. Ensure the necessary permissions are in place to access the project or dataset.\nFor further assistance, please refer to the <a href=\"https://hackolade.com/help/ConnecttoaBigQueryinstance.html\">online documentation</a>."
 }
