@@ -41,7 +41,7 @@ module.exports = (baseProvider, options, app) => {
 			defaultExpiration,
 			customerEncryptionKey,
 			labels,
-			isActivated,
+			isActivated = true,
 		}) {
 			const statement = assignTemplates(templates.createDatabase, {
 				name: getFullName(projectId, databaseName),
