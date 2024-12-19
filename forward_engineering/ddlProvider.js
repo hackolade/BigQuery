@@ -41,8 +41,9 @@ module.exports = (baseProvider, options, app) => {
 			defaultExpiration,
 			customerEncryptionKey,
 			labels,
+			isActivated,
 		}) {
-			return assignTemplates(templates.createDatabase, {
+			const statement = assignTemplates(templates.createDatabase, {
 				name: getFullName(projectId, databaseName),
 				ifNotExist: ifNotExist ? ' IF NOT EXISTS' : '',
 				dbOptions: getContainerOptions({
@@ -53,6 +54,7 @@ module.exports = (baseProvider, options, app) => {
 					labels,
 				}),
 			});
+			return commentIfDeactivated(statement, { isActivated });
 		},
 
 		createTable(
