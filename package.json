@@ -48,6 +48,7 @@
     "dependencies": {
         "@google-cloud/bigquery": "5.7.1",
         "@hackolade/sql-select-statement-parser": "0.0.20",
+        "esbuild-plugin-copy": "2.1.1",
         "lodash": "4.17.21"
     },
     "lint-staged": {
@@ -59,7 +60,8 @@
     },
     "scripts": {
         "lint": "eslint . --max-warnings=0",
-        "package": "node esbuild.package.js"
+        "package": "node esbuild.package.js",
+		"postinstall": "npx simple-git-hooks"
     },
     "devDependencies": {
         "@hackolade/hck-esbuild-plugins-pack": "0.0.1",
