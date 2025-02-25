@@ -1,3 +1,8 @@
+/**
+ * @typedef {import('../types').ColumnDefinition} ColumnDefinition
+ * @typedef {import('../types').JsonSchema} JsonSchema
+ */
+
 const escapeQuotes = (str = '') => {
 	return str.replace(/(")/gi, '\\$1').replace(/\n/gi, '\\n');
 };
@@ -303,6 +308,22 @@ const getColumnSchema =
 		});
 	};
 
+/**
+ * @param {{ type: string; columnDefinition: ColumnDefinition }}
+ * @returns {string}
+ */
+const decorateType = ({ type, columnDefinition }) => {
+	const deps = { assignTemplates: (__, { name, type }) => name + type, tab: value => value, templates: {} };
+	const dataType = getColumnSchema(deps)({
+		name: '',
+		type,
+		dataTypeMode: columnDefinition.dataTypeMode,
+		jsonSchema: columnDefinition,
+	});
+
+	return dataType.trim();
+};
+
 const generateViewSelectStatement =
 	(getFullName, isActivated) =>
 	({ columns, projectId, datasetName }) => {
@@ -359,4 +380,5 @@ module.exports = {
 	clearEmptyStatements,
 	prepareConstraintName,
 	wrapByBackticks,
+	decorateType,
 };
