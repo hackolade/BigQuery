@@ -313,7 +313,7 @@ const getColumnSchema =
  * @returns {string}
  */
 const decorateType = ({ type, columnDefinition }) => {
-	const deps = { assignTemplates: (__, { name, type }) => name + type, tab: value => value, templates: {} };
+	const deps = { assignTemplates: (__, { name = '', type }) => name + type, tab: value => value, templates: {} };
 	const dataType = getColumnSchema(deps)({
 		name: '',
 		type,
