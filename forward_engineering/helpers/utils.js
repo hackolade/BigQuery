@@ -314,14 +314,16 @@ const getColumnSchema =
  */
 const decorateType = ({ type, columnDefinition }) => {
 	const deps = { assignTemplates: (__, { name = '', type }) => name + type, tab: value => value, templates: {} };
-	const dataType = getColumnSchema(deps)({
+	const fullDataType = getColumnSchema(deps)({
 		name: '',
 		type,
 		dataTypeMode: columnDefinition.dataTypeMode,
 		jsonSchema: columnDefinition,
 	});
+	const dataType = fullDataType.trim();
+	const isComplexType = /^(array|struct)/i.test(dataType);
 
-	return dataType.trim();
+	return isComplexType ? dataType.replace(/<[\s\S]+>$/, '<>') : dataType;
 };
 
 const generateViewSelectStatement =
