@@ -87,7 +87,7 @@
     },
     "overrides":{
         "node-fetch": {
-            ".": "npm:@hackolade/fetch@1.2.0"
+            ".": "npm:@hackolade/fetch@1.2.1"
         }
     }
 }
