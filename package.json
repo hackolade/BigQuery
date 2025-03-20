@@ -54,7 +54,6 @@
     "dependencies": {
         "@google-cloud/bigquery": "5.7.1",
         "@hackolade/sql-select-statement-parser": "0.0.20",
-        "esbuild-plugin-copy": "2.1.1",
         "lodash": "4.17.21"
     },
     "lint-staged": {
@@ -75,6 +74,7 @@
         "@typescript-eslint/parser": "7.11.0",
         "esbuild": "0.20.2",
         "esbuild-plugin-clean": "1.0.1",
+        "esbuild-plugin-copy": "2.1.1",
         "eslint": "8.57.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-formatter-teamcity": "^1.0.0",
@@ -84,5 +84,10 @@
         "lint-staged": "14.0.1",
         "prettier": "3.2.5",
         "simple-git-hooks": "2.11.1"
+    },
+    "overrides":{
+        "node-fetch": {
+            ".": "npm:@hackolade/fetch@1.2.0"
+        }
     }
 }
