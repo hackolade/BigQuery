@@ -99,6 +99,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "numeric",
 				"valueType": "number",
 				"minValue": 1,
+				"maxValue": 9223372036854775807,
 				"step": 1,
 				"typeDecorator": true
 			},
@@ -206,6 +207,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "numeric",
 				"valueType": "number",
 				"minValue": 1,
+				"maxValue": 9223372036854775807,
 				"step": 1,
 				"typeDecorator": true
 			},

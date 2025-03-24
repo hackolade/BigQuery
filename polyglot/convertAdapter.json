@@ -57,6 +57,24 @@
 				"to": {
 					"required": false
 				}
+			},
+			{
+				"from": {
+					"type": "string",
+					"length": 9223372036854775807
+				},
+				"to": {
+					"hasMaxLength": true
+				}
+			},
+			{
+				"from": {
+					"type": "bytes",
+					"length": 9223372036854775807
+				},
+				"to": {
+					"hasMaxLength": true
+				}
 			}
 		]
 	}
