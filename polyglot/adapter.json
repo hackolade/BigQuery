@@ -66,6 +66,34 @@
 				"to": {
 					"dataTypeMode": "Nullable"
 				}
+			},
+			{
+				"from": {
+					"type": "varchar",
+					"hasMaxLength": true
+				},
+				"to": {
+					"length": 9223372036854775807
+				}
+			},
+			{
+				"from": {
+					"type": "nvarchar",
+					"hasMaxLength": true
+				},
+				"to": {
+					"length": 9223372036854775807
+				}
+			},
+			{
+				"from": {
+					"type": "binary",
+					"mode": "varbinary",
+					"hasMaxLength": true
+				},
+				"to": {
+					"length": 9223372036854775807
+				}
 			}
 		]
 	}
