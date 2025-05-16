@@ -1,3 +1,5 @@
+'use strict';
+
 const connectionHelper = require('./helpers/connectionHelper');
 const createBigQueryHelper = require('./helpers/bigQueryHelper');
 const { createJsonSchema } = require('./helpers/jsonSchemaHelper');
@@ -32,6 +34,9 @@ const getDatabases = async (connectionInfo, logger, callback, app) => {
 };
 
 const connect = (connectionInfo, logger) => {
+	logger.clear();
+	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
+
 	return connectionHelper.connect(connectionInfo);
 };
 
