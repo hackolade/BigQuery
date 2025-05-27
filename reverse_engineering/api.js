@@ -21,7 +21,7 @@ const getDatabases = async (connectionInfo, logger, callback, app) => {
 			hiddenKeys: connectionInfo.hiddenKeys,
 			logger,
 		});
-		const client = connect(connectionInfo, logger);
+		const client = await connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
 		const rawDatasets = connectionInfo.datasetId
 			? [{ id: connectionInfo.datasetId }]
@@ -33,7 +33,7 @@ const getDatabases = async (connectionInfo, logger, callback, app) => {
 	}
 };
 
-const connect = (connectionInfo, logger) => {
+const connect = async (connectionInfo, logger) => {
 	logger.clear();
 	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
 
@@ -47,7 +47,7 @@ const testConnection = async (connectionInfo, logger, cb) => {
 			hiddenKeys: connectionInfo.hiddenKeys,
 			logger,
 		});
-		const client = connect(connectionInfo, logger);
+		const client = await connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
 		await bigQueryHelper.getDatasets();
 
@@ -72,17 +72,18 @@ const disconnect = async (connectionInfo, logger, cb) => {
 
 const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 	try {
-		const async = app.require('async');
 		const log = createLogger({
 			title: 'Reverse-engineering process',
 			hiddenKeys: connectionInfo.hiddenKeys,
 			logger,
 		});
-		const client = connect(connectionInfo, logger);
+		const client = await connect(connectionInfo, logger);
 		const bigQueryHelper = createBigQueryHelper(client, log);
 		const datasetName = connectionInfo.datasetId || connectionInfo.data?.databaseName;
 		const datasets = datasetName ? [{ id: datasetName }] : await bigQueryHelper.getDatasets();
-		const tablesByDataset = await async.mapSeries(datasets, async dataset => {
+		const tablesByDataset = await datasets.reduce(async (promise, dataset) => {
+			const result = await promise;
+
 			const tables = await bigQueryHelper.getTables(dataset.id);
 			const viewTypes = ['MATERIALIZED_VIEW', 'VIEW'];
 			const dbCollections = tables.filter(t => !viewTypes.includes(t.metadata.type)).map(table => table.id);
@@ -90,13 +91,16 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 				.filter(t => viewTypes.includes(t.metadata.type))
 				.map(table => bigQueryHelper.getViewName(table.id));
 
-			return {
-				isEmpty: tables.length === 0,
-				dbName: dataset.id,
-				dbCollections,
-				views,
-			};
-		});
+			return [
+				...result,
+				{
+					isEmpty: tables.length === 0,
+					dbName: dataset.id,
+					dbCollections,
+					views,
+				},
+			];
+		}, []);
 
 		cb(null, tablesByDataset);
 	} catch (err) {
@@ -109,9 +113,7 @@ const getDbCollectionsNames = async (connectionInfo, logger, cb, app) => {
 
 const getDbCollectionsData = async (data, logger, cb, app) => {
 	try {
-		const _ = app.require('lodash');
-		const async = app.require('async');
-		const client = connect(data, logger);
+		const client = await connect(data, logger);
 		const log = createLogger({
 			title: 'Reverse-engineering process',
 			hiddenKeys: data.hiddenKeys,
@@ -126,7 +128,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			projectName: project.friendlyName,
 		};
 		let relationships = [];
-		const packages = await async.reduce(data.collectionData.dataBaseNames, [], async (result, datasetName) => {
+		const packages = await data.collectionData.dataBaseNames.reduce(async (promise, datasetName) => {
+			let result = await promise;
+
 			log.info(`Process dataset "${datasetName}"`);
 			log.progress(`Process dataset "${datasetName}"`, datasetName);
 
@@ -134,7 +138,6 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			const bucketInfo = getBucketInfo({
 				metadata: dataset.metadata,
 				datasetName,
-				_,
 			});
 			const { tables, views } = data.collectionData.collections[datasetName]?.length
 				? getSpecificTablesAndViews(data, datasetName)
@@ -150,7 +153,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			log.info(`Getting dataset constraints "${datasetName}"`);
 			log.progress(`Getting dataset constraints "${datasetName}"`, datasetName);
 
-			const collectionPackages = await async.mapSeries(tables, async tableName => {
+			const collectionPackages = await tables.reduce(async (promise, tableName) => {
+				const result = await promise;
+
 				log.info(`Get table metadata: "${tableName}"`);
 				log.progress(`Get table metadata`, datasetName, tableName);
 
@@ -176,21 +181,26 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				};
 				const documents = convertValue(rows);
 
-				return {
-					dbName: bucketInfo.name,
-					collectionName: friendlyName || tableName,
-					entityLevel: { ...getTableInfo({ _, table, tableName }), primaryKey },
-					documents: documents,
-					standardDoc: documents[0],
-					views: [],
-					emptyBucket: false,
-					validation: {
-						jsonSchema,
+				return [
+					...result,
+					{
+						dbName: bucketInfo.name,
+						collectionName: friendlyName || tableName,
+						entityLevel: { ...getTableInfo({ table, tableName }), primaryKey },
+						documents: documents,
+						standardDoc: documents[0],
+						views: [],
+						emptyBucket: false,
+						validation: {
+							jsonSchema,
+						},
+						bucketInfo,
 					},
-					bucketInfo,
-				};
-			});
-			const viewsPackages = await async.mapSeries(views, async viewName => {
+				];
+			}, []);
+			const viewsPackages = await views.reduce(async (promise, viewName) => {
+				const result = await promise;
+
 				log.info(`Get view metadata: "${viewName}"`);
 				log.progress(`Get view metadata`, datasetName, viewName);
 
@@ -204,34 +214,38 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 
 				const viewJsonSchema = createJsonSchema(view.metadata.schema ?? {});
 
-				return {
-					dbName: bucketInfo.name,
-					name: friendlyName || viewName,
-					jsonSchema: createViewSchema({
-						viewQuery: viewData.query,
-						tablePackages: collectionPackages,
-						viewJsonSchema,
-						log,
-					}),
-					data: {
+				return [
+					...result,
+					{
+						dbName: bucketInfo.name,
 						name: friendlyName || viewName,
-						code: friendlyName ? viewName : '',
-						materialized: view.metadata.type === 'MATERIALIZED_VIEW',
-						description: view.metadata.description,
-						selectStatement: viewData.query,
-						labels: getLabels(_, view.metadata.labels),
-						expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : undefined,
-						clusteringKey: view.metadata.clustering?.fields || [],
-						...getPartitioning(view.metadata),
-						enableRefresh: Boolean(viewData?.enableRefresh),
-						refreshInterval: isNaN(viewData?.refreshIntervalMs)
-							? ''
-							: Number(viewData?.refreshIntervalMs) / (60 * 1000),
-						maxStaleness: view.metadata.maxStaleness,
-						allowNonIncrementalDefinition: view.metadata?.materializedView?.allowNonIncrementalDefinition,
+						jsonSchema: createViewSchema({
+							viewQuery: viewData.query,
+							tablePackages: collectionPackages,
+							viewJsonSchema,
+							log,
+						}),
+						data: {
+							name: friendlyName || viewName,
+							code: friendlyName ? viewName : '',
+							materialized: view.metadata.type === 'MATERIALIZED_VIEW',
+							description: view.metadata.description,
+							selectStatement: viewData.query,
+							labels: getLabels(view.metadata.labels),
+							expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : undefined,
+							clusteringKey: view.metadata.clustering?.fields || [],
+							...getPartitioning(view.metadata),
+							enableRefresh: Boolean(viewData?.enableRefresh),
+							refreshInterval: isNaN(viewData?.refreshIntervalMs)
+								? ''
+								: Number(viewData?.refreshIntervalMs) / (60 * 1000),
+							maxStaleness: view.metadata.maxStaleness,
+							allowNonIncrementalDefinition:
+								view.metadata?.materializedView?.allowNonIncrementalDefinition,
+						},
 					},
-				};
-			});
+				];
+			}, []);
 
 			result = result.concat(collectionPackages);
 
@@ -244,7 +258,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 			}
 
 			return result;
-		});
+		}, []);
 
 		cb(null, packages, modelInfo, relationships);
 	} catch (err) {
@@ -262,9 +276,9 @@ const getSpecificTablesAndViews = (data, datasetName) => {
 const getTablesAndViews = async dataset => {
 	const collectionsInContainer = (await dataset.getTables()).flat();
 
-	const tables = collectionsInContainer.filter(({ metadata }) => metadata.type === 'TABLE').map(({ id }) => id);
+	const tables = collectionsInContainer.filter(({ metadata }) => metadata?.type === 'TABLE').map(({ id }) => id);
 	const views = collectionsInContainer
-		.filter(({ metadata }) => metadata.type === 'VIEW' || metadata.type === 'MATERIALIZED_VIEW')
+		.filter(({ metadata }) => metadata?.type === 'VIEW' || metadata?.type === 'MATERIALIZED_VIEW')
 		.map(({ id }) => id);
 
 	return { tables, views };
@@ -297,7 +311,7 @@ const createLogger = ({ title, logger, hiddenKeys }) => {
 	};
 };
 
-const getBucketInfo = ({ _, metadata, datasetName }) => {
+const getBucketInfo = ({ metadata, datasetName }) => {
 	const name = metadata?.datasetReference?.datasetId;
 	const friendlyName = metadata.friendlyName;
 
@@ -307,7 +321,7 @@ const getBucketInfo = ({ _, metadata, datasetName }) => {
 		datasetID: metadata.id,
 		dataLocation: (metadata.location || '').toLowerCase(),
 		description: metadata.description || '',
-		labels: getLabels(_, metadata.labels),
+		labels: getLabels(metadata.labels),
 		enableTableExpiration: Boolean(metadata.defaultTableExpirationMs),
 		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs)
 			? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24)
@@ -316,8 +330,12 @@ const getBucketInfo = ({ _, metadata, datasetName }) => {
 	};
 };
 
-const getLabels = (_, labels) => {
-	return _.keys(labels).map(labelKey => ({ labelKey, labelValue: labels[labelKey] }));
+const getLabels = labels => {
+	if (!labels) {
+		return [];
+	}
+
+	return Object.keys(labels).map(labelKey => ({ labelKey, labelValue: labels[labelKey] }));
 };
 
 const getViewName = viewName => {
@@ -330,7 +348,7 @@ const getViewName = viewName => {
 	return '';
 };
 
-const getTableInfo = ({ _, table, tableName }) => {
+const getTableInfo = ({ table, tableName }) => {
 	const metadata = table.metadata || {};
 	const collectionName = metadata.friendlyName || tableName;
 
@@ -343,7 +361,7 @@ const getTableInfo = ({ _, table, tableName }) => {
 		expiration: metadata.expirationTime ? Number(metadata.expirationTime) : undefined,
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
-		labels: getLabels(_, metadata.labels),
+		labels: getLabels(metadata.labels),
 		tableOptions: getExternalOptions(metadata),
 	};
 };
