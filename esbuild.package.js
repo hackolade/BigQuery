@@ -26,7 +26,16 @@ esbuild
 		outdir: RELEASE_FOLDER_PATH,
 		minify: true,
 		logLevel: 'info',
-		external: ['electron', 'lodash'],
+		external: [
+			'electron',
+			'lodash',
+			'debug',
+			'https-proxy-agent',
+			'http-proxy-agent',
+			'fs-extra',
+			'big.js',
+			'node-fetch',
+		],
 		plugins: [
 			clean({
 				patterns: [DEFAULT_RELEASE_FOLDER_PATH],
@@ -35,6 +44,60 @@ esbuild
 				assets: {
 					from: [path.join('node_modules', 'lodash', '**', '*')],
 					to: [path.join('node_modules', 'lodash')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'debug', '**', '*')],
+					to: [path.join('node_modules', 'debug')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'http-proxy-agent', '**', '*')],
+					to: [path.join('node_modules', 'http-proxy-agent')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'https-proxy-agent', '**', '*')],
+					to: [path.join('node_modules', 'https-proxy-agent')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'fs-extra', '**', '*')],
+					to: [path.join('node_modules', 'fs-extra')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'big.js', 'big.js')],
+					to: [path.join('node_modules', 'big.js', 'big.js')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'big.js', 'big.mjs')],
+					to: [path.join('node_modules', 'big.js', 'big.mjs')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'big.js', 'LICENSE.md')],
+					to: [path.join('node_modules', 'big.js', 'LICENSE.md')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'big.js', 'package.json')],
+					to: [path.join('node_modules', 'big.js', 'package.json')],
+				},
+			}),
+			copy({
+				assets: {
+					from: [path.join('node_modules', 'node-fetch', '**', '*')],
+					to: [path.join('node_modules', 'node-fetch')],
 				},
 			}),
 			copyFolderFiles({
