@@ -19,7 +19,6 @@ const EXCLUDED_FILES = [
 	'build',
 	'release',
 	'node_modules',
-	'package-lock.json',
 ];
 
 module.exports = {

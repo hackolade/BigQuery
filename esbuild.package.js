@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const esbuild = require('esbuild');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const { clean } = require('esbuild-plugin-clean');
-const { copy } = require('esbuild-plugin-copy');
 const { copyFolderFiles, addReleaseFlag } = require('@hackolade/hck-esbuild-plugins-pack');
 const { EXCLUDED_EXTENSIONS, EXCLUDED_FILES, DEFAULT_RELEASE_FOLDER_PATH } = require('./buildConstants');
+const { nodeExternalsPlugin } = require('esbuild-node-externals');
 
 const packageData = JSON.parse(fs.readFileSync('./package.json').toString());
 const RELEASE_FOLDER_PATH = path.join(DEFAULT_RELEASE_FOLDER_PATH, `${packageData.name}-${packageData.version}`);
@@ -40,66 +42,7 @@ esbuild
 			clean({
 				patterns: [DEFAULT_RELEASE_FOLDER_PATH],
 			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'lodash', '**', '*')],
-					to: [path.join('node_modules', 'lodash')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'debug', '**', '*')],
-					to: [path.join('node_modules', 'debug')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'http-proxy-agent', '**', '*')],
-					to: [path.join('node_modules', 'http-proxy-agent')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'https-proxy-agent', '**', '*')],
-					to: [path.join('node_modules', 'https-proxy-agent')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'fs-extra', '**', '*')],
-					to: [path.join('node_modules', 'fs-extra')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'big.js', 'big.js')],
-					to: [path.join('node_modules', 'big.js', 'big.js')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'big.js', 'big.mjs')],
-					to: [path.join('node_modules', 'big.js', 'big.mjs')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'big.js', 'LICENSE.md')],
-					to: [path.join('node_modules', 'big.js', 'LICENSE.md')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'big.js', 'package.json')],
-					to: [path.join('node_modules', 'big.js', 'package.json')],
-				},
-			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'node-fetch', '**', '*')],
-					to: [path.join('node_modules', 'node-fetch')],
-				},
-			}),
+			nodeExternalsPlugin(),
 			copyFolderFiles({
 				fromPath: __dirname,
 				targetFolderPath: RELEASE_FOLDER_PATH,
@@ -108,5 +51,10 @@ esbuild
 			}),
 			addReleaseFlag(path.resolve(RELEASE_FOLDER_PATH, 'package.json')),
 		],
+	})
+	.then(async () => {
+		const { stdout, stderr } = await exec(`npm ci --omit=dev`, { cwd: RELEASE_FOLDER_PATH });
+		console.log('stdout:', stdout);
+		console.log('stderr:', stderr);
 	})
 	.catch(() => process.exit(1));
