@@ -52,8 +52,9 @@
     "description": "Hackolade plugin for Google BigQuery Standard SQL",
     "disabled": false,
     "dependencies": {
-        "@google-cloud/bigquery": "5.7.1",
+        "@google-cloud/bigquery": "8.0.0",
         "@hackolade/sql-select-statement-parser": "0.0.20",
+        "fs-extra": "11.3.0",
         "lodash": "4.17.21"
     },
     "lint-staged": {
@@ -87,7 +88,7 @@
     },
     "overrides": {
         "node-fetch": {
-            ".": "npm:@hackolade/fetch@1.2.1"
+            ".": "npm:@hackolade/fetch@1.3.0"
         }
     }
 }
