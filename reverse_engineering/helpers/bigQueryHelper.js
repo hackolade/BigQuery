@@ -7,15 +7,13 @@ const createBigQueryHelper = (client, log) => {
 
 	const getPrimaryKeyConstraintsData = async (projectId, datasetId) => {
 		try {
-			return (
-				await client.query({
-					query: `SELECT * 
+			return await client.query({
+				query: `SELECT * 
 				FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU
 				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 				USING(constraint_name)
 				WHERE TC.constraint_type = "PRIMARY KEY";`,
-				})
-			)[0];
+			});
 		} catch (error) {
 			log.warn('Error while getting table constraints', error);
 			return [];
@@ -24,9 +22,8 @@ const createBigQueryHelper = (client, log) => {
 
 	const getForeignKeyConstraintsData = async (projectId, datasetId) => {
 		try {
-			return (
-				await client.query({
-					query: `SELECT 
+			return await client.query({
+				query: `SELECT 
 				CCU.column_name as \`parent_column\`,
 				KCU.column_name as \`child_column\`,
 				TC.constraint_catalog, 
@@ -44,8 +41,7 @@ const createBigQueryHelper = (client, log) => {
 				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 				USING(constraint_name)
 				WHERE TC.constraint_type = "FOREIGN KEY";`,
-				})
-			)[0];
+			});
 		} catch (error) {
 			log.warn('Error while getting table constraints', error);
 			return [];
@@ -53,11 +49,11 @@ const createBigQueryHelper = (client, log) => {
 	};
 
 	const getConstraintsData = async (projectId, datasetId) => {
-		const primaryKeyConstraintsData = await getPrimaryKeyConstraintsData(projectId, datasetId);
-		const foreignKeyConstraintsData = await getForeignKeyConstraintsData(projectId, datasetId);
+		const primaryKeyConstraintsData = (await getPrimaryKeyConstraintsData(projectId, datasetId)).flat();
+		const foreignKeyConstraintsData = (await getForeignKeyConstraintsData(projectId, datasetId)).flat();
 		return {
-			primaryKeyConstraintsData: primaryKeyConstraintsData.flat(),
-			foreignKeyConstraintsData: foreignKeyConstraintsData.flat(),
+			primaryKeyConstraintsData,
+			foreignKeyConstraintsData,
 		};
 	};
 
