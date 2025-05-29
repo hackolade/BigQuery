@@ -28,16 +28,6 @@ esbuild
 		outdir: RELEASE_FOLDER_PATH,
 		minify: true,
 		logLevel: 'info',
-		external: [
-			'electron',
-			'lodash',
-			'debug',
-			'https-proxy-agent',
-			'http-proxy-agent',
-			'fs-extra',
-			'big.js',
-			'node-fetch',
-		],
 		plugins: [
 			clean({
 				patterns: [DEFAULT_RELEASE_FOLDER_PATH],
