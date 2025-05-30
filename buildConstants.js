@@ -16,6 +16,7 @@ const EXCLUDED_FILES = [
 	'.prettierignore',
 	'.prettierrc',
 	'.dockerignore',
+	'.sonarlint',
 	'build',
 	'release',
 	'node_modules',
