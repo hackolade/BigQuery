@@ -1,18 +1,19 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+const { BigQuery, credentials } = require('@google-cloud/bigquery');
+const fsExtra = require('fs-extra');
 
 let client = null;
 
-const connect = connectionInfo => {
+const connect = async connectionInfo => {
 	if (client) {
 		return client;
 	}
 
 	const projectId = connectionInfo.projectId;
-	const keyFilename = connectionInfo.keyFilename;
 	const location = connectionInfo.location;
+	const credentials = await fsExtra.readJson(connectionInfo.keyFilename);
 
 	client = new BigQuery({
-		keyFilename,
+		credentials,
 		location,
 		projectId,
 		scopes: ['https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/drive'],
