@@ -16,13 +16,10 @@ const EXCLUDED_FILES = [
 	'.prettierignore',
 	'.prettierrc',
 	'.dockerignore',
-	'.sonarlint',
-	'.sonarcloud.properties',
-	'.npmrc',
-	'tsconfig.json',
 	'build',
 	'release',
 	'node_modules',
+	'package-lock.json',
 ];
 
 module.exports = {
