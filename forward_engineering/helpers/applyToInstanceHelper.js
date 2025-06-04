@@ -19,7 +19,7 @@ const execute = async (bigquery, query, location) => {
 const applyToInstance = async (connectionInfo, logger, app) => {
 	const _ = app.require('lodash');
 	const async = app.require('async');
-	const connection = connectionHelper.connect(connectionInfo);
+	const connection = await connectionHelper.connect(connectionInfo);
 	const dataLocation = connectionInfo.containerData?.[0]?.dataLocation;
 	const location = dataLocation === 'default' ? '' : dataLocation;
 

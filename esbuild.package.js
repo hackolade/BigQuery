@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const esbuild = require('esbuild');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const { clean } = require('esbuild-plugin-clean');
-const { copy } = require('esbuild-plugin-copy');
 const { copyFolderFiles, addReleaseFlag } = require('@hackolade/hck-esbuild-plugins-pack');
 const { EXCLUDED_EXTENSIONS, EXCLUDED_FILES, DEFAULT_RELEASE_FOLDER_PATH } = require('./buildConstants');
+const { nodeExternalsPlugin } = require('esbuild-node-externals');
 
 const packageData = JSON.parse(fs.readFileSync('./package.json').toString());
 const RELEASE_FOLDER_PATH = path.join(DEFAULT_RELEASE_FOLDER_PATH, `${packageData.name}-${packageData.version}`);
@@ -13,6 +15,7 @@ esbuild
 	.build({
 		entryPoints: [
 			path.resolve(__dirname, 'api', 'fe.js'),
+			path.resolve(__dirname, 'api', 're.js'),
 			path.resolve(__dirname, 'forward_engineering', 'api.js'),
 			path.resolve(__dirname, 'forward_engineering', 'ddlProvider.js'),
 			path.resolve(__dirname, 'forward_engineering', 'dbtProvider.js'),
@@ -25,17 +28,11 @@ esbuild
 		outdir: RELEASE_FOLDER_PATH,
 		minify: true,
 		logLevel: 'info',
-		external: ['electron', 'lodash'],
 		plugins: [
 			clean({
 				patterns: [DEFAULT_RELEASE_FOLDER_PATH],
 			}),
-			copy({
-				assets: {
-					from: [path.join('node_modules', 'lodash', '**', '*')],
-					to: [path.join('node_modules', 'lodash')],
-				},
-			}),
+			nodeExternalsPlugin(),
 			copyFolderFiles({
 				fromPath: __dirname,
 				targetFolderPath: RELEASE_FOLDER_PATH,
@@ -44,5 +41,10 @@ esbuild
 			}),
 			addReleaseFlag(path.resolve(RELEASE_FOLDER_PATH, 'package.json')),
 		],
+	})
+	.then(async () => {
+		const { stdout, stderr } = await exec(`npm ci --omit=dev`, { cwd: RELEASE_FOLDER_PATH });
+		console.log('stdout:', stdout);
+		console.log('stderr:', stderr);
 	})
 	.catch(() => process.exit(1));
