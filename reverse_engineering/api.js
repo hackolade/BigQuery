@@ -291,7 +291,15 @@ const createLogger = ({ title, logger, hiddenKeys }) => {
 		},
 
 		warn(message, context) {
-			logger.log('info', { message: '[warning] ' + message, context }, title, hiddenKeys);
+			logger.log(
+				'info',
+				{
+					message: '[warning] ' + message,
+					context: JSON.parse(JSON.stringify(context, Object.getOwnPropertyNames(context))),
+				},
+				title,
+				hiddenKeys,
+			);
 		},
 
 		progress(message, dbName = '', tableName = '') {
