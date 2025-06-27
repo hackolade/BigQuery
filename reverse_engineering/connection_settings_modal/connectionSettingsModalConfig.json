@@ -18,8 +18,22 @@
 				"inputLabel": "Project ID",
 				"inputKeyword": "projectId",
 				"inputType": "text",
+				"inputTooltip": "Project ID on Google Cloud Platform",
+				"dependency": {
+					"key": "authType",
+					"value": "app_default_credentials"
+				}
+			},
+			{
+				"inputLabel": "Project ID",
+				"inputKeyword": "optionalProjectId",
+				"inputType": "text",
 				"inputPlaceholder": "Optional",
-				"inputTooltip": "Project ID on Google Cloud Platform"
+				"inputTooltip": "Project ID on Google Cloud Platform",
+				"dependency": {
+					"key": "authType",
+					"value": "service_account_key"
+				}
 			},
 			{
 				"inputLabel": "Dataset name",
@@ -29,11 +43,39 @@
 				"inputTooltip": "Dataset name on Google Cloud Platform"
 			},
 			{
+				"inputLabel": "Authentication",
+				"inputKeyword": "authType",
+				"inputType": "select",
+				"defaultValue": "app_default_credentials",
+				"options": [
+					{
+						"value": "app_default_credentials",
+						"label": "Application Default Credentials"
+					},
+					{
+						"value": "service_account_key",
+						"label": "Service Account Key"
+					}
+				]
+			},
+			{
 				"inputLabel": "Key file",
 				"inputKeyword": "keyFilename",
 				"inputType": "file",
 				"extensions": ["json"],
-				"description": " Path to a .json file for service account"
+				"description": " Path to a .json file for service account",
+				"dependency": {
+					"key": "authType",
+					"value": "service_account_key"
+				}
+			},
+			{
+				"inputLabel": "Credentials file",
+				"inputKeyword": "credentialsFilePath",
+				"inputType": "file",
+				"inputTooltip": "Select the application_default_credentials.json file generated with gcloud cli.  Usually located in $HOME/Appdata/Roaming/gcloud on Windows or in $HOME/.config/gcloud/ on Mac and Linux",
+				"extensions": ["json"],
+				"description": " Path to the application_default_credentials.json file containing Application Default Credentials generated using '''gcloud auth application-default login'''"
 			}
 		]
 	}
