@@ -14,7 +14,7 @@ function getAuthInfo({ authType, connectionInfo }) {
 	}
 	// service account case and backward compatible value
 	return {
-		projectId: connectionInfo?.optionalProjectId,
+		projectId: connectionInfo.projectId,
 		credentialsFilePath: connectionInfo.keyFilename,
 	};
 }

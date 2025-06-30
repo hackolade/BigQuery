@@ -19,21 +19,7 @@
 				"inputKeyword": "projectId",
 				"inputType": "text",
 				"inputTooltip": "Project ID on Google Cloud Platform",
-				"dependency": {
-					"key": "authType",
-					"value": "app_default_credentials"
-				}
-			},
-			{
-				"inputLabel": "Project ID",
-				"inputKeyword": "optionalProjectId",
-				"inputType": "text",
-				"inputPlaceholder": "Optional",
-				"inputTooltip": "Project ID on Google Cloud Platform",
-				"dependency": {
-					"key": "authType",
-					"value": "service_account_key"
-				}
+				"inputPlaceholder": "Optional if using service account"
 			},
 			{
 				"inputLabel": "Dataset name",
