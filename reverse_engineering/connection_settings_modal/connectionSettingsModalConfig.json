@@ -46,7 +46,7 @@
 				"inputLabel": "Authentication",
 				"inputKeyword": "authType",
 				"inputType": "select",
-				"defaultValue": "app_default_credentials",
+				"defaultValue": "service_account_key",
 				"options": [
 					{
 						"value": "app_default_credentials",
