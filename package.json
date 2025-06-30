@@ -1,6 +1,6 @@
 {
     "name": "BigQuery",
-    "version": "0.2.16",
+    "version": "0.2.17",
     "author": "hackolade",
     "engines": {
         "hackolade": "6.8.4",
