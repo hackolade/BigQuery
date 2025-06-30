@@ -75,7 +75,7 @@
 				"inputType": "file",
 				"inputTooltip": "Select the application_default_credentials.json file generated with gcloud cli.  Usually located in $HOME/Appdata/Roaming/gcloud on Windows or in $HOME/.config/gcloud/ on Mac and Linux",
 				"extensions": ["json"],
-				"description": " Path to the application_default_credentials.json file containing Application Default Credentials generated using '''gcloud auth application-default login'''",
+				"description": "Path to the file application_default_credentials.json generated using '''gcloud auth application-default login'''",
 				"dependency": {
 					"key": "authType",
 					"value": "app_default_credentials"
