@@ -1,16 +1,32 @@
 const { BigQuery, credentials } = require('@google-cloud/bigquery');
 const fsExtra = require('fs-extra');
+const path = require('path');
 
 let client = null;
+
+function getAuthInfo({ authType, connectionInfo }) {
+	if (authType === 'app_default_credentials') {
+		// In this authType case projectId is mandatory
+		return {
+			projectId: connectionInfo.projectId,
+			credentialsFilePath: connectionInfo.credentialsFilePath,
+		};
+	}
+	// service account case and backward compatible value
+	return {
+		projectId: connectionInfo?.optionalProjectId,
+		credentialsFilePath: connectionInfo.keyFilename,
+	};
+}
 
 const connect = async connectionInfo => {
 	if (client) {
 		return client;
 	}
-
-	const projectId = connectionInfo.projectId;
+	const authType = connectionInfo.authType;
+	const { projectId, credentialsFilePath } = getAuthInfo({ authType, connectionInfo });
 	const location = connectionInfo.location;
-	const credentials = await fsExtra.readJson(connectionInfo.keyFilename);
+	const credentials = await fsExtra.readJson(path.resolve(credentialsFilePath));
 
 	client = new BigQuery({
 		credentials,
