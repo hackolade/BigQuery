@@ -47,7 +47,8 @@
             "FEScriptCommentsSupported": true,
             "discoverRelationships": true,
             "disableJsonDataMaxLength": true,
-            "disableMultipleTypes": true
+            "disableMultipleTypes": true,
+            "enableManyToManyRelationshipsNormalization": true
         }
     },
     "description": "Hackolade plugin for Google BigQuery Standard SQL",
