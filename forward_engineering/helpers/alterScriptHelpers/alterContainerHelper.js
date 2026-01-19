@@ -7,9 +7,9 @@ module.exports = (app, options) => {
 
 	const getAddContainerScript = modelData => containerData => {
 		const constructedDbData = getDbData([containerData]);
-		const dbData = ddlProvider.hydrateDatabase(constructedDbData, { modelData });
+		const dbData = ddlProvider.hydrateSchema(constructedDbData, { modelData });
 
-		return _.trim(ddlProvider.createDatabase(dbData));
+		return _.trim(ddlProvider.createSchema(dbData));
 	};
 
 	const getDeleteContainerScript = modelData => containerData => {
@@ -36,7 +36,7 @@ module.exports = (app, options) => {
 		}
 
 		const constructedDbData = getDbData([containerData]);
-		const dbData = ddlProvider.hydrateDatabase(constructedDbData, { modelData });
+		const dbData = ddlProvider.hydrateSchema(constructedDbData, { modelData });
 
 		return ddlProvider.alterDatabase(dbData);
 	};
