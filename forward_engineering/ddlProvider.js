@@ -32,7 +32,7 @@ module.exports = (baseProvider, options, app) => {
 	const { joinActivatedAndDeactivatedStatements } = require('./utils/statementJoiner');
 
 	return {
-		createDatabase({
+		createSchema({
 			databaseName,
 			friendlyName,
 			description,
@@ -305,7 +305,7 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		hydrateDatabase(containerData, data) {
+		hydrateSchema(containerData, data) {
 			const modelData = data?.modelData;
 
 			return {

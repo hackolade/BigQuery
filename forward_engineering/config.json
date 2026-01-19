@@ -47,5 +47,12 @@
 			"name": "Apply Drop Statements",
 			"isDropInStatements": true
 		}
-	]
+	],
+	"feLevelSelector": {
+		"entity": {
+			"separateBucket": true
+		},
+		"container": true,
+		"model": true
+	}
 }
