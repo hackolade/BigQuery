@@ -27,6 +27,7 @@
 			"name": "JSON Schema",
 			"keyword": "json",
 			"disableApplyScriptToInstance": true,
+			"disableFeLevelSelector": true,
 			"fileExtensions": [
 				{
 					"label": "JSON",
