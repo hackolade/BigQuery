@@ -31,6 +31,23 @@ module.exports = (baseProvider, options, app) => {
 
 	const { joinActivatedAndDeactivatedStatements } = require('./utils/statementJoiner');
 
+	const hydrateSchema = (containerData, data) => {
+		const modelData = data?.modelData;
+
+		return {
+			databaseName: containerData.name,
+			friendlyName: containerData.businessName,
+			description: containerData.description,
+			isActivated: containerData.isActivated,
+			ifNotExist: containerData.ifNotExist,
+			projectId: modelData?.[0]?.projectID,
+			defaultExpiration: containerData.enableTableExpiration ? containerData.defaultExpiration : '',
+			customerEncryptionKey:
+				containerData.encryption === 'Customer-managed' ? containerData.customerEncryptionKey : '',
+			labels: Array.isArray(containerData.labels) ? containerData.labels : [],
+		};
+	};
+
 	return {
 		createSchema({
 			databaseName,
@@ -305,22 +322,8 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		hydrateSchema(containerData, data) {
-			const modelData = data?.modelData;
-
-			return {
-				databaseName: containerData.name,
-				friendlyName: containerData.businessName,
-				description: containerData.description,
-				isActivated: containerData.isActivated,
-				ifNotExist: containerData.ifNotExist,
-				projectId: modelData?.[0]?.projectID,
-				defaultExpiration: containerData.enableTableExpiration ? containerData.defaultExpiration : '',
-				customerEncryptionKey:
-					containerData.encryption === 'Customer-managed' ? containerData.customerEncryptionKey : '',
-				labels: Array.isArray(containerData.labels) ? containerData.labels : [],
-			};
-		},
+		hydrateSchema,
+		hydrateDatabase: hydrateSchema,
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const data = entityData[0];
