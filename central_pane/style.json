@@ -25,6 +25,15 @@
 				}
 			],
 			"indexes",
+			{
+				"value": "AK",
+				"orderingNumbersBy": ["uniqueKey", "compositeUniqueKey"],
+				"dependency": {
+					"key": "alternateKey",
+					"value": true
+				},
+				"width": 16
+			},
 			"refType"
 		]
 	}
