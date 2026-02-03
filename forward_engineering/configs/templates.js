@@ -34,4 +34,6 @@ module.exports = {
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 
 	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
+
+	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
 };
