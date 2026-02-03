@@ -31,7 +31,7 @@ module.exports = {
 
 	alterTableDropColumn: 'ALTER TABLE ${tableName} DROP COLUMN IF EXISTS ${columnName};',
 
-	renameColumn: '\n RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
+	renameColumn: '\n  RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
 
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 

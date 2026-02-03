@@ -3,6 +3,7 @@ const { wrapByBackticks } = require('../../../helpers/utils');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { getFullName } = require('../../../helpers/general')(app);
 	const collectionName = collection?.role?.compMod?.collectionName;
 
 	if (!collectionName) {
@@ -15,10 +16,10 @@ const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 		return undefined;
 	}
 
-	const fullTableName = [dbData.projectId, dbData.databaseName, name].filter(Boolean).join('.');
+	const fullTableName = getFullName(dbData.projectId, dbData.databaseName, name);
 
 	return assignTemplates(templates.renameTable, {
-		oldTableName: wrapByBackticks(fullTableName),
+		oldTableName: fullTableName,
 		newTableName: wrapByBackticks(newName),
 	});
 };
