@@ -370,6 +370,11 @@ const prepareConstraintName = name => {
 	return (name || '').replace(VALID_FULL_NAME_REGEX, '_').replace(VALID_FIRST_NAME_LETTER_REGEX, '_');
 };
 
+const getFullName = (...names) => {
+	const fullName = names.filter(Boolean).join('.');
+	return wrapByBackticks(fullName);
+};
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -383,4 +388,5 @@ module.exports = {
 	prepareConstraintName,
 	wrapByBackticks,
 	decorateType,
+	getFullName,
 };
