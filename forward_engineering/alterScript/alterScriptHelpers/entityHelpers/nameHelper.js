@@ -1,4 +1,5 @@
 const templates = require('../../..//configs/templates');
+const { wrapByBackticks } = require('../../../helpers/utils');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
@@ -17,8 +18,8 @@ const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const fullTableName = [dbData.projectId, dbData.databaseName, name].filter(Boolean).join('.');
 
 	return assignTemplates(templates.renameTable, {
-		oldTableName: `\`${fullTableName}\``,
-		newTableName: `\`${newName}\``,
+		oldTableName: wrapByBackticks(fullTableName),
+		newTableName: wrapByBackticks(newName),
 	});
 };
 

@@ -1,3 +1,4 @@
+const { getModifyColumnNameScript } = require('./columnHelper/alterColumnNameHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 
 module.exports = (app, options) => {
@@ -77,9 +78,12 @@ module.exports = (app, options) => {
 
 		const modifyEntityNameScript = getModifyCollectionNameScript({ app, collection, dbData });
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
+		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, dbData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
 
-		return [modifyEntityNameScript, modifyTableOptionsScript, ...modifyColumnScripts].filter(Boolean).join('\n\n');
+		return [modifyEntityNameScript, modifyTableOptionsScript, ...modifyColumnScripts, modifyColumnNamesScript]
+			.filter(Boolean)
+			.join('\n\n');
 	};
 
 	const getModifyTableOptions = ({ jsonSchema, tableData }) => {

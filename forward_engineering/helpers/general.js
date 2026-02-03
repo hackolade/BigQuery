@@ -4,6 +4,14 @@ module.exports = app => {
 	const _ = app.require('lodash');
 	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
 
+	const getFullCollectionName = ({ dbData, collection }) => {
+		const projectId = dbData.projectId;
+		const databaseName = dbData.databaseName;
+		const tableName = collection.role?.name || collection.name;
+
+		return getFullName(projectId, databaseName, tableName);
+	};
+
 	const getFullName = (projectId, datasetName, tableName) => {
 		let name = [];
 
@@ -141,6 +149,7 @@ module.exports = app => {
 	return {
 		getLabels,
 		getFullName,
+		getFullCollectionName,
 		getContainerOptions,
 		getViewOptions,
 		cleanObject,
