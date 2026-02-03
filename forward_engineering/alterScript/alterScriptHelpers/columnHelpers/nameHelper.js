@@ -3,7 +3,8 @@ const templates = require('../../../configs/templates');
 const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
 
 const getModifyColumnNameScript = ({ app, collection, tableData }) => {
-	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 
 	const columnsToRename = toPairs(collection.properties).filter(([_, jsonSchema]) => {
 		const compMod = jsonSchema.compMod || {};
@@ -23,11 +24,11 @@ const getModifyColumnNameScript = ({ app, collection, tableData }) => {
 					newColumnName: wrapByBackticks(newField.name),
 				});
 			})
-			.join(',');
+			.join(',\n');
 
 		return assignTemplates(templates.alterTableStatement, {
 			name: tableData.name,
-			alterStatements,
+			alterStatements: tab(alterStatements),
 		});
 	}
 

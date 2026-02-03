@@ -31,13 +31,13 @@ module.exports = {
 
 	alterTableDropColumn: 'ALTER TABLE ${tableName} DROP COLUMN IF EXISTS ${columnName};',
 
-	renameColumn: '\n  RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
+	renameColumn: 'RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
 
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 
 	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
 
-	alterTableStatement: 'ALTER TABLE IF EXISTS ${name} ${alterStatements};',
+	alterTableStatement: 'ALTER TABLE IF EXISTS ${name}\n${alterStatements};',
 
 	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
 };
