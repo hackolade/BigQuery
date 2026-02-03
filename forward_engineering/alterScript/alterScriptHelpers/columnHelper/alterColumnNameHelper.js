@@ -24,9 +24,6 @@ const getModifyColumnNameScript = ({ app, collection, dbData }) => {
 				const compMod = jsonSchema.compMod || {};
 				const { newField = {}, oldField = {} } = compMod;
 
-				const isCollectionActivated = collection.isActivated;
-				const isActivated = isCollectionActivated && jsonSchema.isActivated;
-
 				return assignTemplates(templates.renameColumn, {
 					oldColumnName: wrapByBackticks(oldField.name),
 					newColumnName: wrapByBackticks(newField.name),
