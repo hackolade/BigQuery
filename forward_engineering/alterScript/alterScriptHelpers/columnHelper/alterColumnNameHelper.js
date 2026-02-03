@@ -1,12 +1,12 @@
-const _ = require('lodash');
+const { toPairs } = require('lodash');
 const templates = require('../../../configs/templates');
 const { wrapByBackticks } = require('../../../helpers/utils');
 
 const getModifyColumnNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { getFullCollectionName } = require('../../../helpers/general')(app);
+	const { getFullName } = require('../../../helpers/general')(app);
 
-	const columnsToRename = _.toPairs(collection.properties).filter(([_, jsonSchema]) => {
+	const columnsToRename = toPairs(collection.properties).filter(([_, jsonSchema]) => {
 		const compMod = jsonSchema.compMod || {};
 		const { newField = {}, oldField = {} } = compMod;
 
@@ -14,7 +14,11 @@ const getModifyColumnNameScript = ({ app, collection, dbData }) => {
 	});
 
 	if (columnsToRename.length) {
-		const fullTableName = getFullCollectionName({ dbData, collection });
+		const fullTableName = getFullName(
+			dbData.projectId,
+			dbData.databaseName,
+			collection.role?.name || collection.name,
+		);
 		const alterStatements = columnsToRename
 			.map(([_, jsonSchema]) => {
 				const compMod = jsonSchema.compMod || {};
