@@ -4,7 +4,7 @@ module.exports = {
 	createTable:
 		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
-	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
+	columnDefinition: '${name}${type}${primaryKey}${default}${notNull}${options}',
 
 	createForeignKeyConstraint:
 		'${constraintName}FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
