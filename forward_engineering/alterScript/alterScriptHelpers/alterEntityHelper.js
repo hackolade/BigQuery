@@ -1,3 +1,5 @@
+const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
+
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
 	const { getEntityName } = app.require('@hackolade/ddl-fe-utils').general;
@@ -58,6 +60,7 @@ module.exports = (app, options) => {
 			..._.omit(collection, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey'),
 			...(collection?.role || {}),
 		};
+
 		const databaseName = table.compMod.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
 		const idToNameHashTable = generateIdToNameHashTable(table);
@@ -72,10 +75,11 @@ module.exports = (app, options) => {
 			dbData,
 		};
 
+		const modifyEntityNameScript = getModifyCollectionNameScript({ app, collection, dbData });
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
 
-		return [].concat(modifyTableOptionsScript).concat(modifyColumnScripts).filter(Boolean).join('\n\n');
+		return [modifyEntityNameScript, modifyTableOptionsScript, ...modifyColumnScripts].filter(Boolean).join('\n\n');
 	};
 
 	const getModifyTableOptions = ({ jsonSchema, tableData }) => {
