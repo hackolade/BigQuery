@@ -1,5 +1,5 @@
-const templates = require('../../../configs/templates');
 const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
+const templates = require('../../../configs/templates');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
