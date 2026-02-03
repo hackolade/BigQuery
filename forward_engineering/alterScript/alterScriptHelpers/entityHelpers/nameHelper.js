@@ -1,4 +1,5 @@
-const templates = require('../../..//configs/templates');
+const { getFullName, wrapByBackticks } = require('../../../helpers/utils');
+const templates = require('../../../configs/templates');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
@@ -14,11 +15,11 @@ const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 		return undefined;
 	}
 
-	const fullTableName = [dbData.projectId, dbData.databaseName, name].filter(Boolean).join('.');
+	const fullTableName = getFullName(dbData.projectId, dbData.databaseName, name);
 
 	return assignTemplates(templates.renameTable, {
-		oldTableName: `\`${fullTableName}\``,
-		newTableName: `\`${newName}\``,
+		oldTableName: fullTableName,
+		newTableName: wrapByBackticks(newName),
 	});
 };
 
