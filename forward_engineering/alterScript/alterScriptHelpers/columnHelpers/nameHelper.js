@@ -1,10 +1,9 @@
 const { toPairs } = require('lodash');
 const templates = require('../../../configs/templates');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
 
 const getModifyColumnNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { getFullName } = require('../../../helpers/general')(app);
 
 	const columnsToRename = toPairs(collection.properties).filter(([_, jsonSchema]) => {
 		const compMod = jsonSchema.compMod || {};
