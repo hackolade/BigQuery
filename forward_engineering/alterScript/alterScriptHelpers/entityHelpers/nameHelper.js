@@ -1,9 +1,8 @@
-const templates = require('../../..//configs/templates');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const templates = require('../../../configs/templates');
+const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { getFullName } = require('../../../helpers/general')(app);
 	const collectionName = collection?.role?.compMod?.collectionName;
 
 	if (!collectionName) {

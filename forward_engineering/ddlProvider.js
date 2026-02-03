@@ -12,6 +12,7 @@ const {
 	clearEmptyStatements,
 	prepareConstraintName,
 	wrapByBackticks,
+	getFullName,
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -21,7 +22,6 @@ module.exports = (baseProvider, options, app) => {
 	const _ = app.require('lodash');
 	const {
 		getLabels,
-		getFullName,
 		getContainerOptions,
 		getViewOptions,
 		cleanObject,
@@ -539,14 +539,6 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates(templates.alterTable, {
 				name: tableName,
 				options,
-			});
-		},
-
-		alterColumnOptions(tableName, columnName, description) {
-			return assignTemplates(templates.alterColumnOptions, {
-				description: escapeQuotes(description),
-				tableName: wrapByBackticks(tableName),
-				columnName: wrapByBackticks(columnName),
 			});
 		},
 

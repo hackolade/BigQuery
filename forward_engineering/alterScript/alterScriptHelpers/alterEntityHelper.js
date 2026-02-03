@@ -1,4 +1,5 @@
-const { getModifyColumnNameScript } = require('./columnHelper/alterColumnNameHelper');
+const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
+const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 
 module.exports = (app, options) => {
@@ -81,7 +82,7 @@ module.exports = (app, options) => {
 		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, dbData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
 
-		return [modifyEntityNameScript, modifyTableOptionsScript, ...modifyColumnScripts, modifyColumnNamesScript]
+		return [modifyTableOptionsScript, ...modifyColumnScripts, modifyEntityNameScript, modifyColumnNamesScript]
 			.filter(Boolean)
 			.join('\n\n');
 	};
@@ -137,7 +138,7 @@ module.exports = (app, options) => {
 	};
 
 	const getDeleteColumnScript = modelData => collection => {
-		const collectionSchema = { ...collection, ...(_.omit(collection?.role, 'properties') || {}) };
+		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
 		const tableName = collectionSchema?.code || collectionSchema?.collectionName || collectionSchema?.name;
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
@@ -147,10 +148,10 @@ module.exports = (app, options) => {
 			.map(([name]) => ddlProvider.dropColumn(name, tableName, dbData));
 	};
 
-	const getModifyColumnScripts = ({ tableData, dbData, collection }) => {
-		const collectionSchema = { ...collection, ...(_.omit(collection?.role, 'properties') || {}) };
+	const getModifyColumnScripts = ({ tableData, collection }) => {
+		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
 
-		return _.toPairs(collection.properties)
+		const updateTypeScripts = _.toPairs(collection.properties)
 			.filter(([name, jsonSchema]) => checkFieldPropertiesChanged(jsonSchema.compMod, ['type', 'mode']))
 			.map(([name, jsonSchema]) => {
 				const columnDefinition = createColumnDefinitionBySchema({
@@ -158,11 +159,15 @@ module.exports = (app, options) => {
 					jsonSchema,
 					parentJsonSchema: collectionSchema,
 					ddlProvider,
-					dbData,
+					dbData: tableData.dbData,
 				});
 
 				return ddlProvider.alterColumnType(tableData.name, columnDefinition);
 			});
+
+		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
+
+		return [...updateTypeScripts, ...updateOptionScripts].filter(Boolean);
 	};
 
 	return {

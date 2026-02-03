@@ -4,12 +4,6 @@ const { escapeQuotes, getTimestamp, wrapByBackticks } = require('./utils');
 module.exports = app => {
 	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
 
-	const getFullName = (projectId, datasetName, tableName) => {
-		const name = [projectId, datasetName, tableName].filter(Boolean).join('.');
-
-		return wrapByBackticks(name);
-	};
-
 	const getLabels = labels => {
 		return labels
 			.map(({ labelKey, labelValue }) => {
@@ -128,7 +122,6 @@ module.exports = app => {
 
 	return {
 		getLabels,
-		getFullName,
 		getContainerOptions,
 		getViewOptions,
 		cleanObject,
