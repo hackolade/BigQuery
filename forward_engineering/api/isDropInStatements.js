@@ -1,4 +1,4 @@
-const { DROP_STATEMENTS } = require('./helpers/constants');
+const { DROP_STATEMENTS } = require('../helpers/constants');
 const { generateContainerScript } = require('./generateContainerScript');
 const { generateScript } = require('./generateScript');
 

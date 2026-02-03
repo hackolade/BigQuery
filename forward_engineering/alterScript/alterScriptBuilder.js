@@ -1,11 +1,11 @@
-const { commentDropStatements } = require('./helpers/commentDropStatements');
+const { commentDropStatements } = require('../helpers/commentDropStatements');
 
 const generateAlterScript = (data, callback, app) => {
 	const {
 		getAlterContainersScripts,
 		getAlterCollectionsScripts,
 		getAlterViewScripts,
-	} = require('./helpers/alterScriptFromDeltaHelper');
+	} = require('./alterScriptFromDeltaHelper');
 
 	const collection = JSON.parse(data.jsonSchema);
 	if (!collection) {
