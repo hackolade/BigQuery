@@ -10,8 +10,6 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
 	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
 
-	const fullTableName = getFullName(tableData.dbData.projectId, tableData.dbData.databaseName, tableData.name);
-
 	return _.toPairs(collection.properties)
 		.map(([name, jsonSchema]) => {
 			const oldName = jsonSchema.compMod.oldField.name;
@@ -32,7 +30,7 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 			}
 
 			return assignTemplates(templates.alterColumnOptions, {
-				tableName: fullTableName,
+				tableName: tableData.name,
 				columnName: wrapByBackticks(oldName),
 				options: tab(optionsToUpdate.join(',\n')),
 			});

@@ -550,7 +550,7 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates(templates.alterColumnType, {
 				columnName: wrapByBackticks(columnDefinition.name),
 				type: columnSchema,
-				tableName: wrapByBackticks(columnDefinition.name),
+				tableName,
 			});
 		},
 
