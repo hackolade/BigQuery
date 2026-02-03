@@ -1,4 +1,4 @@
-const { getFullName, wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 
 const getModifyCollectionNameScript = ({ app, collection, dbData }) => {

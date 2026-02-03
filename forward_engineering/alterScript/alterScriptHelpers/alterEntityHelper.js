@@ -1,3 +1,5 @@
+const { getFullName } = require('../../helpers/utils');
+const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 
@@ -68,8 +70,10 @@ module.exports = (app, options) => {
 		const idToActivatedHashTable = generateIdToActivatedHashTable(table);
 		const jsonSchema = setEntityKeys({ idToActivatedHashTable, idToNameHashTable, entity: table });
 		const tableName = getEntityName(jsonSchema);
+		const fullTableName = getFullName(dbData.projectId, dbData.databaseName, collection.role?.name || tableName);
+
 		const tableData = {
-			name: tableName,
+			name: fullTableName,
 			columns: [],
 			foreignKeyConstraints: [],
 			columnDefinitions: [],
@@ -78,9 +82,12 @@ module.exports = (app, options) => {
 
 		const modifyEntityNameScript = getModifyCollectionNameScript({ app, collection, dbData });
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
-		const modifyColumnScripts = getModifyColumnScripts({ tableData, collection });
+		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, tableData });
+		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
 
-		return [modifyTableOptionsScript, ...modifyColumnScripts, modifyEntityNameScript].filter(Boolean).join('\n\n');
+		return [modifyEntityNameScript, modifyTableOptionsScript, modifyColumnNamesScript, ...modifyColumnScripts]
+			.filter(Boolean)
+			.join('\n\n');
 	};
 
 	const getModifyTableOptions = ({ jsonSchema, tableData }) => {

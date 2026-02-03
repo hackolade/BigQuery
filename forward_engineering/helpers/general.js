@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const { escapeQuotes, getTimestamp, wrapByBackticks } = require('./utils');
 
 module.exports = app => {
-	const _ = app.require('lodash');
 	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const getLabels = labels => {
