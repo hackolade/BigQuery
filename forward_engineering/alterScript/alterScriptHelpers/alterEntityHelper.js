@@ -1,4 +1,5 @@
 const { getFullName } = require('../../helpers/utils');
+const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
@@ -84,8 +85,15 @@ module.exports = (app, options) => {
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
 		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, tableData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
+		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
 
-		return [modifyEntityNameScript, modifyTableOptionsScript, modifyColumnNamesScript, ...modifyColumnScripts]
+		return [
+			modifyEntityNameScript,
+			modifyTableOptionsScript,
+			modifyColumnNamesScript,
+			...modifyColumnScripts,
+			...modifyDefaultValueScripts,
+		]
 			.filter(Boolean)
 			.join('\n\n');
 	};
