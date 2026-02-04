@@ -1,4 +1,4 @@
-const { pick } = require('lodash');
+const { pick, isFinite } = require('lodash');
 const { getFullName, wrapByBackticks, escapeQuotes, getColumnSchema } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 
@@ -80,6 +80,29 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 			changeState.action = TYPE_CHANGE.recreate;
 			return;
 		}
+	}
+
+	if (isFinite(oldField.length) && isFinite(newField.length) && newField.length > oldField.length) {
+		changeState.action = TYPE_CHANGE.update;
+		return;
+	}
+
+	const newPrecision = newField.precision ?? 0;
+	const oldPrecision = oldField.precision ?? 0;
+
+	const newScale = newField.scale ?? 0;
+	const oldScale = oldField.scale ?? 0;
+
+	const isPrecisionChanged = newPrecision > oldPrecision;
+
+	if (isPrecisionChanged && newScale >= oldScale) {
+		changeState.action = TYPE_CHANGE.update;
+		return;
+	}
+	const isScaleChanged = newScale > oldScale;
+
+	if (isScaleChanged && newPrecision >= oldPrecision) {
+		changeState.action = TYPE_CHANGE.update;
 	}
 };
 
