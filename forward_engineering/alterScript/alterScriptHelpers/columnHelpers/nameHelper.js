@@ -1,6 +1,6 @@
 const { toPairs } = require('lodash');
 const templates = require('../../../configs/templates');
-const { wrapByBackticks, getFullName } = require('../../../helpers/utils');
+const { wrapByBackticks } = require('../../../helpers/utils');
 
 const getModifyColumnNameScript = ({ app, collection, tableData }) => {
 	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
