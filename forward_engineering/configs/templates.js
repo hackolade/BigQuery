@@ -40,4 +40,11 @@ module.exports = {
 	alterTableStatement: 'ALTER TABLE IF EXISTS ${name}\n${alterStatements};',
 
 	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
+
+	alterPkConstraint:
+		'ALTER TABLE IF EXISTS ${tableName} ADD CONSTRAINT ${constraintName} PRIMARY KEY (${columns}) NOT ENFORCED;',
+
+	alterPkConstraintSimple: 'ALTER TABLE IF EXISTS ${tableName} ADD PRIMARY KEY (${columns}) NOT ENFORCED;',
+
+	dropPkConstraint: 'ALTER TABLE IF EXISTS ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
 };
