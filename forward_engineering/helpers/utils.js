@@ -305,6 +305,7 @@ const getColumnSchema =
 			primaryKey,
 			notNull,
 			options,
+			default: jsonSchema.default ? ` DEFAULT ${jsonSchema.default}` : '',
 		});
 	};
 

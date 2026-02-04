@@ -4,7 +4,7 @@ module.exports = {
 	createTable:
 		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
-	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
+	columnDefinition: '${name}${type}${primaryKey}${default}${notNull}${options}',
 
 	createForeignKeyConstraint:
 		'${constraintName}FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
@@ -30,6 +30,11 @@ module.exports = {
 	alterTableAddColumn: 'ALTER TABLE ${tableName} ADD COLUMN IF NOT EXISTS ${column};',
 
 	alterTableDropColumn: 'ALTER TABLE ${tableName} DROP COLUMN IF EXISTS ${columnName};',
+
+	alterTableSetDefault:
+		'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nSET DEFAULT ${default};',
+
+	alterTableDropDefault: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nDROP DEFAULT;',
 
 	renameColumn: 'RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
 
