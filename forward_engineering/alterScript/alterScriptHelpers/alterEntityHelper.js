@@ -3,6 +3,7 @@ const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaul
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
+const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -85,14 +86,14 @@ module.exports = (app, options) => {
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
 		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, tableData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
-		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
+		const modifyPkScripts = getModifyPkConstraintsScriptDtos({ app, collection, tableData });
 
 		return [
 			modifyEntityNameScript,
 			modifyTableOptionsScript,
 			modifyColumnNamesScript,
 			...modifyColumnScripts,
-			...modifyDefaultValueScripts,
+			...modifyPkScripts,
 		]
 			.filter(Boolean)
 			.join('\n\n');
@@ -177,8 +178,9 @@ module.exports = (app, options) => {
 			});
 
 		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
+		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
 
-		return [...updateTypeScripts, ...updateOptionScripts].filter(Boolean);
+		return [...updateTypeScripts, ...updateOptionScripts, ...modifyDefaultValueScripts].filter(Boolean);
 	};
 
 	return {
