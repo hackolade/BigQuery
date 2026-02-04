@@ -542,18 +542,6 @@ module.exports = (baseProvider, options, app) => {
 			});
 		},
 
-		alterColumnType(tableName, columnDefinition) {
-			const columnSchema = getColumnSchema({ assignTemplates, tab, templates })(
-				_.pick(columnDefinition, 'type', 'dataTypeMode', 'jsonSchema'),
-			);
-
-			return assignTemplates(templates.alterColumnType, {
-				columnName: wrapByBackticks(columnDefinition.name),
-				type: columnSchema,
-				tableName: wrapByBackticks(columnDefinition.name),
-			});
-		},
-
 		alterColumnDropNotNull(tableName, columnName) {
 			return assignTemplates(templates.alterColumnDropNotNull, {
 				columnName: wrapByBackticks(columnName),

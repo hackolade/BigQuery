@@ -1,4 +1,5 @@
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
+const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 
 module.exports = (app, options) => {
@@ -145,22 +146,7 @@ module.exports = (app, options) => {
 	};
 
 	const getModifyColumnScripts = ({ tableData, collection }) => {
-		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
-
-		const updateTypeScripts = _.toPairs(collection.properties)
-			.filter(([name, jsonSchema]) => checkFieldPropertiesChanged(jsonSchema.compMod, ['type', 'mode']))
-			.map(([name, jsonSchema]) => {
-				const columnDefinition = createColumnDefinitionBySchema({
-					name,
-					jsonSchema,
-					parentJsonSchema: collectionSchema,
-					ddlProvider,
-					dbData: tableData.dbData,
-				});
-
-				return ddlProvider.alterColumnType(tableData.name, columnDefinition);
-			});
-
+		const updateTypeScripts = getModifiedColumnTypeScripts({ collection, app, tableData });
 		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
 
 		return [...updateTypeScripts, ...updateOptionScripts].filter(Boolean);
