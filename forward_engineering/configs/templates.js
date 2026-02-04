@@ -4,7 +4,7 @@ module.exports = {
 	createTable:
 		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
-	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
+	columnDefinition: '${name}${type}${primaryKey}${default}${notNull}${options}',
 
 	createForeignKeyConstraint:
 		'${constraintName}FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
@@ -31,9 +31,18 @@ module.exports = {
 
 	alterTableDropColumn: 'ALTER TABLE ${tableName} DROP COLUMN IF EXISTS ${columnName};',
 
+	alterTableSetDefault:
+		'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nSET DEFAULT ${default};',
+
+	alterTableDropDefault: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nDROP DEFAULT;',
+
+	renameColumn: 'RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
+
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 
 	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
+
+	alterTableStatement: 'ALTER TABLE IF EXISTS ${name}\n${alterStatements};',
 
 	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
 };
