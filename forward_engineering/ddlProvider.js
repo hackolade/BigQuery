@@ -536,22 +536,12 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 			});
 
-			return assignTemplates(templates.alterTable, {
-				name: tableName,
-				options,
-			});
-		},
-
-		alterColumnType(tableName, columnDefinition) {
-			const columnSchema = getColumnSchema({ assignTemplates, tab, templates })(
-				_.pick(columnDefinition, 'type', 'dataTypeMode', 'jsonSchema'),
-			);
-
-			return assignTemplates(templates.alterColumnType, {
-				columnName: wrapByBackticks(columnDefinition.name),
-				type: columnSchema,
-				tableName,
-			});
+			return options?.trim()
+				? assignTemplates(templates.alterTable, {
+						name: tableName,
+						options,
+					})
+				: '';
 		},
 
 		alterColumnDropNotNull(tableName, columnName) {
