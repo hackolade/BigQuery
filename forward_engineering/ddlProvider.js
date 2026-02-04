@@ -536,10 +536,12 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 			});
 
-			return assignTemplates(templates.alterTable, {
-				name: tableName,
-				options,
-			});
+			return options?.trim()
+				? assignTemplates(templates.alterTable, {
+						name: tableName,
+						options,
+					})
+				: '';
 		},
 
 		alterColumnDropNotNull(tableName, columnName) {

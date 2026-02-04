@@ -1,4 +1,4 @@
-const { pick, isFinite } = require('lodash');
+const { pick, toPairs } = require('lodash');
 const { getFullName, wrapByBackticks, escapeQuotes, getColumnSchema } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 
@@ -40,7 +40,7 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 			return changeState;
 		}
 
-		for (const [name, newChildField] of Object.entries(newField.properties)) {
+		for (const [name, newChildField] of toPairs(newField.properties)) {
 			const oldChildField = oldField.properties[name];
 			if (!oldChildField) {
 				changeState.action = TYPE_CHANGE.recreate;
@@ -112,7 +112,7 @@ const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 
 	const fullTableName = getFullName(tableData.dbData.projectId, tableData.dbData.databaseName, tableData.name);
 
-	return Object.entries(collection.properties)
+	return toPairs(collection.properties)
 		.map(([name, newJsonSchema]) => {
 			const { oldField } = newJsonSchema.compMod;
 			const oldJsonSchema = collection.role.properties[oldField.name];
