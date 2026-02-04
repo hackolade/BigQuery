@@ -161,11 +161,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -459,11 +456,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -665,11 +659,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -871,11 +862,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -1092,11 +1080,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -1271,11 +1256,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -1558,11 +1540,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
@@ -1740,11 +1719,8 @@ making sure that you maintain a proper JSON format.
 							]
 						},
 						{
-							"type": "not",
-							"values": {
-								"key": "unique",
-								"value": true
-							}
+							"key": "unique",
+							"value": true
 						}
 					]
 				},
