@@ -1,10 +1,10 @@
+const { checkCompModEqual, getCompMod, setEntityKeys } = require('./common');
+
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
 	const { mapProperties } = app.require('@hackolade/ddl-fe-utils');
-	const { setEntityKeys } = require('./common')(app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
-	const { checkCompModEqual, getCompMod } = require('./common')(app);
 
 	const getAddViewScript = modelData => jsonSchema => {
 		const view = _.omit(jsonSchema, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey');

@@ -544,13 +544,6 @@ module.exports = (baseProvider, options, app) => {
 				: '';
 		},
 
-		alterColumnDropNotNull(tableName, columnName) {
-			return assignTemplates(templates.alterColumnDropNotNull, {
-				columnName: wrapByBackticks(columnName),
-				tableName: wrapByBackticks(columnName),
-			});
-		},
-
 		addColumn({ column }, tableName, dbData) {
 			const fullTableName = getFullName(dbData.projectId, dbData.databaseName, tableName);
 
