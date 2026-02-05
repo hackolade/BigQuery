@@ -53,7 +53,7 @@ const getAddSingleForeignKeyStatementDto = ({ relationship, modelData, app }) =>
 
 	const statement = assignTemplates(templates.alterForeignKeyConstraint, {
 		tableName: fullTableName,
-		constraintName: constraintName ? ` CONSTRAINT ${wrapByBackticks(constraintName)}` : '',
+		constraintName: constraintName ? ` CONSTRAINT IF NOT EXISTS ${wrapByBackticks(constraintName)}` : '',
 		foreignKeys: foreignKeysString,
 		primaryTableName,
 		primaryKeys: primaryKeysString,
