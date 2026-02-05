@@ -24,9 +24,9 @@ const getAlterContainersScripts = (collection, app, modelData) => {
 	const deleteContainersScripts = deletedContainers.map(container => getDeleteContainerScript(modelData)(container));
 	const modifiedContainersScripts = modifiedContainers.map(container => getModifiedContainer(modelData)(container));
 
-	return [...deleteContainersScripts, ...addContainersScripts, ...modifiedContainersScripts].map(script =>
-		script.trim(),
-	);
+	return [...deleteContainersScripts, ...addContainersScripts, ...modifiedContainersScripts]
+		.map(script => script.trim())
+		.filter(Boolean);
 };
 
 const getAlterCollectionsScripts = (collection, app, modelData) => {
@@ -92,11 +92,61 @@ const getAlterViewScripts = (collection, app, modelData) => {
 		.map(view => ({ ...view, ...view.role }))
 		.map(getModifiedViewScript(modelData));
 
-	return [...deleteViewsScripts, ...createViewsScripts, ...modifiedViewsScripts].map(script => script.trim());
+	return [...deleteViewsScripts, ...createViewsScripts, ...modifiedViewsScripts]
+		.map(script => script.trim())
+		.filter(Boolean);
+};
+
+const getInlineRelationships = ({ data, options }) => {
+	// Will be implemented with script generation options
+	return [];
+};
+
+const getAlterRelationshipsScript = ({ collection, app, modelData, ignoreRelationshipIDs = [] }) => {
+	const { getDeleteForeignKeyScripts, getAddForeignKeyScripts, getModifyForeignKeyScripts } =
+		require('./alterScriptHelpers/alterForeignKeyHelper')({
+			app,
+			modelData,
+		});
+
+	const addedRelationships = []
+		.concat(collection.properties?.relationships?.properties?.added?.items)
+		.filter(Boolean)
+		.map(item => Object.values(item.properties)[0])
+		.filter(
+			relationship =>
+				relationship?.role?.compMod?.created && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+		);
+
+	const deletedRelationships = []
+		.concat(collection.properties?.relationships?.properties?.deleted?.items)
+		.filter(Boolean)
+		.map(item => Object.values(item.properties)[0])
+		.filter(
+			relationship =>
+				relationship?.role?.compMod?.deleted && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+		);
+
+	const modifiedRelationships = []
+		.concat(collection.properties?.relationships?.properties?.modified?.items)
+		.filter(Boolean)
+		.map(item => Object.values(item.properties)[0])
+		.filter(
+			relationship =>
+				relationship?.role?.compMod?.modified && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+		);
+
+	const deleteFkScriptDtos = getDeleteForeignKeyScripts(deletedRelationships);
+	const addFkScriptDtos = getAddForeignKeyScripts(addedRelationships);
+	const modifiedFkScriptDtos = getModifyForeignKeyScripts(modifiedRelationships);
+
+	return [...deleteFkScriptDtos, ...addFkScriptDtos, ...modifiedFkScriptDtos].filter(Boolean);
 };
 
 module.exports = {
 	getAlterContainersScripts,
 	getAlterCollectionsScripts,
 	getAlterViewScripts,
+	getAlterRelationshipsScript,
+	getInlineRelationships,
 };

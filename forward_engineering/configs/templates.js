@@ -46,10 +46,12 @@ module.exports = {
 
 	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
 
-	alterPkConstraint:
-		'ALTER TABLE IF EXISTS ${tableName} ADD CONSTRAINT ${constraintName} PRIMARY KEY (${columns}) NOT ENFORCED;',
+	alterPkConstraint: 'ALTER TABLE ${tableName}\nADD CONSTRAINT PRIMARY KEY (${columns}) NOT ENFORCED;',
 
-	alterPkConstraintSimple: 'ALTER TABLE IF EXISTS ${tableName} ADD PRIMARY KEY (${columns}) NOT ENFORCED;',
+	dropPk: 'ALTER TABLE ${tableName} DROP PRIMARY KEY IF EXISTS;',
 
-	dropPkConstraint: 'ALTER TABLE IF EXISTS ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
+	alterForeignKeyConstraint:
+		'ALTER TABLE ${tableName}\nADD${constraintName} FOREIGN KEY (${foreignKeys})\nREFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED;',
+
+	dropForeignKeyConstraint: 'ALTER TABLE ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
 };
