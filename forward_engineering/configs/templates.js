@@ -52,4 +52,9 @@ module.exports = {
 	alterPkConstraintSimple: 'ALTER TABLE IF EXISTS ${tableName} ADD PRIMARY KEY (${columns}) NOT ENFORCED;',
 
 	dropPkConstraint: 'ALTER TABLE IF EXISTS ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
+
+	alterForeignKeyConstraint:
+		'ALTER TABLE IF EXISTS ${tableName}\nADD${constraintName} FOREIGN KEY (${foreignKeys})\nREFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED;',
+
+	dropForeignKeyConstraint: 'ALTER TABLE IF EXISTS ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
 };
