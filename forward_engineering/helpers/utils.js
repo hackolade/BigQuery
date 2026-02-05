@@ -392,4 +392,5 @@ module.exports = {
 	wrapByBackticks,
 	decorateType,
 	getFullName,
+	addParameters,
 };

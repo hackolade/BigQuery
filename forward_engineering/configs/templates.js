@@ -23,7 +23,7 @@ module.exports = {
 	alterColumnOptions:
 		'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET OPTIONS (\n${options}\n);',
 
-	alterColumnType: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} SET DATA TYPE ${type};',
+	alterColumnType: 'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET DATA TYPE ${type};',
 
 	alterColumnDropNotNull: 'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName} DROP NOT NULL;',
 
