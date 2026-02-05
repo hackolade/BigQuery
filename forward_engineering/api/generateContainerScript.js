@@ -1,5 +1,5 @@
-const { generateAlterScript } = require('./generateAlterScript');
-const { convertJsonSchemaToBigQuerySchema } = require('./helpers/schemaHelper');
+const { generateAlterScript } = require('../alterScript/alterScriptBuilder');
+const { convertJsonSchemaToBigQuerySchema } = require('../helpers/schemaHelper');
 
 const generateContainerScript = (data, logger, callback, app) => {
 	try {

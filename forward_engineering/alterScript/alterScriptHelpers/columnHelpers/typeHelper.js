@@ -1,0 +1,203 @@
+const _ = require('lodash');
+const { getFullName, wrapByBackticks, escapeQuotes, addParameters } = require('../../../helpers/utils');
+const templates = require('../../../configs/templates');
+const { DATA_TYPE_MODE } = require('../../../helpers/constants');
+
+const TYPE_CHANGE = {
+	recreate: 'recreate',
+	update: 'update',
+};
+
+const allowedConversion = {
+	int64: ['numeric', 'bignumeric', 'float64'],
+	numeric: ['bignumeric', 'float64'],
+};
+
+/**
+ * Compares old and new fields to determine whether the column type can be updated
+ * using ALTER SET DATA TYPE or whether the column must be recreated.
+ *
+ * A type can be updated only for supported BigQuery type conversions.
+ *
+ * Any other change leads to recreate.
+ */
+const setTypeChangeAction = (oldField, newField, changeState) => {
+	if (changeState.action === TYPE_CHANGE.recreate) {
+		return;
+	}
+
+	if (oldField.type !== newField.type) {
+		if ([oldField.dataTypeMode, newField.dataTypeMode].includes(DATA_TYPE_MODE.repeated)) {
+			changeState.action = TYPE_CHANGE.recreate;
+			return;
+		}
+		const isAllowedTypeChange = allowedConversion[oldField.type]?.includes(newField.type);
+		changeState.action = isAllowedTypeChange ? TYPE_CHANGE.update : TYPE_CHANGE.recreate;
+		return;
+	}
+
+	if (newField.type === 'struct') {
+		const getLength = schema => Object.keys(schema.properties).length;
+		const hasDifferentPropLength = getLength(oldField) !== getLength(newField);
+
+		if (hasDifferentPropLength) {
+			changeState.action = TYPE_CHANGE.recreate;
+			return;
+		}
+
+		for (const [name, newChildField] of _.toPairs(newField.properties)) {
+			const oldChildField = oldField.properties[name];
+			if (!oldChildField) {
+				changeState.action = TYPE_CHANGE.recreate;
+				return;
+			}
+			setTypeChangeAction(oldChildField, newChildField, changeState);
+			if (changeState.action === TYPE_CHANGE.recreate) {
+				return;
+			}
+		}
+		return;
+	}
+
+	if (newField.type === 'array') {
+		const oldChildItems = [oldField.items].flat();
+		const newChildItems = [newField.items].flat();
+		const hasDifferentPropLength = oldChildItems.length !== newChildItems.length;
+
+		if (hasDifferentPropLength) {
+			changeState.action = TYPE_CHANGE.recreate;
+			return;
+		}
+
+		for (let index = 0; index < newChildItems.length; index++) {
+			if (oldChildItems[index].type !== newChildItems[index].type) {
+				changeState.action = TYPE_CHANGE.recreate;
+				return;
+			}
+		}
+		return;
+	}
+
+	if (oldField.dataTypeMode !== newField.dataTypeMode) {
+		if (newField.dataTypeMode !== DATA_TYPE_MODE.nullable) {
+			changeState.action = TYPE_CHANGE.recreate;
+			return;
+		}
+	}
+
+	const newLength = newField.length;
+	const oldLength = oldField.length;
+
+	if (_.isFinite(oldLength) && _.isFinite(newLength) && newLength > oldLength) {
+		changeState.action = TYPE_CHANGE.update;
+		return;
+	}
+
+	const newPrecision = newField.precision ?? 0;
+	const oldPrecision = oldField.precision ?? 0;
+
+	const newScale = newField.scale ?? 0;
+	const oldScale = oldField.scale ?? 0;
+
+	const isPrecisionChanged = newPrecision > oldPrecision;
+
+	if (isPrecisionChanged && newScale >= oldScale) {
+		changeState.action = TYPE_CHANGE.update;
+		return;
+	}
+	const isScaleChanged = newScale > oldScale;
+
+	if (isScaleChanged && newPrecision >= oldPrecision) {
+		changeState.action = TYPE_CHANGE.update;
+	}
+};
+
+const convertItemsToType = deps => items => {
+	if (!Array.isArray(items)) {
+		items = [items];
+	}
+
+	return items.map(item => {
+		return getColumnType(deps)(
+			{
+				type: item.type,
+				dataTypeMode: item.dataTypeMode,
+				jsonSchema: item,
+			},
+			true,
+		);
+	});
+};
+
+const convertPropertiesToType = deps => properties => {
+	return Object.keys(properties).map(name => {
+		const item = properties[name];
+
+		return getColumnType(deps)({
+			name,
+			type: item.type,
+			dataTypeMode: item.dataTypeMode,
+			jsonSchema: item,
+		});
+	});
+};
+
+const getColumnType =
+	deps =>
+	({ type, dataTypeMode, name, jsonSchema }, isArrayItem) => {
+		const { tab } = deps;
+
+		if (type === 'array') {
+			return ` ARRAY<\n${tab(convertItemsToType(deps)(jsonSchema.items).join(',\n'))}\n>`;
+		} else if (dataTypeMode === DATA_TYPE_MODE.repeated) {
+			const { dataTypeMode, ...item } = jsonSchema;
+
+			return getColumnType(deps)({
+				type: 'array',
+				jsonSchema: {
+					items: [item],
+				},
+			});
+		} else if (type === 'struct') {
+			return ` STRUCT<\n${tab(convertPropertiesToType(deps)(jsonSchema.properties || {}).join(',\n'))}\n>`;
+		}
+
+		const dataType = type.toUpperCase() + addParameters(type, jsonSchema);
+
+		return name ? `${wrapByBackticks(name)} ${dataType}` : dataType;
+	};
+
+const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
+	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+
+	return _.toPairs(collection.properties)
+		.map(([name, newJsonSchema]) => {
+			const { oldField } = newJsonSchema.compMod;
+			const oldJsonSchema = collection.role.properties[oldField.name];
+
+			const typeChangeState = { action: null };
+			setTypeChangeAction(oldJsonSchema, newJsonSchema, typeChangeState);
+
+			if (typeChangeState.action === TYPE_CHANGE.update) {
+				const typeStatement = getColumnType({ assignTemplates, tab, templates })({
+					type: newJsonSchema.type,
+					dataTypeMode: newJsonSchema.dataTypeMode,
+					jsonSchema: newJsonSchema,
+				});
+
+				return assignTemplates(templates.alterColumnType, {
+					columnName: wrapByBackticks(name),
+					type: typeStatement.trim(),
+					tableName: tableData.name,
+				});
+			}
+
+			return '';
+		})
+		.filter(Boolean);
+};
+
+module.exports = {
+	getModifiedColumnTypeScripts,
+};

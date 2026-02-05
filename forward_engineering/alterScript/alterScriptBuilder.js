@@ -1,11 +1,13 @@
-const { commentDropStatements } = require('./helpers/commentDropStatements');
+const { commentDropStatements } = require('../helpers/commentDropStatements');
 
 const generateAlterScript = (data, callback, app) => {
 	const {
 		getAlterContainersScripts,
 		getAlterCollectionsScripts,
 		getAlterViewScripts,
-	} = require('./helpers/alterScriptFromDeltaHelper');
+		getAlterRelationshipsScript,
+		getInlineRelationships,
+	} = require('./alterScriptFromDeltaHelper');
 
 	const collection = JSON.parse(data.jsonSchema);
 	if (!collection) {
@@ -17,7 +19,16 @@ const generateAlterScript = (data, callback, app) => {
 	const containersScripts = getAlterContainersScripts(collection, app, data.modelData);
 	const collectionsScripts = getAlterCollectionsScripts(collection, app, data.modelData);
 	const viewScripts = getAlterViewScripts(collection, app, data.modelData);
-	const script = [...containersScripts, ...collectionsScripts, ...viewScripts].join('\n\n');
+	const ignoreRelationshipIDs = getInlineRelationships({ data, options: data.options });
+	const relationships = getAlterRelationshipsScript({
+		collection,
+		app,
+		modelData: data.modelData,
+		ignoreRelationshipIDs,
+	});
+	const script = [...containersScripts, ...collectionsScripts, ...viewScripts, ...relationships]
+		.filter(Boolean)
+		.join('\n\n');
 
 	const applyDropStatements = data.options?.additionalOptions?.some(
 		option => option.id === 'applyDropStatements' && option.value,

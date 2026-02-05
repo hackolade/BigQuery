@@ -8,7 +8,7 @@ const { toLower } = require('lodash');
 const types = require('./configs/types');
 const defaultTypes = require('./configs/defaultTypes');
 const { decorateType } = require('./helpers/utils');
-const { getCompositePrimaryKeys, getColumnConstraints } = require('./helpers/constraintHelper');
+const { getCompositePrimaryKeys, getColumnConstraints } = require('./helpers/constraints/dbtConstraintHelper');
 
 class DbtProvider {
 	/**

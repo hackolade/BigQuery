@@ -4,7 +4,7 @@ module.exports = {
 	createTable:
 		'CREATE ${orReplace}${temporary}${external}TABLE ${ifNotExist}${name} ${column_definitions}${partitions}${clustering}${options};\n',
 
-	columnDefinition: '${name}${type}${primaryKey}${notNull}${options}',
+	columnDefinition: '${name}${type}${primaryKey}${default}${notNull}${options}',
 
 	createForeignKeyConstraint:
 		'${constraintName}FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
@@ -21,17 +21,37 @@ module.exports = {
 	alterTable: 'ALTER TABLE IF EXISTS ${name} SET ${options};',
 
 	alterColumnOptions:
-		'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} SET OPTIONS( description="${description}" );',
+		'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET OPTIONS (\n${options}\n);',
 
-	alterColumnType: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} SET DATA TYPE ${type};',
+	alterColumnType: 'ALTER TABLE ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET DATA TYPE ${type};',
 
-	alterColumnDropNotNull: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} DROP NOT NULL;',
+	alterColumnDropNotNull: 'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName} DROP NOT NULL;',
 
 	alterTableAddColumn: 'ALTER TABLE ${tableName} ADD COLUMN IF NOT EXISTS ${column};',
 
 	alterTableDropColumn: 'ALTER TABLE ${tableName} DROP COLUMN IF EXISTS ${columnName};',
 
+	alterTableSetDefault:
+		'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nSET DEFAULT ${default};',
+
+	alterTableDropDefault: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName}\nDROP DEFAULT;',
+
+	renameColumn: 'RENAME COLUMN IF EXISTS ${oldColumnName} TO ${newColumnName}',
+
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 
 	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
+
+	alterTableStatement: 'ALTER TABLE ${name}\n${alterStatements};',
+
+	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
+
+	alterPkConstraint: 'ALTER TABLE ${tableName}\nADD CONSTRAINT PRIMARY KEY (${columns}) NOT ENFORCED;',
+
+	dropPk: 'ALTER TABLE ${tableName} DROP PRIMARY KEY IF EXISTS;',
+
+	alterForeignKeyConstraint:
+		'ALTER TABLE ${tableName}\nADD${constraintName} FOREIGN KEY (${foreignKeys})\nREFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED;',
+
+	dropForeignKeyConstraint: 'ALTER TABLE ${tableName} DROP CONSTRAINT IF EXISTS ${constraintName};',
 };

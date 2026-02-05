@@ -3,6 +3,8 @@
  * @typedef {import('../types').JsonSchema} JsonSchema
  */
 
+const { DATA_TYPE_MODE } = require('./constants');
+
 const escapeQuotes = (str = '') => {
 	return str.replace(/(")/gi, '\\$1').replace(/\n/gi, '\\n');
 };
@@ -275,7 +277,7 @@ const getColumnSchema =
 
 		if (type === 'array') {
 			dataType = ` ARRAY<\n${tab(convertItemsToType(deps)(jsonSchema.items).join(',\n'))}\n>`;
-		} else if (dataTypeMode === 'Repeated') {
+		} else if (dataTypeMode === DATA_TYPE_MODE.repeated) {
 			const { dataTypeMode, ...item } = jsonSchema;
 
 			dataType = getColumnSchema(deps)({
@@ -295,7 +297,7 @@ const getColumnSchema =
 			options += ` OPTIONS( description="${escapeQuotes(description)}" )`;
 		}
 
-		if (dataTypeMode === 'Required' && !isArrayItem) {
+		if (dataTypeMode === DATA_TYPE_MODE.required && !isArrayItem) {
 			notNull = ' NOT NULL';
 		}
 
@@ -305,6 +307,7 @@ const getColumnSchema =
 			primaryKey,
 			notNull,
 			options,
+			default: jsonSchema.default ? ` DEFAULT ${jsonSchema.default}` : '',
 		});
 	};
 
@@ -370,6 +373,11 @@ const prepareConstraintName = name => {
 	return (name || '').replace(VALID_FULL_NAME_REGEX, '_').replace(VALID_FIRST_NAME_LETTER_REGEX, '_');
 };
 
+const getFullName = (...names) => {
+	const fullName = names.filter(Boolean).join('.');
+	return wrapByBackticks(fullName);
+};
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -383,4 +391,6 @@ module.exports = {
 	prepareConstraintName,
 	wrapByBackticks,
 	decorateType,
+	getFullName,
+	addParameters,
 };

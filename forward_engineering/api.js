@@ -1,9 +1,9 @@
 const reApi = require('../reverse_engineering/api');
 const applyToInstanceHelper = require('./helpers/applyToInstanceHelper');
-const { generateScript } = require('./generateScript');
-const { generateContainerScript } = require('./generateContainerScript');
-const { generateViewScript } = require('./generateViewScript');
-const { isDropInStatements } = require('./isDropInStatements');
+const { generateScript } = require('./api/generateScript');
+const { generateContainerScript } = require('./api/generateContainerScript');
+const { generateViewScript } = require('./api/generateViewScript');
+const { isDropInStatements } = require('./api/isDropInStatements');
 
 module.exports = {
 	generateScript,

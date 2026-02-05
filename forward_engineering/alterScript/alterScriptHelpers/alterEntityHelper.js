@@ -1,10 +1,19 @@
+const { getFullName } = require('../../helpers/utils');
+const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
+const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
+const { getModifiedColumnNotNullScripts } = require('./columnHelpers/notNullHelper');
+const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
+const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
+const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
+const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
+const { getCompMod, checkCompModEqual, setEntityKeys } = require('./common');
+
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
 	const { getEntityName } = app.require('@hackolade/ddl-fe-utils').general;
 	const { createColumnDefinitionBySchema } = require('./createColumnDefinition')(_);
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
-	const { checkFieldPropertiesChanged, getCompMod, checkCompModEqual, setEntityKeys } = require('./common')(app);
 
 	const getAddCollectionScript = modelData => collection => {
 		const databaseName = collection.compMod.keyspaceName;
@@ -58,24 +67,38 @@ module.exports = (app, options) => {
 			..._.omit(collection, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey'),
 			...(collection?.role || {}),
 		};
+
 		const databaseName = table.compMod.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
 		const idToNameHashTable = generateIdToNameHashTable(table);
 		const idToActivatedHashTable = generateIdToActivatedHashTable(table);
 		const jsonSchema = setEntityKeys({ idToActivatedHashTable, idToNameHashTable, entity: table });
 		const tableName = getEntityName(jsonSchema);
+		const fullTableName = getFullName(dbData.projectId, dbData.databaseName, collection.role?.name || tableName);
+
 		const tableData = {
-			name: tableName,
+			name: fullTableName,
 			columns: [],
 			foreignKeyConstraints: [],
 			columnDefinitions: [],
 			dbData,
 		};
 
+		const modifyEntityNameScript = getModifyCollectionNameScript({ app, collection, dbData });
 		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
+		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, tableData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
+		const modifyPkScripts = getModifyPkConstraintsScriptDtos({ app, collection, tableData });
 
-		return [].concat(modifyTableOptionsScript).concat(modifyColumnScripts).filter(Boolean).join('\n\n');
+		return [
+			modifyEntityNameScript,
+			modifyTableOptionsScript,
+			modifyColumnNamesScript,
+			...modifyColumnScripts,
+			...modifyPkScripts,
+		]
+			.filter(Boolean)
+			.join('\n\n');
 	};
 
 	const getModifyTableOptions = ({ jsonSchema, tableData }) => {
@@ -129,7 +152,7 @@ module.exports = (app, options) => {
 	};
 
 	const getDeleteColumnScript = modelData => collection => {
-		const collectionSchema = { ...collection, ...(_.omit(collection?.role, 'properties') || {}) };
+		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
 		const tableName = collectionSchema?.code || collectionSchema?.collectionName || collectionSchema?.name;
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
@@ -139,22 +162,18 @@ module.exports = (app, options) => {
 			.map(([name]) => ddlProvider.dropColumn(name, tableName, dbData));
 	};
 
-	const getModifyColumnScripts = ({ tableData, dbData, collection }) => {
-		const collectionSchema = { ...collection, ...(_.omit(collection?.role, 'properties') || {}) };
+	const getModifyColumnScripts = ({ tableData, collection }) => {
+		const updateTypeScripts = getModifiedColumnTypeScripts({ collection, app, tableData });
+		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
+		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
+		const modifiedColumnNotNullScripts = getModifiedColumnNotNullScripts({ app, collection, tableData });
 
-		return _.toPairs(collection.properties)
-			.filter(([name, jsonSchema]) => checkFieldPropertiesChanged(jsonSchema.compMod, ['type', 'mode']))
-			.map(([name, jsonSchema]) => {
-				const columnDefinition = createColumnDefinitionBySchema({
-					name,
-					jsonSchema,
-					parentJsonSchema: collectionSchema,
-					ddlProvider,
-					dbData,
-				});
-
-				return ddlProvider.alterColumnType(tableData.name, columnDefinition);
-			});
+		return [
+			...updateTypeScripts,
+			...updateOptionScripts,
+			...modifyDefaultValueScripts,
+			...modifiedColumnNotNullScripts,
+		].filter(Boolean);
 	};
 
 	return {

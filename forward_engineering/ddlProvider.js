@@ -12,6 +12,7 @@ const {
 	clearEmptyStatements,
 	prepareConstraintName,
 	wrapByBackticks,
+	getFullName,
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -21,7 +22,6 @@ module.exports = (baseProvider, options, app) => {
 	const _ = app.require('lodash');
 	const {
 		getLabels,
-		getFullName,
 		getContainerOptions,
 		getViewOptions,
 		cleanObject,
@@ -536,37 +536,12 @@ module.exports = (baseProvider, options, app) => {
 				labels,
 			});
 
-			return assignTemplates(templates.alterTable, {
-				name: tableName,
-				options,
-			});
-		},
-
-		alterColumnOptions(tableName, columnName, description) {
-			return assignTemplates(templates.alterColumnOptions, {
-				description: escapeQuotes(description),
-				tableName: wrapByBackticks(tableName),
-				columnName: wrapByBackticks(columnName),
-			});
-		},
-
-		alterColumnType(tableName, columnDefinition) {
-			const columnSchema = getColumnSchema({ assignTemplates, tab, templates })(
-				_.pick(columnDefinition, 'type', 'dataTypeMode', 'jsonSchema'),
-			);
-
-			return assignTemplates(templates.alterColumnType, {
-				columnName: wrapByBackticks(columnDefinition.name),
-				type: columnSchema,
-				tableName: wrapByBackticks(columnDefinition.name),
-			});
-		},
-
-		alterColumnDropNotNull(tableName, columnName) {
-			return assignTemplates(templates.alterColumnDropNotNull, {
-				columnName: wrapByBackticks(columnName),
-				tableName: wrapByBackticks(columnName),
-			});
+			return options?.trim()
+				? assignTemplates(templates.alterTable, {
+						name: tableName,
+						options,
+					})
+				: '';
 		},
 
 		addColumn({ column }, tableName, dbData) {
