@@ -1,10 +1,10 @@
+const { getFullName } = require('../../helpers/utils');
 const { checkCompModEqual, getCompMod } = require('./common');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { getDbData } = app.require('@hackolade/ddl-fe-utils').general;
-	const { getFullName } = require('../../helpers/general')(app);
 
 	const getAddContainerScript = modelData => containerData => {
 		const constructedDbData = getDbData([containerData]);
