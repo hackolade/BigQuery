@@ -24,7 +24,7 @@ const getAlterContainersScripts = (collection, app, modelData) => {
 	const deleteContainersScripts = deletedContainers.map(container => getDeleteContainerScript(modelData)(container));
 	const modifiedContainersScripts = modifiedContainers.map(container => getModifiedContainer(modelData)(container));
 
-	return [...deleteContainersScripts, ...addContainersScripts, ...modifiedContainersScripts]
+	return [...addContainersScripts, ...deleteContainersScripts, ...modifiedContainersScripts]
 		.map(script => script.trim())
 		.filter(Boolean);
 };
@@ -47,7 +47,7 @@ const getAlterCollectionsScripts = (collection, app, modelData) => {
 		.filter(collection => collection.compMod?.created)
 		.map(getAddCollectionScript(modelData));
 
-	const deleteCollectionScripts = modifyScriptsData
+	const deleteCollectionScripts = deleteScriptsData
 		.filter(collection => collection.compMod?.deleted)
 		.map(getDeleteCollectionScript(modelData));
 
