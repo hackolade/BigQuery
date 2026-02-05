@@ -1,3 +1,5 @@
+const { DATA_TYPE_MODE } = require('./constants');
+
 const toUpper = s => String(s || '').toUpperCase();
 
 const cleanUp = obj => Object.fromEntries(Object.entries(obj).filter(([key, value]) => value !== ''));
@@ -17,7 +19,7 @@ const convertItem = ({ name, jsonSchema }) => {
 	const schema = cleanUp({
 		name,
 		type: toUpper(getType(jsonSchema)),
-		mode: toUpper(jsonSchema.dataTypeMode || 'Nullable'),
+		mode: toUpper(jsonSchema.dataTypeMode || DATA_TYPE_MODE.nullable),
 		description: jsonSchema.refDescription || jsonSchema.description,
 	});
 
@@ -36,7 +38,7 @@ const convertItem = ({ name, jsonSchema }) => {
 		return items.flatMap(schema => {
 			return convertItem({
 				name,
-				jsonSchema: { ...schema, dataTypeMode: 'Repeated' },
+				jsonSchema: { ...schema, dataTypeMode: DATA_TYPE_MODE.repeated },
 			});
 		});
 	}

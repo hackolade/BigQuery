@@ -69,8 +69,7 @@ const getAlterCollectionsScripts = (collection, app, modelData) => {
 		...addColumnScripts,
 		...deleteColumnScripts,
 	]
-		.filter(Boolean)
-		.map(script => (typeof script === 'string' ? script.trim() : ''))
+		.map(script => script.trim())
 		.filter(Boolean);
 };
 

@@ -1,9 +1,12 @@
 const { getFullName } = require('../../helpers/utils');
 const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
+const { getModifiedColumnNotNullScripts } = require('./columnHelpers/notNullHelper');
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
+const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
+const { getCompMod, checkCompModEqual, setEntityKeys } = require('./common');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -11,7 +14,6 @@ module.exports = (app, options) => {
 	const { createColumnDefinitionBySchema } = require('./createColumnDefinition')(_);
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
-	const { checkFieldPropertiesChanged, getCompMod, checkCompModEqual, setEntityKeys } = require('./common')(app);
 
 	const getAddCollectionScript = modelData => collection => {
 		const databaseName = collection.compMod.keyspaceName;
@@ -161,26 +163,17 @@ module.exports = (app, options) => {
 	};
 
 	const getModifyColumnScripts = ({ tableData, collection }) => {
-		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
-
-		const updateTypeScripts = _.toPairs(collection.properties)
-			.filter(([name, jsonSchema]) => checkFieldPropertiesChanged(jsonSchema.compMod, ['type', 'mode']))
-			.map(([name, jsonSchema]) => {
-				const columnDefinition = createColumnDefinitionBySchema({
-					name,
-					jsonSchema,
-					parentJsonSchema: collectionSchema,
-					ddlProvider,
-					dbData: tableData.dbData,
-				});
-
-				return ddlProvider.alterColumnType(tableData.name, columnDefinition);
-			});
-
+		const updateTypeScripts = getModifiedColumnTypeScripts({ collection, app, tableData });
 		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
 		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
+		const modifiedColumnNotNullScripts = getModifiedColumnNotNullScripts({ app, collection, tableData });
 
-		return [...updateTypeScripts, ...updateOptionScripts, ...modifyDefaultValueScripts].filter(Boolean);
+		return [
+			...updateTypeScripts,
+			...updateOptionScripts,
+			...modifyDefaultValueScripts,
+			...modifiedColumnNotNullScripts,
+		].filter(Boolean);
 	};
 
 	return {

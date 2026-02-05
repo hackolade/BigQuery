@@ -23,9 +23,9 @@ module.exports = {
 	alterColumnOptions:
 		'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET OPTIONS (\n${options}\n);',
 
-	alterColumnType: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} SET DATA TYPE ${type};',
+	alterColumnType: 'ALTER TABLE ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET DATA TYPE ${type};',
 
-	alterColumnDropNotNull: 'ALTER TABLE IF EXISTS ${tableName} ALTER COLUMN IF EXISTS ${columnName} DROP NOT NULL;',
+	alterColumnDropNotNull: 'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName} DROP NOT NULL;',
 
 	alterTableAddColumn: 'ALTER TABLE ${tableName} ADD COLUMN IF NOT EXISTS ${column};',
 
@@ -42,7 +42,7 @@ module.exports = {
 
 	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
 
-	alterTableStatement: 'ALTER TABLE IF EXISTS ${name}\n${alterStatements};',
+	alterTableStatement: 'ALTER TABLE ${name}\n${alterStatements};',
 
 	renameTable: 'ALTER TABLE IF EXISTS ${oldTableName} RENAME TO ${newTableName};',
 
