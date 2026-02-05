@@ -6,16 +6,8 @@ const { CONSTRAINT_POSTFIX } = require('../../../helpers/constraints/constants')
 
 const amountOfColumnsInRegularPk = 1;
 
-const getDefaultConstraintName = ({ entityName }) => {
-	return `${entityName.startsWith('`') ? entityName.slice(1, -1) : entityName}_${CONSTRAINT_POSTFIX.primaryKey}`.replace(
-		/\./,
-		'_',
-	);
-};
-
 const extractOptionsForComparisonWithRegularPkOptions = ({ optionHolder = {} }) => {
 	return {
-		constraintName: optionHolder.constraintName,
 		id: optionHolder.id,
 	};
 };
@@ -105,15 +97,7 @@ const wasCompositePkChangedInTransitionFromRegularToComposite = ({ collection })
 	return PrimaryKeyTransitionDto.transition(!areOptionsEqual);
 };
 
-const getConstraintNameForCompositePk = ({ primaryKey, entityName }) => {
-	if (primaryKey.constraintName) {
-		return primaryKey.constraintName;
-	}
-	return getDefaultConstraintName({ entityName });
-};
-
 const getCreateCompositePKDDLProviderConfig = ({ primaryKey, entityName, entity }) => {
-	const constraintName = getConstraintNameForCompositePk({ primaryKey, entityName });
 	const pkColumns = _.toPairs(entity.role.properties)
 		.filter(([name, jsonSchema]) =>
 			Boolean(primaryKey.compositePrimaryKey?.find(keyDto => keyDto.keyId === jsonSchema.GUID)),
@@ -124,7 +108,6 @@ const getCreateCompositePKDDLProviderConfig = ({ primaryKey, entityName, entity 
 		}));
 
 	return {
-		name: constraintName,
 		columns: pkColumns,
 	};
 };
@@ -195,11 +178,7 @@ const getDropCompositePkScriptDtos = ({ app, collection, tableData }) => {
 
 	return oldPrimaryKeys
 		.map(oldPk => {
-			const constraintName = getConstraintNameForCompositePk({
-				primaryKey: oldPk,
-				entityName: tableName,
-			});
-			const script = dropPK({ tableName, constraintName, app });
+			const script = dropPK({ tableName, app });
 			return new KeyScriptModificationDto(script, tableName, true, isCollectionActivated);
 		})
 		.filter(scriptDto => Boolean(scriptDto.script));
@@ -212,16 +191,7 @@ const getModifyCompositePkScriptDtos = ({ collection, app, tableData }) => {
 	return [...dropCompositePkScriptDtos, ...addCompositePkScriptDtos].filter(Boolean);
 };
 
-const getConstraintNameForRegularPk = ({ columnJsonSchema, entityName }) => {
-	const constraintOptions = columnJsonSchema.primaryKeyOptions;
-	if (constraintOptions?.constraintName?.trim()) {
-		return constraintOptions.constraintName;
-	}
-	return getDefaultConstraintName({ entityName });
-};
-
 const getCreateRegularPKDDLProviderConfig = ({ columnName, columnJsonSchema, entityName }) => {
-	const constraintName = getConstraintNameForRegularPk({ columnJsonSchema, entityName });
 	const pkColumns = [
 		{
 			name: columnName,
@@ -230,7 +200,6 @@ const getCreateRegularPKDDLProviderConfig = ({ columnName, columnJsonSchema, ent
 	];
 
 	return {
-		name: constraintName,
 		columns: pkColumns,
 	};
 };
@@ -430,11 +399,7 @@ const getDropPkScriptDto = ({ app, collection, tableData }) => {
 			return wasRegularPkModified({ columnJsonSchema: jsonSchema, collection });
 		})
 		.map(([name, jsonSchema]) => {
-			const constraintName = getConstraintNameForRegularPk({
-				columnJsonSchema: jsonSchema,
-				entityName: tableName,
-			});
-			const script = dropPK({ tableName, constraintName, app });
+			const script = dropPK({ tableName, app });
 			return new KeyScriptModificationDto(script, tableName, true, isCollectionActivated);
 		})
 		.filter(scriptDto => Boolean(scriptDto.script));
