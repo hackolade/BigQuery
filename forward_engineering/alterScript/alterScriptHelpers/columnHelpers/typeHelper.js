@@ -147,7 +147,7 @@ const getColumnType =
 
 		if (type === 'array') {
 			return ` ARRAY<\n${tab(convertItemsToType(deps)(jsonSchema.items).join(',\n'))}\n>`;
-		} else if (dataTypeMode === 'Repeated') {
+		} else if (dataTypeMode === DATA_TYPE_MODE.repeated) {
 			const { dataTypeMode, ...item } = jsonSchema;
 
 			return getColumnType(deps)({
