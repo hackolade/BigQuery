@@ -6,6 +6,7 @@ const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelpe
 const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
+const { getCompMod, checkCompModEqual, setEntityKeys } = require('./common');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -13,7 +14,6 @@ module.exports = (app, options) => {
 	const { createColumnDefinitionBySchema } = require('./createColumnDefinition')(_);
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
-	const { checkFieldPropertiesChanged, getCompMod, checkCompModEqual, setEntityKeys } = require('./common')(app);
 
 	const getAddCollectionScript = modelData => collection => {
 		const databaseName = collection.compMod.keyspaceName;
