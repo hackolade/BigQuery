@@ -25,8 +25,7 @@ const getAlterContainersScripts = (collection, app, modelData) => {
 	const modifiedContainersScripts = modifiedContainers.map(container => getModifiedContainer(modelData)(container));
 
 	return [...deleteContainersScripts, ...addContainersScripts, ...modifiedContainersScripts]
-		.filter(Boolean)
-		.map(script => (typeof script === 'string' ? script.trim() : ''))
+		.map(script => script.trim())
 		.filter(Boolean);
 };
 
@@ -94,8 +93,7 @@ const getAlterViewScripts = (collection, app, modelData) => {
 		.map(getModifiedViewScript(modelData));
 
 	return [...deleteViewsScripts, ...createViewsScripts, ...modifiedViewsScripts]
-		.filter(Boolean)
-		.map(script => (typeof script === 'string' ? script.trim() : ''))
+		.map(script => script.trim())
 		.filter(Boolean);
 };
 
