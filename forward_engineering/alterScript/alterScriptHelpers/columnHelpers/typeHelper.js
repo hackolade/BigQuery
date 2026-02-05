@@ -1,6 +1,7 @@
 const { pick, toPairs } = require('lodash');
 const { getFullName, wrapByBackticks, escapeQuotes, addParameters } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
+const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
 const TYPE_CHANGE = {
 	recreate: 'recreate',
@@ -76,7 +77,7 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 	}
 
 	if (oldField.dataTypeMode !== newField.dataTypeMode) {
-		if (newField.dataTypeMode.toLowerCase() !== 'nullable') {
+		if (newField.dataTypeMode !== DATA_TYPE_MODE.nullable) {
 			changeState.action = TYPE_CHANGE.recreate;
 			return;
 		}

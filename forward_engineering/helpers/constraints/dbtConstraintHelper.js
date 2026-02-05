@@ -6,6 +6,7 @@
  */
 
 const _ = require('lodash');
+const { DATA_TYPE_MODE } = require('../constants');
 
 /**
  * @param {ColumnDefinition} columnDefinition
@@ -87,7 +88,7 @@ const getPrimaryKeyConstraint = ({ columnDefinition, jsonSchema }) => {
  * @returns {ConstraintDto | undefined}
  */
 const getNotNullConstraint = ({ columnDefinition }) => {
-	if (columnDefinition.dataTypeMode !== 'Required') {
+	if (columnDefinition.dataTypeMode !== DATA_TYPE_MODE.required) {
 		return;
 	}
 
