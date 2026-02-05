@@ -1,5 +1,5 @@
 const { pick, toPairs } = require('lodash');
-const { getFullName, wrapByBackticks, escapeQuotes, getColumnSchema } = require('../../../helpers/utils');
+const { getFullName, wrapByBackticks, escapeQuotes, addParameters } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 
 const TYPE_CHANGE = {
@@ -82,7 +82,10 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 		}
 	}
 
-	if (isFinite(oldField.length) && isFinite(newField.length) && newField.length > oldField.length) {
+	const newLength = newField.length ?? 0;
+	const oldLength = oldField.length ?? 0;
+
+	if (newLength > oldLength) {
 		changeState.action = TYPE_CHANGE.update;
 		return;
 	}
@@ -106,11 +109,62 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 	}
 };
 
+const convertItemsToType = deps => items => {
+	if (!Array.isArray(items)) {
+		items = [items];
+	}
+
+	return items.map(item => {
+		return getColumnType(deps)(
+			{
+				type: item.type,
+				dataTypeMode: item.dataTypeMode,
+				jsonSchema: item,
+			},
+			true,
+		);
+	});
+};
+
+const convertPropertiesToType = deps => properties => {
+	return Object.keys(properties).map(name => {
+		const item = properties[name];
+
+		return getColumnType(deps)({
+			name,
+			type: item.type,
+			dataTypeMode: item.dataTypeMode,
+			jsonSchema: item,
+		});
+	});
+};
+
+const getColumnType =
+	deps =>
+	({ type, dataTypeMode, name, jsonSchema }, isArrayItem) => {
+		const { tab } = deps;
+
+		if (type === 'array') {
+			return ` ARRAY<\n${tab(convertItemsToType(deps)(jsonSchema.items).join(',\n'))}\n>`;
+		} else if (dataTypeMode === 'Repeated') {
+			const { dataTypeMode, ...item } = jsonSchema;
+
+			return getColumnType(deps)({
+				type: 'array',
+				jsonSchema: {
+					items: [item],
+				},
+			});
+		} else if (type === 'struct') {
+			return ` STRUCT<\n${tab(convertPropertiesToType(deps)(jsonSchema.properties || {}).join(',\n'))}\n>`;
+		}
+
+		return type.toUpperCase() + addParameters(type, jsonSchema);
+	};
+
 const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
 	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
-
-	const fullTableName = getFullName(tableData.dbData.projectId, tableData.dbData.databaseName, tableData.name);
 
 	return toPairs(collection.properties)
 		.map(([name, newJsonSchema]) => {
@@ -121,7 +175,7 @@ const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 			setTypeChangeAction(oldJsonSchema, newJsonSchema, typeChangeState);
 
 			if (typeChangeState.action === TYPE_CHANGE.update) {
-				const typeStatement = getColumnSchema({ assignTemplates, tab, templates })({
+				const typeStatement = getColumnType({ assignTemplates, tab, templates })({
 					type: newJsonSchema.type,
 					dataTypeMode: newJsonSchema.dataTypeMode,
 					jsonSchema: newJsonSchema,
@@ -130,7 +184,7 @@ const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 				return assignTemplates(templates.alterColumnType, {
 					columnName: wrapByBackticks(name),
 					type: typeStatement.trim(),
-					tableName: fullTableName,
+					tableName: tableData.name,
 				});
 			}
 
