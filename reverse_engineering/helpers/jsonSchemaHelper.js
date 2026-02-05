@@ -1,3 +1,5 @@
+const { DATA_TYPE_MODE } = require('../../forward_engineering/helpers/constants');
+
 const createJsonSchema = (schema, rows) => {
 	const properties = getProperties(schema.fields || [], rows);
 
@@ -65,11 +67,11 @@ const convertField = (field, values) => {
 const getTypeMode = mode => {
 	switch (mode) {
 		case 'REQUIRED':
-			return 'Required';
+			return DATA_TYPE_MODE.required;
 		case 'REPEATED':
-			return 'Repeated';
+			return DATA_TYPE_MODE.repeated;
 		default:
-			return 'Nullable';
+			return DATA_TYPE_MODE.nullable;
 	}
 };
 

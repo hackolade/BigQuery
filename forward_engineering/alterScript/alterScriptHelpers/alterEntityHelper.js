@@ -1,6 +1,7 @@
 const { getFullName } = require('../../helpers/utils');
 const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
+const { getModifiedColumnNotNullScripts } = require('./columnHelpers/notNullHelper');
 const { getModifiedColumnOptionScripts } = require('./columnHelpers/optionsHelper');
 const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
@@ -165,8 +166,14 @@ module.exports = (app, options) => {
 		const updateTypeScripts = getModifiedColumnTypeScripts({ collection, app, tableData });
 		const updateOptionScripts = getModifiedColumnOptionScripts({ collection, app, tableData });
 		const modifyDefaultValueScripts = getModifiedDefaultColumnValueScripts({ app, collection, tableData });
+		const modifiedColumnNotNullScripts = getModifiedColumnNotNullScripts({ app, collection, tableData });
 
-		return [...updateTypeScripts, ...updateOptionScripts, ...modifyDefaultValueScripts].filter(Boolean);
+		return [
+			...updateTypeScripts,
+			...updateOptionScripts,
+			...modifyDefaultValueScripts,
+			...modifiedColumnNotNullScripts,
+		].filter(Boolean);
 	};
 
 	return {
