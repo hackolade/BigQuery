@@ -7,6 +7,7 @@ const { getModifiedColumnTypeScripts } = require('./columnHelpers/typeHelper');
 const { getModifyCollectionNameScript } = require('./entityHelpers/nameHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
 const { getCompMod, checkCompModEqual, setEntityKeys } = require('./common');
+const { getModifyCollectionOptionsScript } = require('./entityHelpers/optionsHelper');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -84,7 +85,7 @@ module.exports = (app, options) => {
 		};
 
 		const modifyEntityNameScript = getModifyCollectionNameScript({ app, collection, dbData });
-		const modifyTableOptionsScript = getModifyTableOptions({ jsonSchema, tableData });
+		const modifyTableOptionsScript = getModifyCollectionOptionsScript({ app, jsonSchema, tableData });
 		const modifyColumnNamesScript = getModifyColumnNameScript({ app, collection, tableData });
 		const modifyColumnScripts = getModifyColumnScripts({ tableData, dbData, collection });
 		const modifyPkScripts = getModifyPkConstraintsScriptDtos({ app, collection, tableData });
@@ -98,35 +99,6 @@ module.exports = (app, options) => {
 		]
 			.filter(Boolean)
 			.join('\n\n');
-	};
-
-	const getModifyTableOptions = ({ jsonSchema, tableData }) => {
-		const compMod = getCompMod(jsonSchema);
-		const optionsProperties = [
-			'description',
-			'partitioning',
-			'partitioningFilterRequired',
-			'expiration',
-			'tableType',
-			'customerEncryptionKey',
-			'encryption',
-			'labels',
-			'title',
-		];
-
-		const isAnyOptionChanged = _.some(optionsProperties, property => !checkCompModEqual(compMod[property]));
-
-		if (!isAnyOptionChanged) {
-			return '';
-		}
-
-		const hydratedTable = ddlProvider.hydrateTable({
-			entityData: [jsonSchema],
-			tableData,
-			jsonSchema,
-		});
-
-		return ddlProvider.alterTableOptions(hydratedTable);
 	};
 
 	const getAddColumnScript = modelData => collection => {

@@ -18,7 +18,7 @@ module.exports = {
 
 	dropTable: 'DROP TABLE IF EXISTS ${name};',
 
-	alterTable: 'ALTER TABLE IF EXISTS ${name} SET ${options};',
+	alterTableSetOptions: 'ALTER TABLE IF EXISTS ${tableName}\nSET OPTIONS (\n${options}\n);',
 
 	alterColumnOptions:
 		'ALTER TABLE IF EXISTS ${tableName}\nALTER COLUMN IF EXISTS ${columnName}\nSET OPTIONS (\n${options}\n);',
