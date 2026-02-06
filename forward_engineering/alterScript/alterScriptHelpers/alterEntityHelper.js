@@ -1,4 +1,4 @@
-const { getFullName } = require('../../helpers/utils');
+const { getFullName, getName } = require('../../helpers/utils');
 const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
 const { getModifiedColumnNotNullScripts } = require('./columnHelpers/notNullHelper');
@@ -10,7 +10,6 @@ const { getCompMod, checkCompModEqual, setEntityKeys } = require('./common');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
-	const { getEntityName } = app.require('@hackolade/ddl-fe-utils').general;
 	const { createColumnDefinitionBySchema } = require('./createColumnDefinition')(_);
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
@@ -20,12 +19,12 @@ module.exports = (app, options) => {
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
 		const table = {
 			..._.omit(collection, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey'),
-			...(collection?.role || {}),
+			...collection?.role,
 		};
 		const idToNameHashTable = generateIdToNameHashTable(table);
 		const idToActivatedHashTable = generateIdToActivatedHashTable(table);
 		const jsonSchema = setEntityKeys({ idToActivatedHashTable, idToNameHashTable, entity: table });
-		const tableName = getEntityName(jsonSchema);
+		const tableName = getName(jsonSchema);
 		const columnDefinitions = _.toPairs(jsonSchema.properties).map(([name, column]) =>
 			createColumnDefinitionBySchema({
 				jsonSchema: column,
@@ -54,8 +53,8 @@ module.exports = (app, options) => {
 	};
 
 	const getDeleteCollectionScript = modelData => collection => {
-		const jsonSchema = { ...collection, ...(collection?.role || {}) };
-		const tableName = getEntityName(jsonSchema);
+		const jsonSchema = { ...collection, ...collection?.role };
+		const tableName = getName(jsonSchema);
 		const databaseName = collection.compMod.keyspaceName;
 		const projectId = _.first(modelData)?.projectId;
 
@@ -65,7 +64,7 @@ module.exports = (app, options) => {
 	const getModifyCollectionScript = modelData => collection => {
 		const table = {
 			..._.omit(collection, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey'),
-			...(collection?.role || {}),
+			...collection?.role,
 		};
 
 		const databaseName = table.compMod.keyspaceName;
@@ -73,7 +72,7 @@ module.exports = (app, options) => {
 		const idToNameHashTable = generateIdToNameHashTable(table);
 		const idToActivatedHashTable = generateIdToActivatedHashTable(table);
 		const jsonSchema = setEntityKeys({ idToActivatedHashTable, idToNameHashTable, entity: table });
-		const tableName = getEntityName(jsonSchema);
+		const tableName = getName(jsonSchema);
 		const fullTableName = getFullName(dbData.projectId, dbData.databaseName, collection.role?.name || tableName);
 
 		const tableData = {
@@ -131,8 +130,8 @@ module.exports = (app, options) => {
 	};
 
 	const getAddColumnScript = modelData => collection => {
-		const collectionSchema = { ...collection, ...(_.omit(collection?.role, 'properties') || {}) };
-		const tableName = collectionSchema?.code || collectionSchema?.collectionName || collectionSchema?.name;
+		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
+		const tableName = getName(collectionSchema);
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
 
@@ -153,7 +152,7 @@ module.exports = (app, options) => {
 
 	const getDeleteColumnScript = modelData => collection => {
 		const collectionSchema = { ...collection, ..._.omit(collection?.role, 'properties') };
-		const tableName = collectionSchema?.code || collectionSchema?.collectionName || collectionSchema?.name;
+		const tableName = getName(collectionSchema);
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
 

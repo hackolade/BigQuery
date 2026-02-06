@@ -109,32 +109,19 @@ const getAlterRelationshipsScript = ({ collection, app, modelData, ignoreRelatio
 			modelData,
 		});
 
-	const addedRelationships = []
-		.concat(collection.properties?.relationships?.properties?.added?.items)
-		.filter(Boolean)
-		.map(item => Object.values(item.properties)[0])
-		.filter(
-			relationship =>
-				relationship?.role?.compMod?.created && !ignoreRelationshipIDs.includes(relationship?.role?.id),
-		);
+	const relationshipData = collection.properties?.relationships?.properties;
+	const addedRelationships = getItemProperties(relationshipData.added).filter(
+		relationship => relationship?.role?.compMod?.created && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+	);
 
-	const deletedRelationships = []
-		.concat(collection.properties?.relationships?.properties?.deleted?.items)
-		.filter(Boolean)
-		.map(item => Object.values(item.properties)[0])
-		.filter(
-			relationship =>
-				relationship?.role?.compMod?.deleted && !ignoreRelationshipIDs.includes(relationship?.role?.id),
-		);
+	const deletedRelationships = getItemProperties(relationshipData.deleted).filter(
+		relationship => relationship?.role?.compMod?.deleted && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+	);
 
-	const modifiedRelationships = []
-		.concat(collection.properties?.relationships?.properties?.modified?.items)
-		.filter(Boolean)
-		.map(item => Object.values(item.properties)[0])
-		.filter(
-			relationship =>
-				relationship?.role?.compMod?.modified && !ignoreRelationshipIDs.includes(relationship?.role?.id),
-		);
+	const modifiedRelationships = getItemProperties(relationshipData.modified).filter(
+		relationship =>
+			relationship?.role?.compMod?.modified && !ignoreRelationshipIDs.includes(relationship?.role?.id),
+	);
 
 	const deleteFkScriptDtos = getDeleteForeignKeyScripts(deletedRelationships);
 	const addFkScriptDtos = getAddForeignKeyScripts(addedRelationships);

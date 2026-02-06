@@ -13,6 +13,7 @@ const {
 	prepareConstraintName,
 	wrapByBackticks,
 	getFullName,
+	getName,
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -341,7 +342,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				...tableData,
-				name: data.code || data.collectionName,
+				name: getName(jsonSchema) || getName(data),
 				friendlyName: jsonSchema.title && jsonSchema.title !== data.collectionName ? jsonSchema.title : '',
 				description: data.description,
 				orReplace: data.orReplace,
