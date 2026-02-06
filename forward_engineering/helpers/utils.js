@@ -378,6 +378,15 @@ const getFullName = (...names) => {
 	return wrapByBackticks(fullName);
 };
 
+const getName = entity =>
+	entity.compMod?.code?.new ||
+	entity.code ||
+	entity.compMod?.collectionName?.new ||
+	entity.collectionName ||
+	entity.compMod?.name?.new ||
+	entity.name ||
+	'';
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -393,4 +402,5 @@ module.exports = {
 	decorateType,
 	getFullName,
 	addParameters,
+	getName,
 };

@@ -26,7 +26,7 @@ const generateAlterScript = (data, callback, app) => {
 		modelData: data.modelData,
 		ignoreRelationshipIDs,
 	});
-	const script = [...containersScripts, ...collectionsScripts, ...viewScripts, ...relationships]
+	const script = [...containersScripts, ...collectionsScripts, ...relationships, ...viewScripts]
 		.filter(Boolean)
 		.join('\n\n');
 

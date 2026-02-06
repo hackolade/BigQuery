@@ -93,19 +93,19 @@ const setTypeChangeAction = (oldField, newField, changeState) => {
 		return;
 	}
 
-	const newPrecision = newField.precision ?? 0;
-	const oldPrecision = oldField.precision ?? 0;
+	const newPrecision = newField.precision;
+	const oldPrecision = oldField.precision;
 
-	const newScale = newField.scale ?? 0;
-	const oldScale = oldField.scale ?? 0;
+	const newScale = newField.scale;
+	const oldScale = oldField.scale;
 
-	const isPrecisionChanged = newPrecision > oldPrecision;
+	const isPrecisionChanged = _.isFinite(newPrecision) && _.isFinite(oldPrecision) && newPrecision > oldPrecision;
 
-	if (isPrecisionChanged && newScale >= oldScale) {
+	if (isPrecisionChanged && (newScale === oldScale || newScale > oldScale)) {
 		changeState.action = TYPE_CHANGE.update;
 		return;
 	}
-	const isScaleChanged = newScale > oldScale;
+	const isScaleChanged = _.isFinite(newScale) && _.isFinite(oldScale) && newScale > oldScale;
 
 	if (isScaleChanged && newPrecision >= oldPrecision) {
 		changeState.action = TYPE_CHANGE.update;

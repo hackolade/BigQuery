@@ -31,7 +31,7 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 
 			return assignTemplates(templates.alterColumnOptions, {
 				tableName: tableData.name,
-				columnName: wrapByBackticks(oldName),
+				columnName: wrapByBackticks(name),
 				options: tab(optionsToUpdate.join(',\n')),
 			});
 		})
