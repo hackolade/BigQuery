@@ -20,8 +20,8 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 				const oldOptionValue = collection.role.properties[oldName]?.[customOptionName];
 
 				if (newOptionValue !== oldOptionValue) {
-					const value = newOptionValue ? escapeQuotes(newOptionValue) : '';
-					optionsToUpdate.push(`${columnOptionName}="${value}"`);
+					const value = newOptionValue ? `"${escapeQuotes(newOptionValue)}"` : 'NULL';
+					optionsToUpdate.push(`${columnOptionName}=${value}`);
 				}
 			});
 
