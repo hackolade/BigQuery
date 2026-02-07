@@ -332,35 +332,54 @@ const decorateType = ({ type, columnDefinition }) => {
 const generateViewSelectStatement =
 	(getFullName, isActivated) =>
 	({ columns, projectId, datasetName }) => {
-		const keys = columns.reduce((tables, key) => {
-			let column = wrapByBackticks(key.name);
+		const allColumnNames = [];
+		const deactivatedColumnNames = new Set();
+		const columnsByTable = {};
 
-			if (key.alias) {
-				column = `${column} as ${key.alias}`;
+		columns.forEach(column => {
+			const columnName = column.alias || column.name;
+
+			if (!allColumnNames.includes(columnName)) {
+				allColumnNames.push(columnName);
 			}
 
-			if (!tables[key.tableName]) {
-				tables[key.tableName] = {
-					activated: [],
-					deactivated: [],
-				};
+			columnsByTable[column.tableName] ??= {};
+			columnsByTable[column.tableName][columnName] = {
+				name: column.name,
+				alias: column.alias,
+			};
+
+			if (!column.isActivated) {
+				deactivatedColumnNames.add(columnName);
 			}
+		});
 
-			if (isActivated && !key.isActivated) {
-				tables[key.tableName].deactivated.push(column);
-			} else {
-				tables[key.tableName].activated.push(column);
-			}
-
-			return tables;
-		}, {});
-
-		return Object.keys(keys)
+		return Object.keys(columnsByTable)
 			.map(tableName => {
-				const { deactivated, activated } = keys[tableName];
-				const columns = activated.join(', ') + (deactivated.length ? `/*, ${deactivated.join(', ')}*/` : '');
+				const tableColumns = columnsByTable[tableName];
+				const activated = [];
+				const deactivated = [];
 
-				return `SELECT ${columns || '*'} FROM ${getFullName(projectId, datasetName, tableName)}`;
+				allColumnNames.forEach(columnName => {
+					let columnExpression;
+					const column = tableColumns[columnName];
+
+					if (column) {
+						columnExpression = column.alias
+							? `${wrapByBackticks(column.name)} AS ${wrapByBackticks(column.alias)}`
+							: wrapByBackticks(column.name);
+					} else {
+						columnExpression = `NULL AS ${wrapByBackticks(columnName)}`;
+					}
+
+					const arrayToPush = isActivated && deactivatedColumnNames.has(columnName) ? deactivated : activated;
+					arrayToPush.push(columnExpression);
+				});
+
+				const finalColumns =
+					activated.join(',\n  ') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
+
+				return `SELECT\n  ${finalColumns || '*'}\nFROM ${getFullName(projectId, datasetName, tableName)}`;
 			})
 			.join('\nUNION ALL\n');
 	};
