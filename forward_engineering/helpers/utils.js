@@ -344,9 +344,7 @@ const generateViewSelectStatement =
 	({ columns, projectId, datasetName }) => {
 		const allColumnNames = new Set();
 		const deactivatedColumnNames = new Set();
-		const columnsByTable = {
-			[NO_TABLE_KEY]: {},
-		};
+		const columnsByTable = {};
 
 		columns.forEach(column => {
 			const columnName = column.alias || column.name;
@@ -355,18 +353,11 @@ const generateViewSelectStatement =
 				allColumnNames.add(columnName);
 			}
 
-			if (column.tableName) {
-				columnsByTable[column.tableName] ??= {};
-				columnsByTable[column.tableName][columnName] = {
-					name: column.name,
-					alias: column.alias,
-				};
-			} else {
-				columnsByTable[NO_TABLE_KEY][columnName] = {
-					name: column.name,
-					alias: column.alias,
-				};
-			}
+			columnsByTable[column.tableName ?? NO_TABLE_KEY] ??= {};
+			columnsByTable[column.tableName ?? NO_TABLE_KEY][columnName] = {
+				name: column.name,
+				alias: column.alias,
+			};
 
 			if (!column.isActivated) {
 				deactivatedColumnNames.add(columnName);
@@ -400,9 +391,9 @@ const generateViewSelectStatement =
 				const finalColumns =
 					activated.join(',\n  ') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
 
-				return `SELECT\n  ${finalColumns || '*'}\n${getFromStatement({ projectId, datasetName, tableName })}`;
+				return ` SELECT\n  ${finalColumns || '*'}\n ${getFromStatement({ projectId, datasetName, tableName })}`;
 			})
-			.join('\nUNION ALL\n');
+			.join('\n UNION ALL\n');
 	};
 
 const clearEmptyStatements = statements => statements.filter(statementComponent => Boolean(statementComponent));
