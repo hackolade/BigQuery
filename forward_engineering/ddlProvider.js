@@ -241,10 +241,7 @@ module.exports = (baseProvider, options, app) => {
 				selectStatement: `\n ${_.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
-						: generateViewSelectStatement(
-								getFullName,
-								isActivated && !allDeactivated,
-							)({
+						: generateViewSelectStatement(isActivated && !allDeactivated)({
 								columns: viewData.keys,
 								datasetName: dbData.databaseName,
 								projectId: dbData.projectId,

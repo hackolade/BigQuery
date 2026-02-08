@@ -329,25 +329,44 @@ const decorateType = ({ type, columnDefinition }) => {
 	return isComplexType ? dataType.replace(/<[\s\S]+>$/, '<>') : dataType;
 };
 
+const NO_TABLE_KEY = '__NO_TABLE__';
+
+const getFromStatement = ({ projectId, datasetName, tableName }) => {
+	if (tableName === NO_TABLE_KEY) {
+		return 'FROM (SELECT 1)';
+	}
+
+	return `FROM ${getFullName(projectId, datasetName, tableName)}`;
+};
+
 const generateViewSelectStatement =
-	(getFullName, isActivated) =>
+	isActivated =>
 	({ columns, projectId, datasetName }) => {
-		const allColumnNames = [];
+		const allColumnNames = new Set();
 		const deactivatedColumnNames = new Set();
-		const columnsByTable = {};
+		const columnsByTable = {
+			[NO_TABLE_KEY]: {},
+		};
 
 		columns.forEach(column => {
 			const columnName = column.alias || column.name;
 
-			if (!allColumnNames.includes(columnName)) {
-				allColumnNames.push(columnName);
+			if (!allColumnNames.has(columnName)) {
+				allColumnNames.add(columnName);
 			}
 
-			columnsByTable[column.tableName] ??= {};
-			columnsByTable[column.tableName][columnName] = {
-				name: column.name,
-				alias: column.alias,
-			};
+			if (column.tableName) {
+				columnsByTable[column.tableName] ??= {};
+				columnsByTable[column.tableName][columnName] = {
+					name: column.name,
+					alias: column.alias,
+				};
+			} else {
+				columnsByTable[NO_TABLE_KEY][columnName] = {
+					name: column.name,
+					alias: column.alias,
+				};
+			}
 
 			if (!column.isActivated) {
 				deactivatedColumnNames.add(columnName);
@@ -360,26 +379,28 @@ const generateViewSelectStatement =
 				const activated = [];
 				const deactivated = [];
 
-				allColumnNames.forEach(columnName => {
+				for (const columnName of allColumnNames) {
 					let columnExpression;
 					const column = tableColumns[columnName];
 
-					if (column) {
-						columnExpression = column.alias
-							? `${wrapByBackticks(column.name)} AS ${wrapByBackticks(column.alias)}`
-							: wrapByBackticks(column.name);
+					if (column && tableName !== NO_TABLE_KEY) {
+						columnExpression = wrapByBackticks(column.name);
+
+						if (column.alias) {
+							columnExpression += ` AS ${wrapByBackticks(column.alias)}`;
+						}
 					} else {
 						columnExpression = `NULL AS ${wrapByBackticks(columnName)}`;
 					}
 
 					const arrayToPush = isActivated && deactivatedColumnNames.has(columnName) ? deactivated : activated;
 					arrayToPush.push(columnExpression);
-				});
+				}
 
 				const finalColumns =
 					activated.join(',\n  ') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
 
-				return `SELECT\n  ${finalColumns || '*'}\nFROM ${getFullName(projectId, datasetName, tableName)}`;
+				return `SELECT\n  ${finalColumns || '*'}\n${getFromStatement({ projectId, datasetName, tableName })}`;
 			})
 			.join('\nUNION ALL\n');
 	};
