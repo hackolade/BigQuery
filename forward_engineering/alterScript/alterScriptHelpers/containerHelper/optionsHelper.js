@@ -1,17 +1,17 @@
 const _ = require('lodash');
+const { wrapByBackticks } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 const { getModifyOptions } = require('../common');
 
 const options = {
 	businessName: 'friendly_name',
 	description: 'description',
-	partitioningFilterRequired: 'require_partition_filter',
-	expiration: 'expiration_timestamp',
-	customerEncryptionKey: 'kms_key_name',
+	customerEncryptionKey: 'default_kms_key_name',
+	defaultExpiration: 'default_table_expiration_days',
 	labels: 'labels',
 };
 
-const getModifyCollectionOptionsScript = ({ jsonSchema, tableData, app }) => {
+const getModifyContainerOptionsScript = ({ jsonSchema, containerData, app }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
 	const optionsToUpdate = getModifyOptions({ jsonSchema, app, options });
 
@@ -19,12 +19,12 @@ const getModifyCollectionOptionsScript = ({ jsonSchema, tableData, app }) => {
 		return '';
 	}
 
-	return assignTemplates(templates.alterTableSetOptions, {
-		tableName: tableData.name,
+	return assignTemplates(templates.alterDatabaseOptions, {
+		name: wrapByBackticks(containerData.name),
 		options: optionsToUpdate,
 	});
 };
 
 module.exports = {
-	getModifyCollectionOptionsScript,
+	getModifyContainerOptionsScript,
 };
