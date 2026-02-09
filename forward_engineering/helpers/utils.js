@@ -341,7 +341,7 @@ const getFromStatement = ({ projectId, datasetName, tableName }) => {
 
 const generateViewSelectStatement =
 	isActivated =>
-	({ columns, projectId, datasetName }) => {
+	({ columns, projectId, datasetName, tab }) => {
 		const allColumnNames = new Set();
 		const deactivatedColumnNames = new Set();
 		const columnsByTable = {};
@@ -389,11 +389,11 @@ const generateViewSelectStatement =
 				}
 
 				const finalColumns =
-					activated.join(',\n  ') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
+					activated.join(',\n') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
 
-				return ` SELECT\n  ${finalColumns || '*'}\n ${getFromStatement({ projectId, datasetName, tableName })}`;
+				return `SELECT\n${tab(finalColumns || '*')}\n${getFromStatement({ projectId, datasetName, tableName })}`;
 			})
-			.join('\n UNION ALL\n');
+			.join('\nUNION ALL\n');
 	};
 
 const clearEmptyStatements = statements => statements.filter(statementComponent => Boolean(statementComponent));
