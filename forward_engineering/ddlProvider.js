@@ -209,7 +209,7 @@ module.exports = (baseProvider, options, app) => {
 						.filter(Boolean)
 						.map(wrapByBackticks);
 
-					columns = activated.join(', ') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
+					columns = activated.join(',\n') + (deActivated.length ? `/* ${deActivated.join(', ')} */` : '');
 				} else {
 					columns = viewData.keys
 						.map(key => wrapByBackticks(key.alias || key.name))
@@ -237,19 +237,17 @@ module.exports = (baseProvider, options, app) => {
 				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
 				orReplace: viewData.orReplace && !viewData.materialized ? 'OR REPLACE ' : '',
 				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
-				columns: columns.length ? `\n (${columns})` : '',
-				selectStatement: `\n ${_.trim(
+				columns: columns.length ? ` (\n${tab(columns)}\n)` : '',
+				selectStatement: _.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
-						: generateViewSelectStatement(
-								getFullName,
-								isActivated && !allDeactivated,
-							)({
+						: generateViewSelectStatement(isActivated && !allDeactivated)({
 								columns: viewData.keys,
 								datasetName: dbData.databaseName,
 								projectId: dbData.projectId,
+								tab,
 							}),
-				)}`,
+				),
 				options: getViewOptions(viewData),
 				partitions: partitionsStatement ? '\n' + partitionsStatement : '',
 				clustering,
