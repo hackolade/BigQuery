@@ -85,7 +85,7 @@ module.exports = app => {
 
 		options = [...options, ...getMaterializedViewOptions(viewData)];
 
-		return options.length ? `\nOPTIONS(\n${tab(options.join(',\n'))}\n)` : '';
+		return options.length ? `\nOPTIONS (\n${tab(options.join(',\n'))}\n)` : '';
 	};
 
 	const cleanObject = obj =>

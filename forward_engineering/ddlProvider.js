@@ -237,7 +237,7 @@ module.exports = (baseProvider, options, app) => {
 				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
 				orReplace: viewData.orReplace && !viewData.materialized ? 'OR REPLACE ' : '',
 				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
-				columns: columns.length ? `(\n${tab(columns)}\n)` : '',
+				columns: columns.length ? ` (\n${tab(columns)}\n)` : '',
 				selectStatement: _.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
