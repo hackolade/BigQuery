@@ -287,7 +287,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: assignTemplates(templates.createForeignKeyConstraint, {
-					constraintName: name ? `CONSTRAINT ${prepareConstraintName(name)} ` : '',
+					constraintName: name ? `CONSTRAINT ${wrapByBackticks(prepareConstraintName(name))} ` : '',
 					foreignKeys: isActivatedBasedOnTableData
 						? foreignKeysToString(foreignKey)
 						: foreignActiveKeysToString(foreignKey),
@@ -482,27 +482,6 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates(templates.dropDatabase, { name });
 		},
 
-		alterDatabase({
-			databaseName,
-			friendlyName,
-			description,
-			projectId,
-			defaultExpiration,
-			customerEncryptionKey,
-			labels,
-		}) {
-			return assignTemplates(templates.alterDatabase, {
-				name: getFullName(projectId, databaseName),
-				dbOptions: getContainerOptions({
-					friendlyName,
-					description,
-					defaultExpiration,
-					customerEncryptionKey,
-					labels,
-				}),
-			});
-		},
-
 		dropTable(tableName, databaseName, projectId) {
 			return assignTemplates(templates.dropTable, {
 				name: getFullName(projectId, databaseName, tableName),
@@ -530,16 +509,6 @@ module.exports = (baseProvider, options, app) => {
 		dropView(viewName, databaseName, projectId) {
 			return assignTemplates(templates.dropView, {
 				name: getFullName(projectId, databaseName, viewName),
-			});
-		},
-
-		alterView(viewData, dbData) {
-			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
-
-			return assignTemplates(templates.alterViewOptions, {
-				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
-				name: viewName,
-				options: getViewOptions(viewData),
 			});
 		},
 	};

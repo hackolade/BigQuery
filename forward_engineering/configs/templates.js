@@ -10,11 +10,11 @@ module.exports = {
 		'${constraintName}FOREIGN KEY (${foreignKeys}) REFERENCES ${primaryTableName}(${primaryKeys}) NOT ENFORCED',
 
 	createView:
-		'CREATE ${orReplace}${materialized}VIEW ${ifNotExist}${name}${columns}${partitions}${clustering}${options} AS ${selectStatement};\n',
+		'CREATE ${orReplace}${materialized}VIEW ${ifNotExist}${name}${columns}${partitions}${clustering}${options} AS${selectStatement};\n',
 
 	dropDatabase: 'DROP SCHEMA IF EXISTS ${name};',
 
-	alterDatabase: 'ALTER SCHEMA IF EXISTS ${name} SET ${dbOptions};',
+	alterDatabaseOptions: 'ALTER SCHEMA IF EXISTS ${name}\nSET OPTIONS (\n${options}\n);',
 
 	dropTable: 'DROP TABLE IF EXISTS ${name};',
 
@@ -40,7 +40,7 @@ module.exports = {
 
 	dropView: 'DROP VIEW IF EXISTS ${name};',
 
-	alterViewOptions: 'ALTER ${materialized}VIEW ${name} SET ${options};',
+	alterViewOptions: 'ALTER ${materialized}VIEW ${name}\nSET OPTIONS (\n${options}\n);',
 
 	alterTableStatement: 'ALTER TABLE ${name}\n${alterStatements};',
 

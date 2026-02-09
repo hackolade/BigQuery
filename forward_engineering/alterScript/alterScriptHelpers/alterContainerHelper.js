@@ -1,5 +1,6 @@
 const { getFullName } = require('../../helpers/utils');
 const { checkCompModEqual, getCompMod } = require('./common');
+const { getModifyContainerOptionsScript } = require('./containerHelper/optionsHelper');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -20,26 +21,10 @@ module.exports = (app, options) => {
 		return ddlProvider.dropDatabase(fullName);
 	};
 
-	const getModifiedContainer = modelData => containerData => {
-		const compMod = getCompMod(containerData);
-		const optionsProperties = [
-			'businessName',
-			'description',
-			'customerEncryptionKey',
-			'defaultExpiration',
-			'labels',
-		];
-
-		const isAnyOptionChanged = _.some(optionsProperties, property => checkCompModEqual(compMod[property] ?? {}));
-
-		if (!isAnyOptionChanged) {
-			return '';
-		}
-
-		const constructedDbData = getDbData([containerData]);
-		const dbData = ddlProvider.hydrateSchema(constructedDbData, { modelData });
-
-		return ddlProvider.alterDatabase(dbData);
+	const getModifiedContainer = modelData => jsonSchema => {
+		const containerData = getDbData([jsonSchema]);
+		const modifyContainerOptionsScript = getModifyContainerOptionsScript({ app, jsonSchema, containerData });
+		return modifyContainerOptionsScript;
 	};
 
 	return {
