@@ -509,42 +509,6 @@ module.exports = (baseProvider, options, app) => {
 			});
 		},
 
-		alterTableOptions({
-			name,
-			dbData,
-			description,
-			partitioning,
-			partitioningFilterRequired,
-			expiration,
-			tableType,
-			customerEncryptionKey,
-			labels,
-			friendlyName,
-		}) {
-			const tableName = getFullName(dbData.projectId, dbData.databaseName, name);
-			const isExternal = tableType === 'External';
-
-			const options = getTableOptions(
-				tab,
-				getLabels,
-			)({
-				partitioningFilterRequired: isExternal ? false : partitioningFilterRequired,
-				customerEncryptionKey,
-				partitioning,
-				friendlyName,
-				description,
-				expiration,
-				labels,
-			});
-
-			return options?.trim()
-				? assignTemplates(templates.alterTable, {
-						name: tableName,
-						options,
-					})
-				: '';
-		},
-
 		addColumn({ column }, tableName, dbData) {
 			const fullTableName = getFullName(dbData.projectId, dbData.databaseName, tableName);
 
