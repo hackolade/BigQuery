@@ -284,7 +284,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: assignTemplates(templates.createForeignKeyConstraint, {
-					constraintName: name ? `CONSTRAINT ${prepareConstraintName(name)} ` : '',
+					constraintName: name ? `CONSTRAINT ${wrapByBackticks(prepareConstraintName(name))} ` : '',
 					foreignKeys: isActivatedBasedOnTableData
 						? foreignKeysToString(foreignKey)
 						: foreignActiveKeysToString(foreignKey),
@@ -479,67 +479,10 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates(templates.dropDatabase, { name });
 		},
 
-		alterDatabase({
-			databaseName,
-			friendlyName,
-			description,
-			projectId,
-			defaultExpiration,
-			customerEncryptionKey,
-			labels,
-		}) {
-			return assignTemplates(templates.alterDatabase, {
-				name: getFullName(projectId, databaseName),
-				dbOptions: getContainerOptions({
-					friendlyName,
-					description,
-					defaultExpiration,
-					customerEncryptionKey,
-					labels,
-				}),
-			});
-		},
-
 		dropTable(tableName, databaseName, projectId) {
 			return assignTemplates(templates.dropTable, {
 				name: getFullName(projectId, databaseName, tableName),
 			});
-		},
-
-		alterTableOptions({
-			name,
-			dbData,
-			description,
-			partitioning,
-			partitioningFilterRequired,
-			expiration,
-			tableType,
-			customerEncryptionKey,
-			labels,
-			friendlyName,
-		}) {
-			const tableName = getFullName(dbData.projectId, dbData.databaseName, name);
-			const isExternal = tableType === 'External';
-
-			const options = getTableOptions(
-				tab,
-				getLabels,
-			)({
-				partitioningFilterRequired: isExternal ? false : partitioningFilterRequired,
-				customerEncryptionKey,
-				partitioning,
-				friendlyName,
-				description,
-				expiration,
-				labels,
-			});
-
-			return options?.trim()
-				? assignTemplates(templates.alterTable, {
-						name: tableName,
-						options,
-					})
-				: '';
 		},
 
 		addColumn({ column }, tableName, dbData) {
@@ -563,16 +506,6 @@ module.exports = (baseProvider, options, app) => {
 		dropView(viewName, databaseName, projectId) {
 			return assignTemplates(templates.dropView, {
 				name: getFullName(projectId, databaseName, viewName),
-			});
-		},
-
-		alterView(viewData, dbData) {
-			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
-
-			return assignTemplates(templates.alterViewOptions, {
-				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
-				name: viewName,
-				options: getViewOptions(viewData),
 			});
 		},
 	};

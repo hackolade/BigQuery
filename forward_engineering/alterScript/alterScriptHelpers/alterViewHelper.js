@@ -1,4 +1,6 @@
+const { getName, getFullName } = require('../../helpers/utils');
 const { checkCompModEqual, getCompMod, setEntityKeys } = require('./common');
+const { getModifyViewOptionsScript } = require('./viewHelpers/optionsHelper');
 
 module.exports = (app, options) => {
 	const _ = app.require('lodash');
@@ -32,31 +34,17 @@ module.exports = (app, options) => {
 	};
 
 	const getModifiedViewScript = modelData => jsonSchema => {
-		const view = _.omit(jsonSchema, 'timeUnitpartitionKey', 'clusteringKey', 'rangePartitionKey');
-		const idToNameHashTable = generateIdToNameHashTable(view);
-		const idToActivatedHashTable = generateIdToActivatedHashTable(view);
-		const viewSchema = setEntityKeys({ idToActivatedHashTable, idToNameHashTable, entity: view });
-		const dbData = { databaseName: viewSchema.compMod.keyspaceName, projectId: _.first(modelData)?.projectId };
+		const dbData = { databaseName: jsonSchema.compMod.keyspaceName, projectId: _.first(modelData)?.projectId };
+		const viewName = getName(jsonSchema);
+		const fullTableName = getFullName(dbData.projectId, dbData.databaseName, viewName);
+
 		const viewData = {
-			name: viewSchema.code || viewSchema.name,
-			keys: getKeys(viewSchema, viewSchema.compMod?.collectionData?.collectionRefsDefinitionsMap ?? {}),
-			dbData,
+			name: fullTableName,
 		};
 
-		const optionsProperties = viewSchema.materialized
-			? ['enableRefresh', 'refreshInterval', 'expiration', 'businessName', 'description', 'labels']
-			: ['expiration', 'businessName', 'description', 'labels'];
+		const modifyViewOptionsScript = getModifyViewOptionsScript({ app, jsonSchema, viewData });
 
-		const compMod = getCompMod(view);
-		const isAnyOptionChanged = _.some(optionsProperties, property => !checkCompModEqual(compMod[property]));
-
-		if (!isAnyOptionChanged) {
-			return '';
-		}
-
-		const hydratedView = ddlProvider.hydrateView({ viewData, entityData: [viewSchema] });
-
-		return ddlProvider.alterView(hydratedView, dbData);
+		return modifyViewOptionsScript;
 	};
 
 	const getKeys = (viewSchema, collectionRefsDefinitionsMap) => {
