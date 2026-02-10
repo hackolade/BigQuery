@@ -61,6 +61,7 @@ const convertField = (field, values) => {
 		scale,
 		length,
 		subtype,
+		default: field.defaultValueExpression,
 	};
 };
 
