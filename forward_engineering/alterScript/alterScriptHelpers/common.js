@@ -1,34 +1,28 @@
+const { isEqual } = require('lodash');
 const { escapeQuotes, getTimestamp, getName } = require('../../helpers/utils');
-const _ = require('lodash');
 
 const getCompMod = containerData => containerData.role?.compMod ?? {};
 
-const checkCompModEqual = ({ new: newItem, old: oldItem } = {}) => _.isEqual(newItem, oldItem);
+const checkCompModEqual = ({ new: newItem, old: oldItem } = {}) => isEqual(newItem, oldItem);
 
 const setEntityKeys = ({ idToNameHashTable, idToActivatedHashTable, entity }) => {
+	const setKeyArray = obj =>
+		Array.isArray(obj)
+			? obj.map(item => ({
+					...item,
+					name: idToNameHashTable[item.keyId],
+					isActivated: idToActivatedHashTable[item.keyId],
+				}))
+			: [];
+
 	return {
 		...entity,
-		clusteringKey:
-			entity.clusteringKey?.map(key => ({
-				...key,
-				name: idToNameHashTable[key.keyId],
-				isActivated: idToActivatedHashTable[key.keyId],
-			})) || [],
-		timeUnitpartitionKey:
-			entity.timeUnitpartitionKey?.map(key => ({
-				...key,
-				name: idToNameHashTable[key.keyId],
-				isActivated: idToActivatedHashTable[key.keyId],
-			})) || [],
+		clusteringKey: setKeyArray(entity.clusteringKey),
+		timeUnitpartitionKey: setKeyArray(entity.timeUnitpartitionKey),
 		rangeOptions: [
 			{
 				...(entity.rangeOptions ?? {}),
-				rangePartitionKey:
-					entity.rangeOptions?.rangePartitionKey?.map(key => ({
-						...key,
-						name: idToNameHashTable[key.keyId],
-						isActivated: idToActivatedHashTable[key.keyId],
-					})) || [],
+				rangePartitionKey: setKeyArray(entity.rangeOptions?.rangePartitionKey),
 			},
 		],
 	};
@@ -42,7 +36,7 @@ const getModifyOptions = ({ jsonSchema, app, options }) => {
 	Object.entries(options).forEach(([customOptionName, columnOptionName]) => {
 		const { new: newOptionValue, old: oldOptionValue } = jsonSchema.role.compMod[customOptionName] || {};
 
-		if (!_.isEqual(newOptionValue, oldOptionValue)) {
+		if (!isEqual(newOptionValue, oldOptionValue)) {
 			switch (customOptionName) {
 				case 'businessName': {
 					const name = getName(jsonSchema.role);
