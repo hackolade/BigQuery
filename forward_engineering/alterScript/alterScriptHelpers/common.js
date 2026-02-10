@@ -34,7 +34,7 @@ const getModifyOptions = ({ jsonSchema, app, options }) => {
 	const optionsToUpdate = [];
 
 	Object.entries(options).forEach(([customOptionName, columnOptionName]) => {
-		const { new: newOptionValue, old: oldOptionValue } = jsonSchema.role.compMod[customOptionName] || {};
+		const { new: newOptionValue, old: oldOptionValue } = jsonSchema.compMod[customOptionName] || {};
 
 		if (!isEqual(newOptionValue, oldOptionValue)) {
 			switch (customOptionName) {
