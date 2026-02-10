@@ -98,8 +98,19 @@ const getAlterViewScripts = (collection, app, modelData) => {
 };
 
 const getInlineRelationships = ({ data, options }) => {
-	// Will be implemented with script generation options
-	return [];
+	if (options?.scriptGenerationOptions?.feActiveOptions?.foreignKeys !== 'inline') {
+		return [];
+	}
+
+	const addedCollectionIDs = getItems(data.properties?.entities?.properties?.added)
+		.filter(item => item && Object.values(item.properties)?.[0]?.compMod?.created)
+		.map(item => Object.values(item.properties)[0].role.id);
+
+	const addedRelationships = getItems(data.properties?.relationships?.properties?.added)
+		.map(item => item && Object.values(item.properties)[0])
+		.filter(r => r?.role?.compMod?.created && addedCollectionIDs.includes(r?.role?.childCollection));
+
+	return addedRelationships;
 };
 
 const getAlterRelationshipsScript = ({ collection, app, modelData, ignoreRelationshipIDs = [] }) => {

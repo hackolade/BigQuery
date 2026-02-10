@@ -6,6 +6,11 @@ const getRelationshipName = ({ relationship }) => {
 	return compMod.code?.new || compMod.name?.new || relationship.role.code || relationship.role.name;
 };
 
+const getOldRelationshipName = ({ relationship }) => {
+	const compMod = relationship.role.compMod;
+	return compMod.code?.old || compMod.name?.old || relationship.role.code || relationship.role.name;
+};
+
 const getFullChildTableName = ({ relationship, modelData }) => {
 	const compMod = relationship.role.compMod;
 
@@ -94,7 +99,7 @@ const getAddForeignKeyScripts =
 const getDeleteSingleForeignKeyStatementDto = ({ app, relationship, modelData }) => {
 	const compMod = relationship.role.compMod;
 	const tableName = getFullChildTableName({ relationship, modelData });
-	const relationshipName = getRelationshipName({ relationship });
+	const relationshipName = getOldRelationshipName({ relationship });
 	const constraintName = prepareConstraintName(relationshipName);
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 
