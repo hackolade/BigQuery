@@ -25,10 +25,8 @@ const applyToInstance = async (connectionInfo, logger, app) => {
 
 	const queries = connectionInfo.script
 		.split('\n\n')
-		.map(query => {
-			return _.trim(query);
-		})
-		.filter(Boolean);
+		.map(_.trim)
+		.filter(query => query && !query.startsWith('--'));
 
 	await async.mapSeries(queries, async query => {
 		const message = 'Query: ' + query.split('\n').shift().substr(0, 150);
