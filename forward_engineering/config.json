@@ -28,6 +28,7 @@
 			"keyword": "json",
 			"disableApplyScriptToInstance": true,
 			"disableFeLevelSelector": true,
+			"disableScriptGenerationOptions": true,
 			"fileExtensions": [
 				{
 					"label": "JSON",
