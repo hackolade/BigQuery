@@ -17,7 +17,6 @@ const EXCLUDED_FILES = [
 	'build',
 	'release',
 	'node_modules',
-	'package-lock.json',
 	'prettier.config.js',
 	'lint-staged.config.js',
 ];
