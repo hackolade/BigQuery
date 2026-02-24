@@ -475,6 +475,14 @@ module.exports = (baseProvider, options, app) => {
 			return commentIfDeactivated(statement, data, isPartOfLine);
 		},
 
+		commentStatement(statement) {
+			return commentIfDeactivated(statement, { isActivated: false });
+		},
+
+		prepareName(name) {
+			return wrapByBackticks(name);
+		},
+
 		// * statements for alter script from delta model
 		dropDatabase(name) {
 			return assignTemplates(templates.dropDatabase, { name });
