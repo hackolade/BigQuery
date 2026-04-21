@@ -64,6 +64,18 @@ class DbtProvider {
 	getColumnConstraints({ columnDefinition, jsonSchema }) {
 		return getColumnConstraints({ columnDefinition, jsonSchema });
 	}
+
+	/**
+	 * @param {{ columnDefinition: ColumnDefinition }}
+	 * @returns {Record<string, unknown>}
+	 */
+	getEntityColumnProperties({ columnDefinition }) {
+		const policyTags = columnDefinition.dbtPolicyTags?.filter(Boolean);
+
+		return {
+			...(policyTags?.length && { policy_tags: policyTags }),
+		};
+	}
 }
 
 module.exports = DbtProvider;
