@@ -77,1902 +77,1916 @@ making sure that you maintain a proper JSON format.
 
 */
 
-{
-	"lowerTab": "JsonDetails",
-	"structure": {
-		"string": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"minValue": 1,
-				"maxValue": 9223372036854775807,
-				"step": 1,
-				"typeDecorator": true
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+[
+	{
+		"lowerTab": "JsonDetails",
+		"structure": {
+			"string": [
+				"name",
+				"code",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				{
+					"propertyName": "Length",
+					"propertyKeyword": "length",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"minValue": 1,
+					"maxValue": 9223372036854775807,
+					"step": 1,
+					"typeDecorator": true
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
-												"key": "primaryKey",
-												"value": true
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
 											}
 										]
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
-				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+								]
+							},
+							{
+								"key": "unique",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
 									"key": "compositePrimaryKey",
 									"value": true
 								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
-						{
-							"key": "compositeUniqueKey",
-							"value": true
-						}
-					]
+							}
+						]
+					}
 				},
-				"disabledOnCondition": [
-					{
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			"dependencies",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"minLength",
-			"maxLength",
-			"pattern",
-			"format",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"bytes": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"minValue": 1,
-				"maxValue": 9223372036854775807,
-				"step": 1,
-				"typeDecorator": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
+					},
+					"disabled": true
 				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
-						{
-							"key": "compositeUniqueKey",
-							"value": true
-						}
-					]
-				},
-				"disabledOnCondition": [
-					{
-						"key": "compositeUniqueKey",
-						"value": true
-					}
-				]
-			},
-			"description",
-			"dependencies",
-			"comments"
-		],
-		"numeric": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				"dependencies",
+				"foreignCollection",
+				"foreignField",
+				"relationshipType",
+				"default",
+				"minLength",
+				"maxLength",
+				"pattern",
+				"format",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"bytes": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				{
+					"propertyName": "Length",
+					"propertyKeyword": "length",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"minValue": 1,
+					"maxValue": 9223372036854775807,
+					"step": 1,
+					"typeDecorator": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			{
-				"propertyName": "Precision",
-				"propertyKeyword": "precision",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"typeDecorator": true
-			},
-			{
-				"propertyName": "Scale",
-				"propertyKeyword": "scale",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"typeDecorator": true
-			},
-			"dependencies",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"bignumeric": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				"description",
+				"dependencies",
+				"comments"
+			],
+			"numeric": [
+				"name",
+				"code",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			{
-				"propertyName": "Precision",
-				"propertyKeyword": "precision",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"typeDecorator": true
-			},
-			{
-				"propertyName": "Scale",
-				"propertyKeyword": "scale",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"typeDecorator": true
-			},
-			"dependencies",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"int64": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				{
+					"propertyName": "Precision",
+					"propertyKeyword": "precision",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"allowNegative": false,
+					"typeDecorator": true
+				},
+				{
+					"propertyName": "Scale",
+					"propertyKeyword": "scale",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"allowNegative": false,
+					"typeDecorator": true
+				},
+				"dependencies",
+				"foreignCollection",
+				"foreignField",
+				"relationshipType",
+				"default",
+				"unit",
+				"minimum",
+				"exclusiveMinimum",
+				"maximum",
+				"exclusiveMaximum",
+				"multipleOf",
+				"divisibleBy",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"bignumeric": [
+				"name",
+				"code",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			"dependencies",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"float64": [
-			"name",
-			"code",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			"dependencies",
-			"foreignCollection",
-			"foreignField",
-			"relationshipType",
-			"default",
-			"unit",
-			"minimum",
-			"exclusiveMinimum",
-			"maximum",
-			"exclusiveMaximum",
-			"multipleOf",
-			"divisibleBy",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"bool": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				{
+					"propertyName": "Precision",
+					"propertyKeyword": "precision",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"allowNegative": false,
+					"typeDecorator": true
+				},
+				{
+					"propertyName": "Scale",
+					"propertyKeyword": "scale",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"allowNegative": false,
+					"typeDecorator": true
+				},
+				"dependencies",
+				"foreignCollection",
+				"foreignField",
+				"relationshipType",
+				"default",
+				"unit",
+				"minimum",
+				"exclusiveMinimum",
+				"maximum",
+				"exclusiveMaximum",
+				"multipleOf",
+				"divisibleBy",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"int64": [
+				"name",
+				"code",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			"dependencies",
-			"comments"
-		],
-		"___0": [],
-		"date": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
+											}
+										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
+									}
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
+					},
+					"disabledOnCondition": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
+				},
+				"dependencies",
+				"foreignCollection",
+				"foreignField",
+				"relationshipType",
+				"default",
+				"unit",
+				"minimum",
+				"exclusiveMinimum",
+				"maximum",
+				"exclusiveMaximum",
+				"multipleOf",
+				"divisibleBy",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"float64": [
+				"name",
+				"code",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				"dependencies",
+				"foreignCollection",
+				"foreignField",
+				"relationshipType",
+				"default",
+				"unit",
+				"minimum",
+				"exclusiveMinimum",
+				"maximum",
+				"exclusiveMaximum",
+				"multipleOf",
+				"divisibleBy",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"bool": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
 											}
 										]
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
-				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+								]
+							},
+							{
+								"key": "unique",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
 									"key": "compositePrimaryKey",
 									"value": true
 								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
-						{
-							"key": "compositeUniqueKey",
-							"value": true
-						}
-					]
+							}
+						]
+					}
 				},
-				"disabledOnCondition": [
-					{
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			"dependencies",
-			"pattern",
-			"default",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"time": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
+					},
+					"disabled": true
 				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
-						{
-							"key": "compositeUniqueKey",
-							"value": true
-						}
-					]
-				},
-				"disabledOnCondition": [
-					{
-						"key": "compositeUniqueKey",
-						"value": true
-					}
-				]
-			},
-			"description",
-			"dependencies",
-			"pattern",
-			"default",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"datetime": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				"dependencies",
+				"comments"
+			],
+			"___0": [],
+			"date": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
-					}
-				]
-			},
-			"dependencies",
-			"pattern",
-			"default",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"timestamp": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			{
-				"propertyName": "Primary key",
-				"propertyKeyword": "primaryKey",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"disabledOnCondition": {
-					"type": "or",
-					"values": [
-						{
-							"key": "timeUnitpartitionKey",
-							"value": true
-						},
-						{
-							"key": "rangePartitionKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "siblings",
-									"value": {
-										"type": "and",
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
 										"values": [
 											{
 												"key": "primaryKey",
-												"value": true
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
 											}
 										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
 									}
-								}
-							]
-						},
-						{
-							"type": "not",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "compositePrimaryKey",
-											"value": false
-										},
-										{
-											"key": "compositePrimaryKey",
-											"exist": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"key": "unique",
-							"value": true
-						}
-					]
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
 				},
-				"propertyTooltip": {
-					"disabled": [
-						{
-							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
-							"dependency": {
-								"key": "compositePrimaryKey",
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
 								"value": true
 							}
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "compositeUniqueKey",
-				"propertyNameFull": "Composite Unique Key",
-				"propertyType": "checkbox",
-				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
-				},
-				"disabled": true
-			},
-			{
-				"propertyName": "Unique",
-				"propertyKeyword": "unique",
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"type": "or",
-									"values": [
-										{
-											"key": "primaryKey",
-											"value": false
-										},
-										{
-											"key": "primaryKey",
-											"exist": false
-										}
-									]
-								},
-								{
-									"key": "compositePrimaryKey",
-									"value": true
-								}
-							]
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "compositeUniqueKey",
-									"value": false
-								},
-								{
-									"key": "compositeUniqueKey",
-									"exist": false
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Alternate Key",
-				"propertyKeyword": "alternateKey",
-				"defaultValue": false,
-				"enableForReference": true,
-				"propertyType": "checkbox",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "unique",
-							"value": true
-						},
+						]
+					},
+					"disabledOnCondition": [
 						{
 							"key": "compositeUniqueKey",
 							"value": true
 						}
 					]
 				},
-				"disabledOnCondition": [
-					{
+				"dependencies",
+				"pattern",
+				"default",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"time": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
 						"key": "compositeUniqueKey",
 						"value": true
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
+											}
+										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
+									}
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
 					}
-				]
-			},
-			"dependencies",
-			"pattern",
-			"default",
-			"enum",
-			"sample",
-			"comments"
-		],
-		"___1": [],
-		"geography": [
-			"name",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			"comments"
-		],
-		"___2": [],
-		"struct": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			"description",
-			"dependencies",
-			"minProperties",
-			"maxProperties",
-			"additionalProperties",
-			"comments"
-		],
-		"array": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Required", "Repeated"]
-			},
-			{
-				"propertyKeyword": "subtype",
-				"hidden": true
-			},
-			"description",
-			"dependencies",
-			"minItems",
-			"maxItems",
-			"uniqueItems",
-			"additionalItems",
-			"comments"
-		],
-		"___3": [],
-		"json": [
-			"name",
-			"code",
-			"sampleName",
-			"schemaId",
-			"type",
-			{
-				"propertyKeyword": "mode",
-				"propertyType": "select",
-				"options": ["json"],
-				"hidden": true
-			},
-			{
-				"propertyName": "JSON Types",
-				"propertyKeyword": "subtype",
-				"propertyType": "select",
-				"options": [
-					{
-						"name": "object",
+				},
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
+					},
+					"disabledOnCondition": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
+				},
+				"description",
+				"dependencies",
+				"pattern",
+				"default",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"datetime": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
+						"key": "compositeUniqueKey",
+						"value": true
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
+											}
+										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
+									}
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
+					},
+					"disabledOnCondition": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
+				},
+				"dependencies",
+				"pattern",
+				"default",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"timestamp": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				{
+					"propertyName": "Primary key",
+					"propertyKeyword": "primaryKey",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"disabledOnCondition": {
+						"type": "or",
+						"values": [
+							{
+								"key": "timeUnitpartitionKey",
+								"value": true
+							},
+							{
+								"key": "rangePartitionKey",
+								"value": true
+							},
+							{
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							},
+							{
+								"type": "and",
+								"values": [
+									{
+										"level": "siblings",
+										"value": {
+											"type": "and",
+											"values": [
+												{
+													"key": "primaryKey",
+													"value": true
+												}
+											]
+										}
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "compositePrimaryKey",
+												"value": false
+											},
+											{
+												"key": "compositePrimaryKey",
+												"exist": false
+											}
+										]
+									}
+								]
+							},
+							{
+								"key": "unique",
+								"value": true
+							}
+						]
+					},
+					"propertyTooltip": {
+						"disabled": [
+							{
+								"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+								"dependency": {
+									"key": "compositePrimaryKey",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "compositeUniqueKey",
+					"propertyNameFull": "Composite Unique Key",
+					"propertyType": "checkbox",
+					"dependency": {
+						"key": "compositeUniqueKey",
+						"value": true
+					},
+					"disabled": true
+				},
+				{
+					"propertyName": "Unique",
+					"propertyKeyword": "unique",
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"type": "or",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": false
+											},
+											{
+												"key": "primaryKey",
+												"exist": false
+											}
+										]
+									},
+									{
+										"key": "compositePrimaryKey",
+										"value": true
+									}
+								]
+							},
+							{
+								"type": "or",
+								"values": [
+									{
+										"key": "compositeUniqueKey",
+										"value": false
+									},
+									{
+										"key": "compositeUniqueKey",
+										"exist": false
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"propertyName": "Alternate Key",
+					"propertyKeyword": "alternateKey",
+					"defaultValue": false,
+					"enableForReference": true,
+					"propertyType": "checkbox",
+					"dependency": {
+						"type": "or",
+						"values": [
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
+					},
+					"disabledOnCondition": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
+				},
+				"dependencies",
+				"pattern",
+				"default",
+				"enum",
+				"sample",
+				"comments"
+			],
+			"___1": [],
+			"geography": [
+				"name",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				"comments"
+			],
+			"___2": [],
+			"struct": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				"description",
+				"dependencies",
+				"minProperties",
+				"maxProperties",
+				"additionalProperties",
+				"comments"
+			],
+			"array": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Required", "Repeated"]
+				},
+				{
+					"propertyKeyword": "subtype",
+					"hidden": true
+				},
+				"description",
+				"dependencies",
+				"minItems",
+				"maxItems",
+				"uniqueItems",
+				"additionalItems",
+				"comments"
+			],
+			"___3": [],
+			"json": [
+				"name",
+				"code",
+				"sampleName",
+				"schemaId",
+				"type",
+				{
+					"propertyKeyword": "mode",
+					"propertyType": "select",
+					"options": ["json"],
+					"hidden": true
+				},
+				{
+					"propertyName": "JSON Types",
+					"propertyKeyword": "subtype",
+					"propertyType": "select",
+					"options": [
+						{
+							"name": "object",
+							"value": "object"
+						},
+						{
+							"name": "array",
+							"value": "array"
+						},
+						{
+							"name": "string",
+							"value": "string"
+						},
+						{
+							"name": "number",
+							"value": "number"
+						},
+						{
+							"name": "boolean",
+							"value": "boolean"
+						},
+						{
+							"name": "null",
+							"value": "null"
+						}
+					],
+					"defaultValue": "object"
+				},
+				{
+					"propertyName": "Type mode",
+					"propertyKeyword": "dataTypeMode",
+					"shouldValidate": false,
+					"propertyTooltip": "Select from list of options",
+					"propertyType": "select",
+					"options": ["Nullable", "Required", "Repeated"]
+				},
+				{
+					"propertyName": "JSON Type",
+					"propertyKeyword": "physicalType",
+					"propertyType": "select",
+					"hidden": true
+				},
+				"description",
+				"dependencies",
+				{
+					"propertyName": "Min Properties",
+					"propertyKeyword": "minProperties",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"dependency": {
+						"key": "subtype",
 						"value": "object"
-					},
-					{
-						"name": "array",
-						"value": "array"
-					},
-					{
-						"name": "string",
-						"value": "string"
-					},
-					{
-						"name": "number",
-						"value": "number"
-					},
-					{
-						"name": "boolean",
-						"value": "boolean"
-					},
-					{
-						"name": "null",
-						"value": "null"
 					}
-				],
-				"defaultValue": "object"
-			},
+				},
+				{
+					"propertyName": "Max Properties",
+					"propertyKeyword": "maxProperties",
+					"propertyType": "numeric",
+					"valueType": "number",
+					"dependency": {
+						"key": "subtype",
+						"value": "object"
+					}
+				},
+				"additionalProperties",
+				"comments"
+			]
+		}
+	},
+	{
+		"lowerTab": "dbt",
+		"system": true,
+		"structure": [
 			{
-				"propertyName": "Type mode",
-				"propertyKeyword": "dataTypeMode",
-				"shouldValidate": false,
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["Nullable", "Required", "Repeated"]
-			},
-			{
-				"propertyName": "JSON Type",
-				"propertyKeyword": "physicalType",
-				"propertyType": "select",
-				"hidden": true
-			},
-			"description",
-			"dependencies",
-			{
-				"propertyName": "Min Properties",
-				"propertyKeyword": "minProperties",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"dependency": {
-					"key": "subtype",
-					"value": "object"
-				}
-			},
-			{
-				"propertyName": "Max Properties",
-				"propertyKeyword": "maxProperties",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"dependency": {
-					"key": "subtype",
-					"value": "object"
-				}
-			},
-			"additionalProperties",
-			"comments"
+				"propertyName": "Policy tags",
+				"propertyKeyword": "dbtPolicyTags",
+				"propertyType": "multipleText",
+				"enableForReference": true
+			}
 		]
 	}
-}
+]
