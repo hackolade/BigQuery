@@ -1978,7 +1978,7 @@ making sure that you maintain a proper JSON format.
 		}
 	},
 	{
-		"lowerTab": "Dbt",
+		"lowerTab": "dbt",
 		"system": true,
 		"structure": [
 			{
