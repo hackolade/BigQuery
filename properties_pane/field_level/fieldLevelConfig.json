@@ -1984,7 +1984,8 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Policy tags",
 				"propertyKeyword": "dbtPolicyTags",
-				"propertyType": "multipleText"
+				"propertyType": "multipleText",
+				"enableForReference": true
 			}
 		]
 	}
