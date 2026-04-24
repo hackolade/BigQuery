@@ -1985,7 +1985,17 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Policy tags",
 				"propertyKeyword": "dbtPolicyTags",
 				"propertyType": "multipleText",
-				"enableForReference": true
+				"enableForReference": true,
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"level": "container",
+							"key": "dbtSourceGroup",
+							"value": true
+						}
+					]
+				}
 			}
 		]
 	}
