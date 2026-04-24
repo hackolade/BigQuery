@@ -76,6 +76,17 @@ class DbtProvider {
 			...(policyTags?.length && { policy_tags: policyTags }),
 		};
 	}
+
+	/**
+	 * @param {{ modelData: object[]; containerData: object[]; entityData: object[];}}
+	 * @returns {{ databaseName?: string, schemaName?: string }}
+	 */
+	getEntityProperties({ modelData, containerData, entityData }) {
+		return {
+			databaseName: modelData?.[0]?.projectID,
+			schemaName: containerData?.[0]?.code ?? containerData?.[0]?.name,
+		};
+	}
 }
 
 module.exports = DbtProvider;
