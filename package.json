@@ -89,6 +89,6 @@
         "node-fetch": {
             ".": "npm:@hackolade/fetch@1.3.0"
         },
-        "minimatch": "10.2.4"
+        "minimatch": "10.2.6"
     }
 }
