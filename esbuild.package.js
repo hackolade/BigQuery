@@ -43,7 +43,7 @@ esbuild
 		],
 	})
 	.then(async () => {
-		const { stdout, stderr } = await exec(`npm ci --omit=dev`, { cwd: RELEASE_FOLDER_PATH });
+		const { stdout, stderr } = await exec(`npm ci --no-bin-links --ignore-scripts --omit=dev`, { cwd: RELEASE_FOLDER_PATH });
 		console.log('stdout:', stdout);
 		console.log('stderr:', stderr);
 	})
