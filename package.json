@@ -48,7 +48,8 @@
             "discoverRelationships": true,
             "disableJsonDataMaxLength": true,
             "disableMultipleTypes": true,
-            "generateAssociativeEntitiesForManyToManyRelationships": true
+            "generateAssociativeEntitiesForManyToManyRelationships": true,
+            "createForeignKeysForConceptualRelationships": true
         }
     },
     "description": "Hackolade plugin for Google BigQuery Standard SQL",
