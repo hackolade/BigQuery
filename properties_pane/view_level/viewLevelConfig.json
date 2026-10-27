@@ -105,7 +105,7 @@
 				"template": "collectiontree",
 				"isCompositeKey": true,
 				"templateOptions": {
-					"maxFields": 4
+					"maxFields": 1
 				},
 				"dependency": {
 					"type": "and",
@@ -138,7 +138,7 @@
 						"template": "collectiontree",
 						"isCompositeKey": true,
 						"templateOptions": {
-							"maxFields": 4
+							"maxFields": 1
 						}
 					},
 					{
