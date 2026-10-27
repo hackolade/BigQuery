@@ -278,7 +278,7 @@ making sure that you maintain a proper JSON format.
 				"template": "collectiontree",
 				"isCompositeKey": true,
 				"templateOptions": {
-					"maxFields": 4
+					"maxFields": 1
 				},
 				"dependency": {
 					"type": "and",
@@ -314,7 +314,7 @@ making sure that you maintain a proper JSON format.
 						"template": "collectiontree",
 						"isCompositeKey": true,
 						"templateOptions": {
-							"maxFields": 4
+							"maxFields": 1
 						}
 					},
 					{
