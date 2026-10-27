@@ -3,7 +3,7 @@
     "version": "0.2.33",
     "author": "hackolade",
     "engines": {
-        "hackolade": "6.8.4",
+        "hackolade": "8.13.7",
         "hackoladePlugin": "1.2.0"
     },
     "contributes": {
