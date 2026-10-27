@@ -114,14 +114,6 @@ making sure that you maintain a proper JSON format.
 						"type": "or",
 						"values": [
 							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
-							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
 								"value": true
@@ -409,14 +401,6 @@ making sure that you maintain a proper JSON format.
 						"type": "or",
 						"values": [
 							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
-							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
 								"value": true
@@ -612,14 +596,6 @@ making sure that you maintain a proper JSON format.
 						"type": "or",
 						"values": [
 							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
-							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
 								"value": true
@@ -814,14 +790,6 @@ making sure that you maintain a proper JSON format.
 					"disabledOnCondition": {
 						"type": "or",
 						"values": [
-							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
 							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
@@ -1033,14 +1001,6 @@ making sure that you maintain a proper JSON format.
 						"type": "or",
 						"values": [
 							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
-							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
 								"value": true
@@ -1208,14 +1168,6 @@ making sure that you maintain a proper JSON format.
 					"disabledOnCondition": {
 						"type": "or",
 						"values": [
-							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
 							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
@@ -1493,14 +1445,6 @@ making sure that you maintain a proper JSON format.
 						"type": "or",
 						"values": [
 							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
-							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",
 								"value": true
@@ -1671,14 +1615,6 @@ making sure that you maintain a proper JSON format.
 					"disabledOnCondition": {
 						"type": "or",
 						"values": [
-							{
-								"key": "timeUnitpartitionKey",
-								"value": true
-							},
-							{
-								"key": "rangePartitionKey",
-								"value": true
-							},
 							{
 								"level": "siblings",
 								"key": "compositePrimaryKey",

@@ -98,8 +98,12 @@
 			{
 				"propertyName": "Partition by",
 				"propertyKeyword": "timeUnitpartitionKey",
-				"propertyType": "primaryKeySetter",
+				"propertyType": "compositeKeySetter",
+				"disabledItemStrategy": "default",
 				"abbr": "PK",
+				"setPrimaryKey": false,
+				"template": "collectiontree",
+				"isCompositeKey": true,
 				"templateOptions": {
 					"maxFields": 4
 				},
@@ -127,9 +131,12 @@
 					{
 						"propertyName": "Partition by",
 						"propertyKeyword": "rangePartitionKey",
-						"propertyType": "fieldList",
-						"template": "orderedList",
+						"propertyType": "compositeKeySetter",
+						"disabledItemStrategy": "default",
 						"abbr": "PK",
+						"setPrimaryKey": false,
+						"template": "collectiontree",
+						"isCompositeKey": true,
 						"templateOptions": {
 							"maxFields": 4
 						}
