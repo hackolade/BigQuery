@@ -27,22 +27,31 @@ const createBigQueryHelper = (client, log) => {
 			return (
 				await client.query({
 					query: `SELECT 
-				CCU.column_name as \`parent_column\`,
-				KCU.column_name as \`child_column\`,
+				PK.column_name as \`parent_column\`,
+				FK.column_name as \`child_column\`,
+				FK.ordinal_position,
 				TC.constraint_catalog, 
 				TC.constraint_name, 
 				TC.constraint_schema, 
 				TC.constraint_type, 
 				TC.table_catalog,
-				CCU.table_schema as \`parent_schema\`,
-				KCU.table_schema as \`child_schema\`,
-				CCU.table_name as \`parent_table\`,
-				KCU.table_name as \`child_table\`
-				FROM (${projectId}.${datasetId}.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS CCU 
-				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU
-				USING(constraint_name)) 
+				REF.table_schema as \`parent_schema\`,
+				FK.table_schema as \`child_schema\`,
+				REF.table_name as \`parent_table\`,
+				FK.table_name as \`child_table\`
+				FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS FK
 				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 				USING(constraint_name)
+				INNER JOIN (
+					SELECT DISTINCT constraint_name, table_schema, table_name
+					FROM ${projectId}.${datasetId}.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE
+				) AS REF
+				USING(constraint_name)
+				INNER JOIN ${projectId}.${datasetId}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS PK
+				ON PK.table_schema = REF.table_schema
+				AND PK.table_name = REF.table_name
+				AND PK.position_in_unique_constraint IS NULL
+				AND PK.ordinal_position = FK.position_in_unique_constraint
 				WHERE TC.constraint_type = "FOREIGN KEY";`,
 				})
 			)[0];
