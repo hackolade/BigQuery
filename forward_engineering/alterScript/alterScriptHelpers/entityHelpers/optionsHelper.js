@@ -13,16 +13,19 @@ const options = {
 
 const getModifyCollectionOptionsScript = ({ jsonSchema, tableData, app }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const optionsToUpdate = getModifyOptions({ jsonSchema, app, options });
 
 	if (!optionsToUpdate) {
 		return '';
 	}
 
-	return assignTemplates(templates.alterTableSetOptions, {
+	const script = assignTemplates(templates.alterTableSetOptions, {
 		tableName: tableData.name,
 		options: optionsToUpdate,
 	});
+
+	return commentIfDeactivated(script, { isActivated: jsonSchema.isActivated !== false });
 };
 
 module.exports = {
