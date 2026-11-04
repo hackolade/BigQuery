@@ -8,7 +8,7 @@ const columnOptions = {
 
 const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 
 	return _.toPairs(collection.properties)
 		.map(([name, jsonSchema]) => {
@@ -29,11 +29,14 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 				return '';
 			}
 
-			return assignTemplates(templates.alterColumnOptions, {
+			const script = assignTemplates(templates.alterColumnOptions, {
 				tableName: tableData.name,
 				columnName: wrapByBackticks(name),
 				options: tab(optionsToUpdate.join(',\n')),
 			});
+			const isActivated = collection.role?.isActivated !== false && jsonSchema.isActivated !== false;
+
+			return commentIfDeactivated(script, { isActivated });
 		})
 		.filter(Boolean);
 };
