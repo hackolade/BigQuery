@@ -239,8 +239,21 @@ making sure that you maintain a proper JSON format.
 							}
 						},
 						{
-							"key": "partitioning",
-							"value": "By ingestion time"
+							"type": "or",
+							"values": [
+								{
+									"key": "partitioning",
+									"value": "By ingestion time"
+								},
+								{
+									"key": "partitioning",
+									"value": "By time-unit column"
+								},
+								{
+									"key": "partitioning",
+									"value": "By integer-range"
+								}
+							]
 						}
 					]
 				}
