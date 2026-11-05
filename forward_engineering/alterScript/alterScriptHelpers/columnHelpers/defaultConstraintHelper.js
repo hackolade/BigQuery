@@ -3,7 +3,8 @@ const templates = require('../../../configs/templates');
 const { wrapByBackticks } = require('../../../helpers/utils');
 
 const getUpdatedDefaultColumnValueScript = ({ collection, commonProps }) => {
-	const { assignTemplates, tableName } = commonProps;
+	const { assignTemplates, tableName, commentIfDeactivated } = commonProps;
+	const isCollectionActivated = collection.role?.isActivated !== false;
 
 	return toPairs(collection.properties)
 		.filter(([_name, jsonSchema]) => {
@@ -13,16 +14,19 @@ const getUpdatedDefaultColumnValueScript = ({ collection, commonProps }) => {
 			return newDefault !== undefined && (!oldDefault || newDefault !== oldDefault);
 		})
 		.map(([columnName, jsonSchema]) => {
-			return assignTemplates(templates.alterTableSetDefault, {
+			const script = assignTemplates(templates.alterTableSetDefault, {
 				tableName,
 				columnName: wrapByBackticks(columnName),
 				default: jsonSchema.default,
 			});
+			const isActivated = isCollectionActivated && jsonSchema.isActivated !== false;
+			return commentIfDeactivated(script, { isActivated });
 		});
 };
 
 const getDeletedDefaultColumnValueScript = ({ collection, commonProps }) => {
-	const { assignTemplates, tableName } = commonProps;
+	const { assignTemplates, tableName, commentIfDeactivated } = commonProps;
+	const isCollectionActivated = collection.role?.isActivated !== false;
 
 	return toPairs(collection.properties)
 		.filter(([_name, jsonSchema]) => {
@@ -34,19 +38,23 @@ const getDeletedDefaultColumnValueScript = ({ collection, commonProps }) => {
 			return hasPrevValue && !hasNewValue;
 		})
 		.map(([columnName, jsonSchema]) => {
-			return assignTemplates(templates.alterTableDropDefault, {
+			const script = assignTemplates(templates.alterTableDropDefault, {
 				tableName,
 				columnName: wrapByBackticks(columnName),
 			});
+			const isActivated = isCollectionActivated && jsonSchema.isActivated !== false;
+			return commentIfDeactivated(script, { isActivated });
 		});
 };
 
 const getModifiedDefaultColumnValueScripts = ({ app, collection, tableData }) => {
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const commonProps = {
 		assignTemplates,
 		tableName: tableData.name,
+		commentIfDeactivated,
 	};
 
 	const updatedDefaultValuesScriptDtos = getUpdatedDefaultColumnValueScript({ collection, commonProps });

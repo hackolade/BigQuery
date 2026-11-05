@@ -5,6 +5,8 @@ const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
 const getModifiedColumnNotNullScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const isCollectionActivated = collection.role?.isActivated !== false;
 
 	return toPairs(collection.properties)
 		.map(([name, newJsonSchema]) => {
@@ -15,10 +17,12 @@ const getModifiedColumnNotNullScripts = ({ collection, app, tableData }) => {
 				oldJsonSchema.dataTypeMode === DATA_TYPE_MODE.required;
 
 			if (isNullDrop) {
-				return assignTemplates(templates.alterColumnDropNotNull, {
+				const script = assignTemplates(templates.alterColumnDropNotNull, {
 					tableName: tableData.name,
 					columnName: wrapByBackticks(name),
 				});
+				const isActivated = isCollectionActivated && newJsonSchema.isActivated !== false;
+				return commentIfDeactivated(script, { isActivated });
 			}
 
 			return '';
