@@ -4,8 +4,7 @@ const templates = require('../../../configs/templates');
 const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
 const getModifiedColumnNotNullScripts = ({ collection, app, tableData }) => {
-	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const { assignTemplates, general } = app.require('@hackolade/ddl-fe-utils');
 	const isCollectionActivated = collection.role?.isActivated !== false;
 
 	return toPairs(collection.properties)
@@ -22,7 +21,7 @@ const getModifiedColumnNotNullScripts = ({ collection, app, tableData }) => {
 					columnName: wrapByBackticks(name),
 				});
 				const isActivated = isCollectionActivated && newJsonSchema.isActivated !== false;
-				return commentIfDeactivated(script, { isActivated });
+				return general.commentIfDeactivated(script, { isActivated });
 			}
 
 			return '';

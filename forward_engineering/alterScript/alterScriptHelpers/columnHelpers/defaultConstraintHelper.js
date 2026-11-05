@@ -48,13 +48,12 @@ const getDeletedDefaultColumnValueScript = ({ collection, commonProps }) => {
 };
 
 const getModifiedDefaultColumnValueScripts = ({ app, collection, tableData }) => {
-	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
-	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const { assignTemplates, general } = app.require('@hackolade/ddl-fe-utils');
 
 	const commonProps = {
 		assignTemplates,
 		tableName: tableData.name,
-		commentIfDeactivated,
+		commentIfDeactivated: general.commentIfDeactivated,
 	};
 
 	const updatedDefaultValuesScriptDtos = getUpdatedDefaultColumnValueScript({ collection, commonProps });
