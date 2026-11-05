@@ -120,14 +120,14 @@ module.exports = (baseProvider, options, app) => {
 			});
 			const clustering = getClusteringKey(clusteringKey, isActivated);
 			const isExternal = tableType === 'External';
+			const hasActivePartitionClause = !isExternal && Boolean(partitions) && isPartitionActivated !== false;
 			const options = getTableOptions(
 				tab,
 				getLabels,
 			)({
 				externalTableOptions: isExternal ? _.omit(externalTableOptions, 'autodetect') : null,
-				partitioningFilterRequired: isExternal ? false : partitioningFilterRequired,
+				partitioningFilterRequired: hasActivePartitionClause ? partitioningFilterRequired : false,
 				customerEncryptionKey,
-				partitioning,
 				friendlyName,
 				description,
 				expiration,

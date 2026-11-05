@@ -124,7 +124,6 @@ const getTableOptions =
 	({
 		expiration,
 		partitioningFilterRequired,
-		partitioning,
 		customerEncryptionKey,
 		description,
 		labels,
@@ -145,7 +144,7 @@ const getTableOptions =
 			options.push(`expiration_timestamp=TIMESTAMP "${getTimestamp(expiration)}"`);
 		}
 
-		if (partitioning === 'By ingestion time' && partitioningFilterRequired) {
+		if (partitioningFilterRequired) {
 			options.push(`require_partition_filter=true`);
 		}
 
