@@ -1,6 +1,6 @@
 {
     "name": "BigQuery",
-    "version": "0.2.33",
+    "version": "0.2.34",
     "author": "hackolade",
     "engines": {
         "hackolade": "8.13.7",
@@ -49,7 +49,7 @@
             "disableJsonDataMaxLength": true,
             "disableMultipleTypes": true,
             "generateAssociativeEntitiesForManyToManyRelationships": true,
-            "createForeignKeysForConceptualRelationships": true
+            "generateForeignKeysForConceptualRelationships": true
         }
     },
     "description": "Hackolade plugin for Google BigQuery Standard SQL",

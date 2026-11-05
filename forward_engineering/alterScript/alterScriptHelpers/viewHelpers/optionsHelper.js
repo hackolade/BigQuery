@@ -19,6 +19,7 @@ const materializedViewOptions = {
 
 const getModifyViewOptionsScript = ({ jsonSchema, viewData, app }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const options = jsonSchema.materialized ? materializedViewOptions : viewOptions;
 	const optionsToUpdate = getModifyOptions({ jsonSchema, app, options });
 
@@ -26,11 +27,13 @@ const getModifyViewOptionsScript = ({ jsonSchema, viewData, app }) => {
 		return '';
 	}
 
-	return assignTemplates(templates.alterViewOptions, {
+	const script = assignTemplates(templates.alterViewOptions, {
 		materialized: jsonSchema.materialized ? 'MATERIALIZED ' : '',
 		name: viewData.name,
 		options: optionsToUpdate,
 	});
+
+	return commentIfDeactivated(script, { isActivated: jsonSchema.isActivated !== false });
 };
 
 module.exports = {

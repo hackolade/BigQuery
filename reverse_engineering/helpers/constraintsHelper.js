@@ -90,39 +90,28 @@ const getConstraintBusinessName = constraintNameFromCloud => {
 };
 
 const reverseForeignKeys = foreignKeyConstraintsData => {
-	return foreignKeyConstraintsData.reduce((constraints, fkConstraintData) => {
-		const constraintNameToUse = getConstraintBusinessName(fkConstraintData.constraint_name);
-		const constraintInList = constraints.find(({ relationshipName }) => relationshipName === constraintNameToUse);
-		const { parent_column, child_column } = fkConstraintData;
-		if (constraintInList) {
-			const isParentAdded = constraintInList.parentField.includes(parent_column);
-			const isChildAdded = constraintInList.childField.includes(child_column);
-			const newConstraintData = {
-				...constraintInList,
-				childField: isChildAdded ? constraintInList.childField : [...constraintInList.childField, child_column],
-				parentField: isParentAdded
-					? constraintInList.parentField
-					: [...constraintInList.parentField, parent_column],
-			};
-			return [
-				...constraints.filter(({ relationshipName }) => relationshipName !== constraintNameToUse),
-				newConstraintData,
-			];
-		} else {
-			const newConstraint = {
-				relationshipName: constraintNameToUse,
-				relationshipType: 'Foreign Key',
-				childDbName: fkConstraintData.child_schema,
-				childCollection: fkConstraintData.child_table,
-				childField: [fkConstraintData.child_column],
-				dbName: fkConstraintData.parent_schema,
-				parentCollection: fkConstraintData.parent_table,
-				parentField: [fkConstraintData.parent_column],
-				relationshipInfo: {},
-			};
-			return [...constraints, newConstraint];
-		}
-	}, []);
+	const constraintNames = [
+		...new Set(foreignKeyConstraintsData.map(({ constraint_name }) => getConstraintBusinessName(constraint_name))),
+	];
+
+	return constraintNames.map(constraintName => {
+		const columns = foreignKeyConstraintsData
+			.filter(({ constraint_name }) => getConstraintBusinessName(constraint_name) === constraintName)
+			.toSorted((a, b) => a.ordinal_position - b.ordinal_position);
+		const [firstColumn] = columns;
+
+		return {
+			relationshipName: constraintName,
+			relationshipType: 'Foreign Key',
+			childDbName: firstColumn.child_schema,
+			childCollection: firstColumn.child_table,
+			childField: columns.map(({ child_column }) => child_column),
+			dbName: firstColumn.parent_schema,
+			parentCollection: firstColumn.parent_table,
+			parentField: columns.map(({ parent_column }) => parent_column),
+			relationshipInfo: {},
+		};
+	});
 };
 
 module.exports = {

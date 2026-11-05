@@ -855,7 +855,11 @@ making sure that you maintain a proper JSON format.
 						"propertyName": "Key",
 						"propertyKeyword": "compositePrimaryKey",
 						"propertyType": "primaryKeySetter",
-						"abbr": "pk"
+						"abbr": "pk",
+						"disabledItemStrategy": {
+							"type": "compositeKeyExcept",
+							"parameters": ["timeUnitpartitionKey", "rangePartitionKey", "clusteringKey"]
+						}
 					}
 				]
 			},
