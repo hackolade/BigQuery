@@ -92,7 +92,7 @@ const getConstraintBusinessName = constraintNameFromCloud => {
 const reverseForeignKeys = foreignKeyConstraintsData => {
 	const constraintNames = [
 		...new Set(foreignKeyConstraintsData.map(({ constraint_name }) => getConstraintBusinessName(constraint_name))),
-	];
+	].toSorted((a, b) => a.localeCompare(b));
 
 	return constraintNames.map(constraintName => {
 		const columns = foreignKeyConstraintsData
