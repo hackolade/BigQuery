@@ -1,5 +1,5 @@
 const { pick, toPairs } = require('lodash');
-const { getFullName, wrapByBackticks, escapeQuotes, getColumnSchema } = require('../../../helpers/utils');
+const { wrapByBackticks } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
