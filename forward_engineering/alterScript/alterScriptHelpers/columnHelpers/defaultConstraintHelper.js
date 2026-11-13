@@ -11,7 +11,7 @@ const getUpdatedDefaultColumnValueScript = ({ collection, commonProps }) => {
 			const newDefault = jsonSchema.default;
 			const oldName = jsonSchema.compMod.oldField.name;
 			const oldDefault = collection.role.properties[oldName]?.default;
-			return newDefault !== undefined && (!oldDefault || newDefault !== oldDefault);
+			return newDefault !== undefined && newDefault !== oldDefault;
 		})
 		.map(([columnName, jsonSchema]) => {
 			const script = assignTemplates(templates.alterTableSetDefault, {

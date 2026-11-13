@@ -3,6 +3,7 @@
  * @typedef {import('../types').JsonSchema} JsonSchema
  */
 
+const { isBoolean } = require('lodash');
 const { DATA_TYPE_MODE } = require('./constants');
 
 const escapeQuotes = (str = '') => {
@@ -11,6 +12,16 @@ const escapeQuotes = (str = '') => {
 
 const wrapByBackticks = (str = '') => {
 	return `\`${str}\``;
+};
+
+const getDefault = defaultValue => {
+	if (isBoolean(defaultValue)) {
+		return defaultValue;
+	} else if (defaultValue === null) {
+		return 'NULL';
+	} else {
+		return defaultValue;
+	}
 };
 
 const getPartitioningByIngestionTime = partitioningType => {
@@ -306,7 +317,7 @@ const getColumnSchema =
 			primaryKey,
 			notNull,
 			options,
-			default: jsonSchema.default ? ` DEFAULT ${jsonSchema.default}` : '',
+			default: jsonSchema.default !== undefined ? ` DEFAULT ${getDefault(jsonSchema.default)}` : '',
 		});
 	};
 
@@ -433,4 +444,5 @@ module.exports = {
 	getFullName,
 	addParameters,
 	getName,
+	getDefault,
 };

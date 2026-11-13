@@ -1,3 +1,5 @@
+const { getDefault } = require('../../helpers/utils');
+
 module.exports = _ => {
 	const createColumnDefinition = data => {
 		return {
@@ -20,18 +22,6 @@ module.exports = _ => {
 		}
 
 		return !parentSchema.required.includes(propertyName);
-	};
-
-	const getDefault = jsonSchema => {
-		const defaultValue = jsonSchema.default;
-
-		if (_.isBoolean(defaultValue)) {
-			return defaultValue;
-		} else if (jsonSchema.default === null) {
-			return 'NULL';
-		} else {
-			return defaultValue;
-		}
 	};
 
 	const getLength = jsonSchema => {
