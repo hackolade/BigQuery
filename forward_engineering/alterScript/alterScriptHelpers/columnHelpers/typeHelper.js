@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getFullName, wrapByBackticks, escapeQuotes, addParameters } = require('../../../helpers/utils');
+const { wrapByBackticks, addParameters, isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
@@ -169,7 +169,8 @@ const getColumnType =
 
 const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
-	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return _.toPairs(collection.properties)
 		.map(([name, newJsonSchema]) => {
@@ -186,11 +187,14 @@ const getModifiedColumnTypeScripts = ({ collection, app, tableData }) => {
 					jsonSchema: newJsonSchema,
 				});
 
-				return assignTemplates(templates.alterColumnType, {
+				const script = assignTemplates(templates.alterColumnType, {
 					columnName: wrapByBackticks(name),
 					type: typeStatement.trim(),
 					tableName: tableData.name,
 				});
+				const isActivated = isCollectionActivated && newJsonSchema.isActivated !== false;
+
+				return commentIfDeactivated(script, { isActivated });
 			}
 
 			return '';

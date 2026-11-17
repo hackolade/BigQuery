@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { PrimaryKeyTransitionDto, KeyScriptModificationDto } = require('../../types/AlterKeyDto');
-const { getFullName, wrapByBackticks } = require('../../../helpers/utils');
+const { isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 const { alterPkConstraint, dropPK } = require('../../../helpers/constraints/constraintHelper');
 const { CONSTRAINT_POSTFIX } = require('../../../helpers/constraints/constants');
 
@@ -131,7 +131,7 @@ const getAddCompositePkScriptDtos = ({ app, collection, tableData }) => {
 	}
 
 	const tableName = tableData.name;
-	const isCollectionActivated = collection.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return newPrimaryKeys
 		.map(newPk => {
@@ -174,7 +174,7 @@ const getDropCompositePkScriptDtos = ({ app, collection, tableData }) => {
 
 	const tableName = tableData.name;
 
-	const isCollectionActivated = collection.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return oldPrimaryKeys
 		.map(oldPk => {
@@ -347,7 +347,7 @@ const wasRegularPkModified = ({ columnJsonSchema, collection }) => {
 
 const getAddPkScriptDtos = ({ app, collection, tableData }) => {
 	const tableName = tableData.name;
-	const isCollectionActivated = collection.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return _.toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => {
@@ -382,7 +382,7 @@ const getAddPkScriptDtos = ({ app, collection, tableData }) => {
 
 const getDropPkScriptDto = ({ app, collection, tableData }) => {
 	const tableName = tableData.name;
-	const isCollectionActivated = collection.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return _.toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => {
@@ -426,13 +426,17 @@ const sortModifyPkConstraints = ({ constraintDtos }) => {
 };
 
 const getModifyPkConstraintsScriptDtos = ({ app, collection, tableData }) => {
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const modifyCompositePkScriptDtos = getModifyCompositePkScriptDtos({ app, collection, tableData });
 	const modifyPkScriptDtos = getModifyPkScriptDtos({ app, collection, tableData });
 
 	const allDtos = [...modifyCompositePkScriptDtos, ...modifyPkScriptDtos];
 	const sortedAllDtos = sortModifyPkConstraints({ constraintDtos: allDtos });
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
-	return sortedAllDtos.map(dto => dto.script).filter(Boolean);
+	return sortedAllDtos
+		.filter(dto => Boolean(dto.script))
+		.map(dto => commentIfDeactivated(dto.script, { isActivated: isCollectionActivated && dto.isActivated }));
 };
 
 module.exports = {

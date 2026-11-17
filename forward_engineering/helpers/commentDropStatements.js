@@ -4,7 +4,9 @@ const commentDropStatements = (script = '') =>
 	script
 		.split('\n')
 		.map(line => {
-			if (DROP_STATEMENTS.some(statement => line.includes(statement))) {
+			const isAlreadyCommented = line.trimStart().startsWith('--');
+
+			if (!isAlreadyCommented && DROP_STATEMENTS.some(statement => line.includes(statement))) {
 				return `-- ${line}`;
 			} else {
 				return line;

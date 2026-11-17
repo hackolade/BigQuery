@@ -1,4 +1,4 @@
-const { getName, getFullName } = require('../../helpers/utils');
+const { getName, getFullName, isCollectionInDeltaModelActivated } = require('../../helpers/utils');
 const { checkCompModEqual, getCompMod, setEntityKeys } = require('./common');
 const { getModifyViewOptionsScript } = require('./viewHelpers/optionsHelper');
 
@@ -6,6 +6,7 @@ module.exports = (app, options) => {
 	const _ = app.require('lodash');
 	const { mapProperties } = app.require('@hackolade/ddl-fe-utils');
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 
 	const getAddViewScript = modelData => jsonSchema => {
@@ -21,8 +22,10 @@ module.exports = (app, options) => {
 			dbData,
 		};
 		const hydratedView = ddlProvider.hydrateView({ viewData, entityData: [view] });
+		const isActivated = isCollectionInDeltaModelActivated(view);
+		const script = ddlProvider.createView(hydratedView, dbData, isActivated);
 
-		return ddlProvider.createView(hydratedView, dbData, view.isActivated);
+		return isActivated ? script : commentIfDeactivated(script, { isActivated });
 	};
 
 	const getDeleteViewScript = modelData => view => {

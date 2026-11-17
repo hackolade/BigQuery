@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getFullName, wrapByBackticks, escapeQuotes } = require('../../../helpers/utils');
+const { wrapByBackticks, escapeQuotes, isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 
 const columnOptions = {
@@ -9,6 +9,7 @@ const columnOptions = {
 const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
 	const { tab, commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return _.toPairs(collection.properties)
 		.map(([name, jsonSchema]) => {
@@ -34,7 +35,7 @@ const getModifiedColumnOptionScripts = ({ collection, app, tableData }) => {
 				columnName: wrapByBackticks(name),
 				options: tab(optionsToUpdate.join(',\n')),
 			});
-			const isActivated = collection.role?.isActivated !== false && jsonSchema.isActivated !== false;
+			const isActivated = isCollectionActivated && jsonSchema.isActivated !== false;
 
 			return commentIfDeactivated(script, { isActivated });
 		})

@@ -1,18 +1,22 @@
 const _ = require('lodash');
-const { wrapByBackticks } = require('../utils');
 const templates = require('../../configs/templates');
 
 const getKeyOptions = ({ keyData, isParentActivated, app }) => {
 	const { checkAllKeysDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+	const { foreignKeysToString, foreignActiveKeysToString } = require('../general')(app);
 
-	const isAllColumnsDeactivated = checkAllKeysDeactivated({ keys: keyData.columns || [] });
-	const columns = _.isEmpty(keyData.columns)
-		? ''
-		: keyData.columns.map(column => wrapByBackticks(column.name)).join(', ');
+	const keyColumns = keyData.columns || [];
+	const isAllColumnsDeactivated = checkAllKeysDeactivated(keyColumns);
+	const isActivated = !isAllColumnsDeactivated && isParentActivated;
+	let columns = '';
+
+	if (!_.isEmpty(keyColumns)) {
+		columns = isActivated ? foreignKeysToString(keyColumns) : foreignActiveKeysToString(keyColumns);
+	}
 
 	return {
 		columns,
-		isActivated: !isAllColumnsDeactivated && isParentActivated,
+		isActivated,
 	};
 };
 

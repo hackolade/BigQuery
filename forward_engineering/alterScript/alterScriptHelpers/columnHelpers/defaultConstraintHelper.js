@@ -1,10 +1,10 @@
 const { toPairs } = require('lodash');
 const templates = require('../../../configs/templates');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 
 const getUpdatedDefaultColumnValueScript = ({ collection, commonProps }) => {
 	const { assignTemplates, tableName, commentIfDeactivated } = commonProps;
-	const isCollectionActivated = collection.role?.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return toPairs(collection.properties)
 		.filter(([_name, jsonSchema]) => {
@@ -26,7 +26,7 @@ const getUpdatedDefaultColumnValueScript = ({ collection, commonProps }) => {
 
 const getDeletedDefaultColumnValueScript = ({ collection, commonProps }) => {
 	const { assignTemplates, tableName, commentIfDeactivated } = commonProps;
-	const isCollectionActivated = collection.role?.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return toPairs(collection.properties)
 		.filter(([_name, jsonSchema]) => {

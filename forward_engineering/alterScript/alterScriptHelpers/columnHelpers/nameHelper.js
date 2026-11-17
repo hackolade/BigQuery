@@ -1,10 +1,11 @@
-const { toPairs } = require('lodash');
+const { toPairs, partition } = require('lodash');
 const templates = require('../../../configs/templates');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 
 const getModifyColumnNameScript = ({ app, collection, tableData }) => {
-	const { tab } = app.require('@hackolade/ddl-fe-utils').general;
+	const { tab, commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	const columnsToRename = toPairs(collection.properties).filter(([_, jsonSchema]) => {
 		const compMod = jsonSchema.compMod || {};
@@ -14,22 +15,32 @@ const getModifyColumnNameScript = ({ app, collection, tableData }) => {
 	});
 
 	if (columnsToRename.length) {
-		const alterStatements = columnsToRename
-			.map(([_, jsonSchema]) => {
-				const compMod = jsonSchema.compMod || {};
-				const { newField = {}, oldField = {} } = compMod;
+		const hasActivatedRenames = columnsToRename.some(([_, jsonSchema]) => jsonSchema.isActivated !== false);
+		const isStatementActivated = isCollectionActivated && hasActivatedRenames;
 
-				return assignTemplates(templates.renameColumn, {
+		const renameStatementDtos = columnsToRename.map(([_, jsonSchema]) => {
+			const compMod = jsonSchema.compMod || {};
+			const { newField = {}, oldField = {} } = compMod;
+
+			return {
+				statement: assignTemplates(templates.renameColumn, {
 					oldColumnName: wrapByBackticks(oldField.name),
 					newColumnName: wrapByBackticks(newField.name),
-				});
-			})
-			.join(',\n');
+				}),
+				isActivated: !isStatementActivated || jsonSchema.isActivated !== false,
+			};
+		});
+		const [activatedRenames, deactivatedRenames] = partition(renameStatementDtos, dto => dto.isActivated);
+		const alterStatements =
+			activatedRenames.map(dto => dto.statement).join(',\n') +
+			deactivatedRenames.map(dto => `\n/*, ${dto.statement} */`).join('');
 
-		return assignTemplates(templates.alterTableStatement, {
+		const script = assignTemplates(templates.alterTableStatement, {
 			name: tableData.name,
 			alterStatements: tab(alterStatements),
 		});
+
+		return commentIfDeactivated(script, { isActivated: isStatementActivated });
 	}
 
 	return '';

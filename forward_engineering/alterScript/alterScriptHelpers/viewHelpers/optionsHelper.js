@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const templates = require('../../../configs/templates');
 const { getModifyOptions } = require('../common');
+const { isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 
 const viewOptions = {
 	businessName: 'friendly_name',
@@ -33,7 +34,7 @@ const getModifyViewOptionsScript = ({ jsonSchema, viewData, app }) => {
 		options: optionsToUpdate,
 	});
 
-	return commentIfDeactivated(script, { isActivated: jsonSchema.isActivated !== false });
+	return commentIfDeactivated(script, { isActivated: isCollectionInDeltaModelActivated(jsonSchema) });
 };
 
 module.exports = {
