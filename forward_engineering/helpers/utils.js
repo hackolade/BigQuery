@@ -354,56 +354,70 @@ const generateViewSelectStatement =
 	({ columns, projectId, datasetName, tab }) => {
 		const allColumnNames = new Set();
 		const deactivatedColumnNames = new Set();
+		const activatedTableNames = new Set();
 		const columnsByTable = {};
 
 		columns.forEach(column => {
 			const columnName = column.alias || column.name;
+			const tableName = column.tableName ?? NO_TABLE_KEY;
 
 			if (!allColumnNames.has(columnName)) {
 				allColumnNames.add(columnName);
 			}
 
-			columnsByTable[column.tableName ?? NO_TABLE_KEY] ??= {};
-			columnsByTable[column.tableName ?? NO_TABLE_KEY][columnName] = {
+			columnsByTable[tableName] ??= {};
+			columnsByTable[tableName][columnName] = {
 				name: column.name,
 				alias: column.alias,
 			};
 
-			if (!column.isActivated) {
+			if (column.isActivated) {
+				activatedTableNames.add(tableName);
+			} else {
 				deactivatedColumnNames.add(columnName);
 			}
 		});
 
-		return Object.keys(columnsByTable)
-			.map(tableName => {
-				const tableColumns = columnsByTable[tableName];
-				const activated = [];
-				const deactivated = [];
+		const selectStatementDtos = Object.keys(columnsByTable).map(tableName => {
+			const tableColumns = columnsByTable[tableName];
+			const isTableActivated = !isActivated || activatedTableNames.has(tableName);
+			const activated = [];
+			const deactivated = [];
 
-				for (const columnName of allColumnNames) {
-					let columnExpression;
-					const column = tableColumns[columnName];
+			for (const columnName of allColumnNames) {
+				let columnExpression;
+				const column = tableColumns[columnName];
 
-					if (column && tableName !== NO_TABLE_KEY) {
-						columnExpression = wrapByBackticks(column.name);
+				if (column && tableName !== NO_TABLE_KEY) {
+					columnExpression = wrapByBackticks(column.name);
 
-						if (column.alias) {
-							columnExpression += ` AS ${wrapByBackticks(column.alias)}`;
-						}
-					} else {
-						columnExpression = `NULL AS ${wrapByBackticks(columnName)}`;
+					if (column.alias) {
+						columnExpression += ` AS ${wrapByBackticks(column.alias)}`;
 					}
-
-					const arrayToPush = isActivated && deactivatedColumnNames.has(columnName) ? deactivated : activated;
-					arrayToPush.push(columnExpression);
+				} else {
+					columnExpression = `NULL AS ${wrapByBackticks(columnName)}`;
 				}
 
-				const finalColumns =
-					activated.join(',\n') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
+				const isColumnDeactivated = isActivated && isTableActivated && deactivatedColumnNames.has(columnName);
+				const arrayToPush = isColumnDeactivated ? deactivated : activated;
+				arrayToPush.push(columnExpression);
+			}
 
-				return `SELECT\n${tab(finalColumns || '*')}\n${getFromStatement({ projectId, datasetName, tableName })}`;
-			})
-			.join('\nUNION ALL\n');
+			const finalColumns =
+				activated.join(',\n') + (deactivated.length ? `\n  /*, ${deactivated.join(', ')}*/` : '');
+
+			return {
+				statement: `SELECT\n${tab(finalColumns || '*')}\n${getFromStatement({ projectId, datasetName, tableName })}`,
+				isActivated: isTableActivated,
+			};
+		});
+
+		const activatedSelectStatements = selectStatementDtos.filter(dto => dto.isActivated).map(dto => dto.statement);
+		const deactivatedSelectStatements = selectStatementDtos
+			.filter(dto => !dto.isActivated)
+			.map(dto => `/* UNION ALL\n${dto.statement} */`);
+
+		return [activatedSelectStatements.join('\nUNION ALL\n'), ...deactivatedSelectStatements].join('\n');
 	};
 
 const clearEmptyStatements = statements => statements.filter(statementComponent => Boolean(statementComponent));
@@ -428,6 +442,22 @@ const getName = entity =>
 	entity.name ||
 	'';
 
+const isObjectInDeltaModelActivated = modelObject => {
+	return modelObject?.compMod?.isActivated?.new ?? modelObject?.role?.isActivated ?? modelObject?.isActivated ?? true;
+};
+
+const isParentContainerActivated = collection => {
+	return (
+		collection?.compMod?.bucketProperties?.isActivated ??
+		collection?.role?.compMod?.bucketProperties?.isActivated ??
+		true
+	);
+};
+
+const isCollectionInDeltaModelActivated = collection => {
+	return Boolean(isParentContainerActivated(collection) && isObjectInDeltaModelActivated(collection));
+};
+
 module.exports = {
 	isActivatedPartition,
 	getTablePartitioning,
@@ -445,4 +475,7 @@ module.exports = {
 	addParameters,
 	getName,
 	getDefault,
+	isObjectInDeltaModelActivated,
+	isParentContainerActivated,
+	isCollectionInDeltaModelActivated,
 };

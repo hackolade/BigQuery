@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, isObjectInDeltaModelActivated } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 const { getModifyOptions } = require('../common');
 
@@ -13,16 +13,19 @@ const options = {
 
 const getModifyContainerOptionsScript = ({ jsonSchema, containerData, app }) => {
 	const { assignTemplates } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const optionsToUpdate = getModifyOptions({ jsonSchema, app, options });
 
 	if (!optionsToUpdate) {
 		return '';
 	}
 
-	return assignTemplates(templates.alterDatabaseOptions, {
+	const script = assignTemplates(templates.alterDatabaseOptions, {
 		name: wrapByBackticks(containerData.name),
 		options: optionsToUpdate,
 	});
+
+	return commentIfDeactivated(script, { isActivated: isObjectInDeltaModelActivated(jsonSchema) });
 };
 
 module.exports = {

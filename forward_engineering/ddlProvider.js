@@ -139,15 +139,25 @@ module.exports = (baseProvider, options, app) => {
 				isActivated: columnDto.isActivated,
 			}));
 			const partitionsStatement = commentIfDeactivated(partitions, { isActivated: isPartitionActivated });
-			const compositePkFieldsNamesList = primaryKey.flatMap(compositePK =>
-				compositePK?.compositePrimaryKey.map(key => wrapByBackticks(key.name)),
+			const compositePkKeys = primaryKey.flatMap(compositePK =>
+				(compositePK?.compositePrimaryKey || []).map(key => ({
+					name: key.name || '',
+					isActivated: key.isActivated ?? properties?.[key.name]?.isActivated ?? true,
+				})),
 			);
-			const compositePrimaryKeyOutlineConstraint = compositePkFieldsNamesList.length
-				? `PRIMARY KEY (${compositePkFieldsNamesList.join(', ')}) NOT ENFORCED`
+			const isCompositePkActivated = !checkAllKeysDeactivated(compositePkKeys);
+			const compositePkFieldsNames =
+				isActivated && isCompositePkActivated
+					? foreignKeysToString(compositePkKeys)
+					: foreignActiveKeysToString(compositePkKeys);
+			const compositePrimaryKeyOutlineConstraint = compositePkKeys.length
+				? `PRIMARY KEY (${compositePkFieldsNames}) NOT ENFORCED`
 				: '';
 			const compositePrimaryKeyOutlineConstraintStatementDto = {
-				statement: compositePrimaryKeyOutlineConstraint,
-				isActivated: true,
+				statement: commentIfDeactivated(compositePrimaryKeyOutlineConstraint, {
+					isActivated: !isActivated || isCompositePkActivated,
+				}),
+				isActivated: !isActivated || isCompositePkActivated,
 			};
 			const foreignKeyConstraintStatementDtos = (foreignKeyConstraints || []).map(constraintDto => ({
 				statement: commentIfDeactivated(constraintDto.statement, { isActivated: constraintDto.isActivated }),
@@ -435,11 +445,14 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateViewColumn(data) {
+			const isSourceTableActivated = _.first(data.entityData)?.isActivated !== false;
+			const isSourceDatasetActivated = _.first(data.containerData)?.isActivated !== false;
+
 			return {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
-				isActivated: data.isActivated,
+				isActivated: Boolean(data.isActivated && isSourceTableActivated && isSourceDatasetActivated),
 			};
 		},
 

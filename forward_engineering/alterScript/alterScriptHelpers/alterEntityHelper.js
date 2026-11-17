@@ -1,4 +1,4 @@
-const { getFullName, getName } = require('../../helpers/utils');
+const { getFullName, getName, isCollectionInDeltaModelActivated } = require('../../helpers/utils');
 const { getModifiedDefaultColumnValueScripts } = require('./columnHelpers/defaultConstraintHelper');
 const { getModifyColumnNameScript } = require('./columnHelpers/nameHelper');
 const { getModifiedColumnNotNullScripts } = require('./columnHelpers/notNullHelper');
@@ -14,6 +14,7 @@ module.exports = (app, options) => {
 	const { createColumnDefinitionBySchema } = require('./createColumnDefinition')(_);
 	const ddlProvider = require('../../ddlProvider')(null, options, app);
 	const { generateIdToNameHashTable, generateIdToActivatedHashTable } = app.require('@hackolade/ddl-fe-utils');
+	const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 
 	const getAddCollectionScript = modelData => collection => {
 		const databaseName = collection.compMod.keyspaceName;
@@ -49,8 +50,9 @@ module.exports = (app, options) => {
 			tableData,
 			jsonSchema,
 		});
+		const isActivated = isCollectionInDeltaModelActivated(collection);
 
-		return ddlProvider.createTable(hydratedTable, jsonSchema.isActivated);
+		return commentIfDeactivated(ddlProvider.createTable(hydratedTable, isActivated), { isActivated });
 	};
 
 	const getDeleteCollectionScript = modelData => collection => {
@@ -106,6 +108,7 @@ module.exports = (app, options) => {
 		const tableName = getName(collectionSchema);
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
+		const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 		return _.toPairs(collection.properties)
 			.filter(([name, jsonSchema]) => !jsonSchema.compMod)
@@ -118,8 +121,13 @@ module.exports = (app, options) => {
 					dbData,
 				}),
 			)
-			.map(ddlProvider.convertColumnDefinition)
-			.map(column => ddlProvider.addColumn(column, tableName, dbData));
+			.map(columnDefinition => {
+				const column = ddlProvider.convertColumnDefinition({ ...columnDefinition, isActivated: true });
+				const script = ddlProvider.addColumn(column, tableName, dbData);
+				const isActivated = isCollectionActivated && columnDefinition.isActivated !== false;
+
+				return commentIfDeactivated(script, { isActivated });
+			});
 	};
 
 	const getDeleteColumnScript = modelData => collection => {
@@ -127,10 +135,16 @@ module.exports = (app, options) => {
 		const tableName = getName(collectionSchema);
 		const databaseName = collectionSchema.compMod?.keyspaceName;
 		const dbData = { databaseName, projectId: _.first(modelData)?.projectId };
+		const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 		return _.toPairs(collection.properties)
 			.filter(([name, jsonSchema]) => !jsonSchema.compMod)
-			.map(([name]) => ddlProvider.dropColumn(name, tableName, dbData));
+			.map(([name, jsonSchema]) => {
+				const script = ddlProvider.dropColumn(name, tableName, dbData);
+				const isActivated = isCollectionActivated && jsonSchema.isActivated !== false;
+
+				return commentIfDeactivated(script, { isActivated });
+			});
 	};
 
 	const getModifyColumnScripts = ({ tableData, collection }) => {

@@ -11,6 +11,14 @@ const getOldRelationshipName = ({ relationship }) => {
 	return compMod.code?.old || compMod.name?.old || relationship.role.code || relationship.role.name;
 };
 
+const isRelationshipActivated = ({ relationship }) => {
+	return (relationship.role?.compMod?.isActivated?.new ?? relationship.role?.isActivated) !== false;
+};
+
+const isRelatedTableActivated = ({ bucket, collection } = {}) => {
+	return bucket?.isActivated !== false && collection?.isActivated !== false;
+};
+
 const getFullChildTableName = ({ relationship, modelData }) => {
 	const compMod = relationship.role.compMod;
 
@@ -33,15 +41,14 @@ const getAddSingleForeignKeyStatementDto = ({ relationship, modelData, app }) =>
 
 	const foreignKey = compMod.child.collection.fkFields;
 	const primaryKey = compMod.parent.collection.fkFields;
-	const isActivated = compMod.isActivated?.new ?? relationship.role.isActivated;
 	const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
 	const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
 	const isActivatedBasedOnTableData =
-		isActivated &&
+		isRelationshipActivated({ relationship }) &&
 		!isAllPrimaryKeysDeactivated &&
 		!isAllForeignKeysDeactivated &&
-		compMod.parent.collection.isActivated &&
-		compMod.child.collection.isActivated;
+		isRelatedTableActivated(compMod.parent) &&
+		isRelatedTableActivated(compMod.child);
 
 	const primaryTableName = getFullName(
 		modelData?.[0]?.projectID,
@@ -88,11 +95,13 @@ const canRelationshipBeAdded = ({ relationship }) => {
 const getAddForeignKeyScripts =
 	({ app, modelData }) =>
 	addedRelationships => {
+		const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+
 		return addedRelationships
 			.filter(relationship => canRelationshipBeAdded({ relationship }))
 			.map(relationship => {
 				const scriptDto = getAddSingleForeignKeyStatementDto({ relationship, modelData, app });
-				return scriptDto.statement;
+				return commentIfDeactivated(scriptDto.statement, { isActivated: scriptDto.isActivated });
 			});
 	};
 
@@ -108,11 +117,9 @@ const getDeleteSingleForeignKeyStatementDto = ({ app, relationship, modelData })
 		constraintName: wrapByBackticks(constraintName),
 	});
 
-	const isRelationshipActivated = Boolean(relationship.role?.compMod?.isActivated?.new);
-	const isChildTableActivated = compMod.child.collection.isActivated;
 	return {
 		statement,
-		isActivated: isRelationshipActivated && isChildTableActivated,
+		isActivated: isRelationshipActivated({ relationship }) && isRelatedTableActivated(compMod.child),
 	};
 };
 
@@ -131,28 +138,35 @@ const canRelationshipBeDeleted = ({ relationship }) => {
 const getDeleteForeignKeyScripts =
 	({ modelData, app }) =>
 	deletedRelationships => {
+		const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+
 		return deletedRelationships
 			.filter(relationship => canRelationshipBeDeleted({ relationship }))
 			.map(relationship => {
 				const scriptDto = getDeleteSingleForeignKeyStatementDto({ app, relationship, modelData });
-				return scriptDto.statement;
+				return commentIfDeactivated(scriptDto.statement, { isActivated: scriptDto.isActivated });
 			});
 	};
 
 const getModifyForeignKeyScripts =
 	({ modelData, app }) =>
 	modifiedRelationships => {
+		const { commentIfDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
+
 		return modifiedRelationships
 			.filter(
 				relationship => canRelationshipBeAdded({ relationship }) && canRelationshipBeDeleted({ relationship }),
 			)
-			.map(relationship => {
+			.flatMap(relationship => {
 				const deleteScriptDto = getDeleteSingleForeignKeyStatementDto({ app, relationship, modelData });
 				const addScriptDto = getAddSingleForeignKeyStatementDto({ relationship, modelData, app });
+				const isActivated = deleteScriptDto.isActivated && addScriptDto.isActivated;
 
-				return [deleteScriptDto.statement, addScriptDto.statement];
-			})
-			.flat();
+				return [
+					commentIfDeactivated(deleteScriptDto.statement, { isActivated }),
+					commentIfDeactivated(addScriptDto.statement, { isActivated }),
+				];
+			});
 	};
 
 module.exports = ({ modelData, app }) => {

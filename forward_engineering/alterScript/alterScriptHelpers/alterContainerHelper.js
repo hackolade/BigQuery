@@ -1,4 +1,4 @@
-const { getFullName } = require('../../helpers/utils');
+const { getFullName, isObjectInDeltaModelActivated } = require('../../helpers/utils');
 const { checkCompModEqual, getCompMod } = require('./common');
 const { getModifyContainerOptionsScript } = require('./containerHelper/optionsHelper');
 
@@ -11,7 +11,9 @@ module.exports = (app, options) => {
 		const constructedDbData = getDbData([containerData]);
 		const dbData = ddlProvider.hydrateSchema(constructedDbData, { modelData });
 
-		return _.trim(ddlProvider.createSchema(dbData));
+		return _.trim(
+			ddlProvider.createSchema({ ...dbData, isActivated: isObjectInDeltaModelActivated(containerData) }),
+		);
 	};
 
 	const getDeleteContainerScript = modelData => containerData => {

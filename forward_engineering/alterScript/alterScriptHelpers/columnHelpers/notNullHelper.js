@@ -1,11 +1,11 @@
 const { pick, toPairs } = require('lodash');
-const { wrapByBackticks } = require('../../../helpers/utils');
+const { wrapByBackticks, isCollectionInDeltaModelActivated } = require('../../../helpers/utils');
 const templates = require('../../../configs/templates');
 const { DATA_TYPE_MODE } = require('../../../helpers/constants');
 
 const getModifiedColumnNotNullScripts = ({ collection, app, tableData }) => {
 	const { assignTemplates, general } = app.require('@hackolade/ddl-fe-utils');
-	const isCollectionActivated = collection.role?.isActivated !== false;
+	const isCollectionActivated = isCollectionInDeltaModelActivated(collection);
 
 	return toPairs(collection.properties)
 		.map(([name, newJsonSchema]) => {
