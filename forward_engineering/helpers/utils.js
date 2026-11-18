@@ -5,9 +5,33 @@
 
 const { isBoolean } = require('lodash');
 const { DATA_TYPE_MODE } = require('./constants');
+const { getDataGovernanceTagClause, getResourceTagsOption, withoutDataGovernanceTag } = require('./tagsHelper');
 
 const escapeQuotes = (str = '') => {
 	return str.replace(/(")/gi, '\\$1').replace(/\n/gi, '\\n');
+};
+
+const omitRepeatedMode = jsonSchema =>
+	Object.fromEntries(Object.entries(jsonSchema).filter(([key]) => key !== 'dataTypeMode'));
+
+const getColumnOptions = ({ description, jsonSchema }) => {
+	const columnOptions = [];
+
+	if (description) {
+		columnOptions.push(`description="${escapeQuotes(description)}"`);
+	}
+
+	const dataGovernanceTag = getDataGovernanceTagClause(jsonSchema);
+
+	if (dataGovernanceTag) {
+		columnOptions.push(dataGovernanceTag);
+	}
+
+	if (columnOptions.length === 0) {
+		return '';
+	}
+
+	return ` OPTIONS( ${columnOptions.join(', ')} )`;
 };
 
 const wrapByBackticks = (str = '') => {
@@ -138,6 +162,7 @@ const getTableOptions =
 		customerEncryptionKey,
 		description,
 		labels,
+		tags,
 		friendlyName,
 		externalTableOptions,
 	}) => {
@@ -165,6 +190,12 @@ const getTableOptions =
 
 		if (Array.isArray(labels) && labels.length) {
 			options.push(`labels=[\n${tab(getLabels(labels))}\n]`);
+		}
+
+		const resourceTagsOption = getResourceTagsOption({ tags, tab });
+
+		if (resourceTagsOption) {
+			options.push(resourceTagsOption);
 		}
 
 		if (externalTableOptions) {
@@ -286,15 +317,15 @@ const getColumnSchema =
 		let notNull = '';
 
 		if (type === 'array') {
-			dataType = ` ARRAY<\n${tab(convertItemsToType(deps)(jsonSchema.items).join(',\n'))}\n>`;
-		} else if (dataTypeMode === DATA_TYPE_MODE.repeated) {
-			const { dataTypeMode, ...item } = jsonSchema;
+			const items = [jsonSchema.items].flat().map(item => withoutDataGovernanceTag(item));
 
+			dataType = ` ARRAY<\n${tab(convertItemsToType(deps)(items).join(',\n'))}\n>`;
+		} else if (dataTypeMode === DATA_TYPE_MODE.repeated) {
 			dataType = getColumnSchema(deps)({
 				type: 'array',
 				description,
 				jsonSchema: {
-					items: [item],
+					items: [withoutDataGovernanceTag(omitRepeatedMode(jsonSchema))],
 				},
 			});
 		} else if (type === 'struct') {
@@ -303,9 +334,7 @@ const getColumnSchema =
 			dataType = (' ' + type).toUpperCase() + addParameters(type, jsonSchema);
 		}
 
-		if (description) {
-			options += ` OPTIONS( description="${escapeQuotes(description)}" )`;
-		}
+		options = getColumnOptions({ description, jsonSchema });
 
 		if (dataTypeMode === DATA_TYPE_MODE.required && !isArrayItem) {
 			notNull = ' NOT NULL';
@@ -331,7 +360,7 @@ const decorateType = ({ type, columnDefinition }) => {
 		name: '',
 		type,
 		dataTypeMode: columnDefinition.dataTypeMode,
-		jsonSchema: columnDefinition,
+		jsonSchema: withoutDataGovernanceTag(columnDefinition),
 	});
 	const dataType = fullDataType.trim();
 	const isComplexType = /^(array|struct)/i.test(dataType);

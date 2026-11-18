@@ -106,6 +106,50 @@ making sure that you maintain a proper JSON format.
 				},
 				"description",
 				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
 					"enableForReference": true,
@@ -375,6 +419,50 @@ making sure that you maintain a proper JSON format.
 					]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				"dependencies",
 				"comments"
 			],
@@ -392,6 +480,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
@@ -588,6 +720,50 @@ making sure that you maintain a proper JSON format.
 				},
 				"description",
 				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
 					"enableForReference": true,
@@ -783,6 +959,50 @@ making sure that you maintain a proper JSON format.
 				},
 				"description",
 				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
 					"enableForReference": true,
@@ -961,6 +1181,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				"dependencies",
 				"foreignCollection",
 				"foreignField",
@@ -992,6 +1256,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
@@ -1160,6 +1468,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
@@ -1414,6 +1766,50 @@ making sure that you maintain a proper JSON format.
 					]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				"dependencies",
 				"pattern",
 				"default",
@@ -1436,6 +1832,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
@@ -1608,6 +2048,50 @@ making sure that you maintain a proper JSON format.
 				},
 				"description",
 				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
+				{
 					"propertyName": "Primary key",
 					"propertyKeyword": "primaryKey",
 					"enableForReference": true,
@@ -1777,6 +2261,50 @@ making sure that you maintain a proper JSON format.
 					"options": ["Nullable", "Required", "Repeated"]
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				"comments"
 			],
 			"___2": [],
@@ -1820,6 +2348,68 @@ making sure that you maintain a proper JSON format.
 					"hidden": true
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							},
+							{
+								"type": "not",
+								"values": {
+									"type": "or",
+									"values": [
+										{
+											"level": "children",
+											"key": "type",
+											"value": "struct"
+										},
+										{
+											"level": "children",
+											"key": "childType",
+											"value": "struct"
+										}
+									]
+								}
+							}
+						]
+					}
+				},
 				"dependencies",
 				"minItems",
 				"maxItems",
@@ -1887,6 +2477,50 @@ making sure that you maintain a proper JSON format.
 					"hidden": true
 				},
 				"description",
+				{
+					"propertyName": "Data governance tag",
+					"propertyType": "block",
+					"propertyKeyword": "dataGovernanceTag",
+					"structure": [
+						{
+							"propertyName": "Key",
+							"propertyKeyword": "tagKey",
+							"propertyType": "text"
+						},
+						{
+							"propertyName": "Value",
+							"propertyKeyword": "tagValue",
+							"propertyType": "text"
+						}
+					],
+					"dependency": {
+						"type": "and",
+						"values": [
+							{
+								"type": "or",
+								"values": [
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "Native"
+									},
+									{
+										"level": "root",
+										"key": "tableType",
+										"value": "External"
+									}
+								]
+							},
+							{
+								"type": "not",
+								"values": {
+									"key": "arrayItem",
+									"value": true
+								}
+							}
+						]
+					}
+				},
 				"dependencies",
 				{
 					"propertyName": "Min Properties",

@@ -263,6 +263,23 @@
 				]
 			},
 			{
+				"propertyName": "Tags",
+				"propertyType": "group",
+				"propertyKeyword": "tags",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "tagKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "tagValue",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
 				"propertyName": "Custom scripts",
 				"propertyType": "block",
 				"propertyKeyword": "customScripts",

@@ -46,6 +46,7 @@ module.exports = (baseProvider, options, app) => {
 			customerEncryptionKey:
 				containerData.encryption === 'Customer-managed' ? containerData.customerEncryptionKey : '',
 			labels: Array.isArray(containerData.labels) ? containerData.labels : [],
+			tags: Array.isArray(containerData.tags) ? containerData.tags : [],
 		};
 	};
 
@@ -59,6 +60,7 @@ module.exports = (baseProvider, options, app) => {
 			defaultExpiration,
 			customerEncryptionKey,
 			labels,
+			tags,
 			isActivated = true,
 		}) {
 			const statement = assignTemplates(templates.createDatabase, {
@@ -70,6 +72,7 @@ module.exports = (baseProvider, options, app) => {
 					defaultExpiration,
 					customerEncryptionKey,
 					labels,
+					tags,
 				}),
 			});
 			return commentIfDeactivated(statement, { isActivated });
@@ -94,6 +97,7 @@ module.exports = (baseProvider, options, app) => {
 				clusteringKey,
 				customerEncryptionKey,
 				labels,
+				tags,
 				friendlyName,
 				externalTableOptions,
 				foreignKeyConstraints,
@@ -132,6 +136,7 @@ module.exports = (baseProvider, options, app) => {
 				description,
 				expiration,
 				labels,
+				tags,
 			});
 			const external = isExternal ? 'EXTERNAL ' : '';
 			const columnStatementDtos = (columns || []).map(columnDto => ({
@@ -366,6 +371,7 @@ module.exports = (baseProvider, options, app) => {
 				clusteringKey: data.clusteringKey,
 				customerEncryptionKey: data.encryption ? data.customerEncryptionKey : '',
 				labels: data.labels,
+				tags: data.tags,
 				primaryKey,
 				externalTableOptions: cleanObject(
 					{
@@ -468,6 +474,7 @@ module.exports = (baseProvider, options, app) => {
 				ifNotExist: detailsTab.ifNotExist,
 				selectStatement: detailsTab.selectStatement,
 				labels: detailsTab.labels,
+				tags: detailsTab.tags,
 				description: detailsTab.description,
 				expiration: detailsTab.expiration,
 				friendlyName: detailsTab.businessName,

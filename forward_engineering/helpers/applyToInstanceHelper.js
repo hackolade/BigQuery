@@ -1,4 +1,5 @@
 const connectionHelper = require('../../reverse_engineering/helpers/connectionHelper');
+const { addTagKeyDetail } = require('./tagsHelper');
 
 const execute = async (bigquery, query, location) => {
 	const response = await bigquery.createJob({
@@ -31,7 +32,12 @@ const applyToInstance = async (connectionInfo, logger, app) => {
 	await async.mapSeries(queries, async query => {
 		const message = 'Query: ' + query.split('\n').shift().substr(0, 150);
 		logger.progress({ message });
-		await execute(connection, query, location);
+
+		try {
+			await execute(connection, query, location);
+		} catch (error) {
+			throw addTagKeyDetail({ error, query, logger });
+		}
 	});
 };
 
