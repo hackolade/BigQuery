@@ -19,6 +19,8 @@ const isRelatedTableActivated = ({ bucket, collection } = {}) => {
 	return bucket?.isActivated !== false && collection?.isActivated !== false;
 };
 
+const areFkFieldsActivated = fields => (fields || []).every(field => field?.isActivated !== false);
+
 const getFullChildTableName = ({ relationship, modelData }) => {
 	const compMod = relationship.role.compMod;
 
@@ -31,7 +33,6 @@ const getFullChildTableName = ({ relationship, modelData }) => {
 
 const getAddSingleForeignKeyStatementDto = ({ relationship, modelData, app }) => {
 	const compMod = relationship.role.compMod;
-	const { checkAllKeysDeactivated } = app.require('@hackolade/ddl-fe-utils').general;
 	const { foreignKeysToString, foreignActiveKeysToString } = require('../../helpers/general')(app);
 	const assignTemplates = app.require('@hackolade/ddl-fe-utils').assignTemplates;
 
@@ -41,12 +42,10 @@ const getAddSingleForeignKeyStatementDto = ({ relationship, modelData, app }) =>
 
 	const foreignKey = compMod.child.collection.fkFields;
 	const primaryKey = compMod.parent.collection.fkFields;
-	const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
-	const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
 	const isActivatedBasedOnTableData =
 		isRelationshipActivated({ relationship }) &&
-		!isAllPrimaryKeysDeactivated &&
-		!isAllForeignKeysDeactivated &&
+		areFkFieldsActivated(primaryKey) &&
+		areFkFieldsActivated(foreignKey) &&
 		isRelatedTableActivated(compMod.parent) &&
 		isRelatedTableActivated(compMod.child);
 
@@ -119,7 +118,12 @@ const getDeleteSingleForeignKeyStatementDto = ({ app, relationship, modelData })
 
 	return {
 		statement,
-		isActivated: isRelationshipActivated({ relationship }) && isRelatedTableActivated(compMod.child),
+		isActivated:
+			isRelationshipActivated({ relationship }) &&
+			isRelatedTableActivated(compMod.parent) &&
+			isRelatedTableActivated(compMod.child) &&
+			areFkFieldsActivated(compMod.parent?.collection?.fkFields) &&
+			areFkFieldsActivated(compMod.child?.collection?.fkFields),
 	};
 };
 
