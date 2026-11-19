@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { escapeQuotes, getTimestamp, wrapByBackticks } = require('./utils');
+const { getResourceTagsOption } = require('./tagsHelper');
 
 module.exports = app => {
 	const { commentIfDeactivated, tab } = app.require('@hackolade/ddl-fe-utils').general;
@@ -12,7 +13,14 @@ module.exports = app => {
 			.join(',\n');
 	};
 
-	const getContainerOptions = ({ friendlyName, description, defaultExpiration, customerEncryptionKey, labels }) => {
+	const getContainerOptions = ({
+		friendlyName,
+		description,
+		defaultExpiration,
+		customerEncryptionKey,
+		labels,
+		tags,
+	}) => {
 		let dbOptions = [];
 
 		if (friendlyName) {
@@ -33,6 +41,12 @@ module.exports = app => {
 
 		if (labels.length) {
 			dbOptions.push(`labels=[\n${tab(getLabels(labels))}\n]`);
+		}
+
+		const resourceTagsOption = getResourceTagsOption({ tags, tab });
+
+		if (resourceTagsOption) {
+			dbOptions.push(resourceTagsOption);
 		}
 
 		return dbOptions.length ? `\nOPTIONS(\n${tab(dbOptions.join(',\n'))}\n)` : '';
@@ -81,6 +95,12 @@ module.exports = app => {
 
 		if (Array.isArray(viewData.labels) && viewData.labels.length) {
 			options.push(`labels=[\n${tab(getLabels(viewData.labels))}\n]`);
+		}
+
+		const resourceTagsOption = getResourceTagsOption({ tags: viewData.tags, tab });
+
+		if (resourceTagsOption) {
+			options.push(resourceTagsOption);
 		}
 
 		options = [...options, ...getMaterializedViewOptions(viewData)];

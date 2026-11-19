@@ -241,6 +241,24 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Tags",
+				"propertyType": "group",
+				"propertyKeyword": "tags",
+				"groupItemLimit": 50,
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "tagKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "tagValue",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
 				"propertyName": "Custom scripts",
 				"propertyType": "block",
 				"propertyKeyword": "customScripts",

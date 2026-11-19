@@ -168,7 +168,9 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 				const [rows] = await bigQueryHelper.getRows(tableName, table, recordSamplingSettings);
 				log.info(`Convert rows: "${tableName}"`);
 				log.progress(`Convert rows`, datasetName, tableName);
-				const rawJsonSchema = createJsonSchema(table.metadata.schema ?? {}, rows);
+				const rawJsonSchema = createJsonSchema(table.metadata.schema ?? {}, rows, {
+					includeDataGovernanceTags: true,
+				});
 				const { propertiesWithInjectedConstraints, primaryKey } = injectPrimaryKeyConstraintsIntoTable({
 					datasetId: dataset.id,
 					properties: rawJsonSchema.properties,
@@ -232,6 +234,7 @@ const getDbCollectionsData = async (data, logger, cb, app) => {
 							description: view.metadata.description,
 							selectStatement: viewData.query,
 							labels: getLabels(view.metadata.labels),
+							tags: getResourceTags(view.metadata.resourceTags),
 							expiration: view.metadata.expirationTime ? Number(view.metadata.expirationTime) : undefined,
 							clusteringKey: view.metadata.clustering?.fields || [],
 							...getPartitioning(view.metadata),
@@ -330,6 +333,7 @@ const getBucketInfo = ({ metadata, datasetName }) => {
 		dataLocation: (metadata.location || '').toLowerCase(),
 		description: metadata.description || '',
 		labels: getLabels(metadata.labels),
+		tags: getResourceTags(metadata.resourceTags),
 		enableTableExpiration: Boolean(metadata.defaultTableExpirationMs),
 		defaultExpiration: !isNaN(metadata.defaultTableExpirationMs)
 			? metadata.defaultTableExpirationMs / (1000 * 60 * 60 * 24)
@@ -344,6 +348,14 @@ const getLabels = labels => {
 	}
 
 	return Object.keys(labels).map(labelKey => ({ labelKey, labelValue: labels[labelKey] }));
+};
+
+const getResourceTags = resourceTags => {
+	if (!resourceTags) {
+		return [];
+	}
+
+	return Object.keys(resourceTags).map(tagKey => ({ tagKey, tagValue: resourceTags[tagKey] }));
 };
 
 const getViewName = viewName => {
@@ -370,6 +382,7 @@ const getTableInfo = ({ table, tableName }) => {
 		clusteringKey: metadata.clustering?.fields || [],
 		...getEncryption(metadata.encryptionConfiguration),
 		labels: getLabels(metadata.labels),
+		tags: getResourceTags(metadata.resourceTags),
 		tableOptions: getExternalOptions(metadata),
 	};
 };
