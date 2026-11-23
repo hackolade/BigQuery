@@ -14,6 +14,8 @@ const {
 	wrapByBackticks,
 	getFullName,
 	getName,
+	isViewColumnSourceActivated,
+	isViewActivated,
 } = require('./helpers/utils');
 
 module.exports = (baseProvider, options, app) => {
@@ -206,13 +208,13 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		createView(viewData, dbData, isActivated) {
+		createView(viewData, dbData, viewIsActivated) {
 			const viewName = getFullName(dbData.projectId, dbData.databaseName, viewData.name);
 			let columns = '';
-			const allDeactivated = viewData.keys.length && viewData.keys.every(key => !key.isActivated);
+			const isActivated = isViewActivated(viewData, { isActivated: viewIsActivated });
 
 			if (!viewData.materialized) {
-				if (isActivated && !allDeactivated) {
+				if (isActivated) {
 					const activated = viewData.keys
 						.filter(key => key.isActivated)
 						.map(key => key.alias || key.name)
@@ -256,7 +258,7 @@ module.exports = (baseProvider, options, app) => {
 				selectStatement: _.trim(
 					viewData.selectStatement
 						? viewData.selectStatement
-						: generateViewSelectStatement(isActivated && !allDeactivated)({
+						: generateViewSelectStatement(isActivated)({
 								columns: viewData.keys,
 								datasetName: dbData.databaseName,
 								projectId: dbData.projectId,
@@ -268,7 +270,7 @@ module.exports = (baseProvider, options, app) => {
 				clustering,
 			});
 
-			if (isActivated && allDeactivated) {
+			if (!isActivated) {
 				return commentIfDeactivated(statement, { isActivated: false });
 			} else {
 				return statement;
@@ -451,14 +453,11 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateViewColumn(data) {
-			const isSourceTableActivated = _.first(data.entityData)?.isActivated !== false;
-			const isSourceDatasetActivated = _.first(data.containerData)?.isActivated !== false;
-
 			return {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
-				isActivated: Boolean(data.isActivated && isSourceTableActivated && isSourceDatasetActivated),
+				isActivated: data.isActivated !== false && isViewColumnSourceActivated(data),
 			};
 		},
 
