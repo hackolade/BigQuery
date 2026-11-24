@@ -270,11 +270,13 @@ module.exports = (baseProvider, options, app) => {
 				clustering,
 			});
 
-			if (!isActivated) {
+			// Only self-comment when the caller thinks the view is active but columns/sources
+			// make it inactive. When viewIsActivated is false, the caller comments the statement.
+			if (viewIsActivated && !isActivated) {
 				return commentIfDeactivated(statement, { isActivated: false });
-			} else {
-				return statement;
 			}
+
+			return statement;
 		},
 
 		createForeignKeyConstraint(
