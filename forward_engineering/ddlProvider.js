@@ -252,7 +252,7 @@ module.exports = (baseProvider, options, app) => {
 			const statement = assignTemplates(templates.createView, {
 				name: viewName,
 				materialized: viewData.materialized ? 'MATERIALIZED ' : '',
-				orReplace: viewData.orReplace && !viewData.materialized ? 'OR REPLACE ' : '',
+				orReplace: viewData.orReplace ? 'OR REPLACE ' : '',
 				ifNotExist: viewData.ifNotExist ? 'IF NOT EXISTS ' : '',
 				columns: columns.length ? ` (\n${tab(columns)}\n)` : '',
 				selectStatement: _.trim(
